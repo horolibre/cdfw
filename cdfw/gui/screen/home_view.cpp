@@ -3,7 +3,7 @@
 // the LICENSE file.
 
 // Local Headers
-#include "cdfw/gui/screen/home.h"
+#include "cdfw/gui/screen/home_view.h"
 
 // Third Party Headers
 #include <lvgl.h>

@@ -3,7 +3,7 @@
 // the LICENSE file.
 
 // Local Headers
-#include "cdfw/gui/screen/boot.h"
+#include "cdfw/gui/screen/boot_view.h"
 #include "cdfw/core/version.h"
 
 // Third Party Headers

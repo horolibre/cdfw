@@ -2,8 +2,8 @@
 // Use of this source code is governed by a GPLv3 license that can be found in
 // the LICENSE file.
 
-#ifndef CDFW_GUI_SCREEN_HOME_H
-#define CDFW_GUI_SCREEN_HOME_H
+#ifndef CDFW_GUI_SCREEN_HOME_VIEW_H
+#define CDFW_GUI_SCREEN_HOME_VIEW_H
 
 // Local Headers
 #include "cdfw/core/ui/home_model.h"
@@ -27,4 +27,4 @@ public:
 } // namespace gui
 } // namespace cdfw
 
-#endif // CDFW_GUI_SCREEN_HOME_H
+#endif // CDFW_GUI_SCREEN_HOME_VIEW_H

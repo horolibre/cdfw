@@ -2,8 +2,8 @@
 // Use of this source code is governed by a GPLv3 license that can be found in
 // the LICENSE file.
 
-#ifndef CDFW_GUI_SCREEN_BOOT_H
-#define CDFW_GUI_SCREEN_BOOT_H
+#ifndef CDFW_GUI_SCREEN_BOOT_VIEW_H
+#define CDFW_GUI_SCREEN_BOOT_VIEW_H
 
 namespace cdfw {
 namespace gui {
@@ -20,4 +20,4 @@ public:
 } // namespace gui
 } // namespace cdfw
 
-#endif // CDFW_GUI_SCREEN_BOOT_H
+#endif // CDFW_GUI_SCREEN_BOOT_VIEW_H

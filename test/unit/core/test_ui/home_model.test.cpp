@@ -12,7 +12,7 @@ namespace cdfw {
 namespace core{
 namespace ui {
 namespace {
-TEST(HomeModel, DefaultState) {
+TEST(HomeModelTests, DefaultState) {
   auto model = HomeModel::Create();
   ASSERT_EQ(model->GetWifiState(), HomeModel::WifiState::DISCONNECTED);
 }
