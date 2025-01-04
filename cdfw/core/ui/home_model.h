@@ -19,7 +19,10 @@ public:
   // Virtual d'tor.
   virtual ~HomeModel() = default;
 
-  enum class WifiState { DISABLED, DISCONNECTED, CONNECTED };
+  // Underscore suffix to avoid conflict with a macro defined by the Arduino
+  // SDK.
+  enum class WifiState { DISABLED_, DISCONNECTED, CONNECTED };
+
   virtual WifiState GetWifiState() = 0;
 };
 } // namespace ui

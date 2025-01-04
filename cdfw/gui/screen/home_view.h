@@ -8,6 +8,9 @@
 // Local Headers
 #include "cdfw/core/ui/home_model.h"
 
+// C++ Standard Library Headers
+#include <memory>
+
 namespace cdfw {
 namespace gui {
 namespace screen {

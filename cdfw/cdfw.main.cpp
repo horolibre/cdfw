@@ -5,6 +5,7 @@
 // Main file for Horolibre Cleaner display firmware.
 
 // Local Headers
+#include "cdfw/core/core.h"
 #include "cdfw/gui/gui.h"
 #include "cdfw/hal/hal.h"
 #include "cdfw/hw/hw.h"
@@ -22,6 +23,8 @@ namespace {
 cdfw::hal::Touchscreen *touchscreen = nullptr;
 
 std::unique_ptr<cdfw::gui::screen::HomeView> home_view = nullptr;
+
+std::unique_ptr<cdfw::core::ui::BootPresenter> boot_presenter = nullptr;
 } // namespace
 
 #ifndef PIO_UNIT_TESTING
@@ -49,7 +52,9 @@ void setup() {
   lv_indev_set_read_cb(indev, &cdfw::hal::Touchscreen::ReadCallbackRouter);
 
   // Register GUI screens.
-  cdfw::gui::screen::BootView::Register();
+  boot_presenter = cdfw::core::ui::BootPresenter::Create();
+  boot_presenter->SetView(cdfw::gui::screen::BootView::Create());
+
   home_view = cdfw::gui::screen::HomeView::Register();
 }
 

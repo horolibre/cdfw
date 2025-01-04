@@ -5,16 +5,22 @@
 #ifndef CDFW_GUI_SCREEN_BOOT_VIEW_H
 #define CDFW_GUI_SCREEN_BOOT_VIEW_H
 
+// Local Headers
+#include "cdfw/core/ui/boot_presenter.h"
+
+// C++ Standard Library Headers
+#include <memory>
+
 namespace cdfw {
 namespace gui {
 namespace screen {
-class BootView {
+class BootView : public core::ui::BootPresenterView {
 public:
   // Factory method.
-  static void Register();
+  static std::unique_ptr<BootPresenterView> Create();
 
-  // Virtual d'tor.
-  virtual ~BootView() = default;
+  // Pure virtual d'tor to prevent instantiation.
+  virtual ~BootView() = 0;
 };
 } // namespace screen
 } // namespace gui
