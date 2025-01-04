@@ -14,7 +14,6 @@
 namespace cdfw {
 namespace gui {
 namespace screen {
-namespace home {
 namespace {
 static void btn_event_cb(lv_event_t *e) {
   lv_event_code_t code = lv_event_get_code(e);
@@ -28,22 +27,42 @@ static void btn_event_cb(lv_event_t *e) {
     lv_label_set_text_fmt(label, "Button: %d", cnt);
   }
 }
+
+class HomeViewImpl : public HomeView {
+public:
+  HomeViewImpl() : scr_(nullptr) {}
+  virtual ~HomeViewImpl() = default;
+
+  void Init() {
+    scr_ = lv_obj_create(NULL);
+    lv_obj_t *btn = lv_button_create(scr_);
+    lv_obj_add_event_cb(btn, btn_event_cb, LV_EVENT_ALL, NULL);
+    lv_obj_t *label = lv_label_create(btn);
+    lv_label_set_text(label, "Button");
+    lv_obj_center(label);
+  }
+
+  void Show() override final { lv_scr_load(scr_); }
+
+  void SetWifiIcon(const char *icon) override final {}
+
+  void DelayedShow() override final {
+    // Queue timed animation to show the home screen.
+    lv_screen_load_anim(scr_, LV_SCR_LOAD_ANIM_FADE_OUT, /*time*/ 1000,
+                        /*delay*/ 2000,
+                        /*auto_del*/ true);
+  }
+
+private:
+  lv_obj_t *scr_;
+};
 } // namespace
 
-void Register() {
-  lv_obj_t *scr = lv_obj_create(NULL);
-  lv_obj_t *btn = lv_button_create(scr);
-  lv_obj_add_event_cb(btn, btn_event_cb, LV_EVENT_ALL, NULL);
-  lv_obj_t *label = lv_label_create(btn);
-  lv_label_set_text(label, "Button");
-  lv_obj_center(label);
-
-  // Queue timed animation to show the home screen.
-  lv_screen_load_anim(scr, LV_SCR_LOAD_ANIM_FADE_OUT, /*time*/ 1000,
-                      /*delay*/ 3000,
-                      /*auto_del*/ true);
+std::unique_ptr<HomeView> HomeView::Register() {
+  auto view = std::make_unique<HomeViewImpl>();
+  view->Init();
+  return view;
 }
-} // namespace home
 } // namespace screen
 } // namespace gui
 } // namespace cdfw

@@ -8,9 +8,14 @@
 namespace cdfw {
 namespace gui {
 namespace screen {
-namespace boot {
-void Register();
-} // namespace boot
+class BootView {
+public:
+  // Factory method.
+  static void Register();
+
+  // Virtual d'tor.
+  virtual ~BootView() = default;
+};
 } // namespace screen
 } // namespace gui
 } // namespace cdfw

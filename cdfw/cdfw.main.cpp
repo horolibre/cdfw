@@ -20,7 +20,11 @@
 namespace {
 // Static device pointers.
 cdfw::hal::Touchscreen *touchscreen = nullptr;
+
+std::unique_ptr<cdfw::gui::screen::HomeView> home_view = nullptr;
 } // namespace
+
+#ifndef PIO_UNIT_TESTING
 
 void setup() {
   Serial.begin(115200);
@@ -45,8 +49,8 @@ void setup() {
   lv_indev_set_read_cb(indev, &cdfw::hal::Touchscreen::ReadCallbackRouter);
 
   // Register GUI screens.
-  cdfw::gui::screen::boot::Register();
-  cdfw::gui::screen::home::Register();
+  cdfw::gui::screen::BootView::Register();
+  home_view = cdfw::gui::screen::HomeView::Register();
 }
 
 void loop() {
@@ -62,3 +66,5 @@ void loop() {
   // Not sure why the delay.
   delay(5);
 }
+
+#endif // PIO_UNIT_TESTING
