@@ -4,6 +4,7 @@
 
 // Local Headers
 #include "cdfw/core/ui/home_model.h"
+#include "cdfw/core/ui/settings_model.h"
 
 // Third Party Headers
 #include <gtest/gtest.h>
@@ -13,8 +14,23 @@ namespace core {
 namespace ui {
 namespace {
 TEST(HomeModelTests, DefaultState) {
-  auto model = HomeModel::Create();
-  ASSERT_EQ(model->GetWifiState(), HomeModel::WifiState::DISCONNECTED);
+  auto settings_model = SettingsModel::Create();
+  auto home_model = HomeModel::Create(settings_model);
+  ASSERT_EQ(home_model->GetWifiState(), WifiState::DISCONNECTED);
+}
+
+TEST(HomeModelTests, ReflectsSettingsState) {
+  auto settings_model = SettingsModel::Create();
+  auto home_model = HomeModel::Create(settings_model);
+
+  settings_model->SetWifiState(WifiState::CONNECTED);
+  ASSERT_EQ(home_model->GetWifiState(), WifiState::CONNECTED);
+
+  settings_model->SetWifiState(WifiState::DISCONNECTED);
+  ASSERT_EQ(home_model->GetWifiState(), WifiState::DISCONNECTED);
+
+  settings_model->SetWifiState(WifiState::DISABLED_);
+  ASSERT_EQ(home_model->GetWifiState(), WifiState::DISABLED_);
 }
 } // namespace
 } // namespace ui

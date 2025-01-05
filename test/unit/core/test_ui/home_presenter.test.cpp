@@ -21,7 +21,6 @@ public:
   virtual ~MockHomeModel() = default;
 
   virtual WifiState GetWifiState() override final { return wifi_state_; }
-  virtual void SetWifiState(WifiState state) override final { wifi_state_ = state; }
 };
 
 class MockHomeView : public HomePresenterView {
@@ -67,13 +66,13 @@ TEST(HomePresenterTests, InitNotCalled) {
       HomePresenter::Create(std::make_unique<MockHomeView>(view_data),
                             std::make_unique<MockHomeModel>());
 
-    ASSERT_FALSE(view_data.init_called);
-    ASSERT_FALSE(view_data.show_called);
-    ASSERT_FALSE(view_data.delayed_show_called);
-    ASSERT_FALSE(view_data.set_wifi_color_called);
-    ASSERT_FALSE(view_data.set_wifi_visible_called);
-    ASSERT_TRUE(view_data.wifi_visible);
-    //ASSERT_EQ(view_data.wifi_color, lv_palette_main(LV_PALETTE_RED));
+  ASSERT_FALSE(view_data.init_called);
+  ASSERT_FALSE(view_data.show_called);
+  ASSERT_FALSE(view_data.delayed_show_called);
+  ASSERT_FALSE(view_data.set_wifi_color_called);
+  ASSERT_FALSE(view_data.set_wifi_visible_called);
+  ASSERT_TRUE(view_data.wifi_visible);
+  // ASSERT_EQ(view_data.wifi_color, lv_palette_main(LV_PALETTE_RED));
 }
 
 TEST(HomePresenterTests, InitCalled) {
@@ -81,48 +80,48 @@ TEST(HomePresenterTests, InitCalled) {
   auto presenter =
       HomePresenter::Create(std::make_unique<MockHomeView>(view_data),
                             std::make_unique<MockHomeModel>());
-    presenter->Init();
+  presenter->Init();
 
-    ASSERT_TRUE(view_data.init_called);
-    ASSERT_FALSE(view_data.show_called);
-    ASSERT_TRUE(view_data.delayed_show_called);
-    ASSERT_TRUE(view_data.set_wifi_color_called);
-    ASSERT_TRUE(view_data.set_wifi_visible_called);
-    ASSERT_TRUE(view_data.wifi_visible);
-    //ASSERT_EQ(view_data.wifi_color, lv_palette_main(LV_PALETTE_RED));
+  ASSERT_TRUE(view_data.init_called);
+  ASSERT_FALSE(view_data.show_called);
+  ASSERT_TRUE(view_data.delayed_show_called);
+  ASSERT_TRUE(view_data.set_wifi_color_called);
+  ASSERT_TRUE(view_data.set_wifi_visible_called);
+  ASSERT_TRUE(view_data.wifi_visible);
+  // ASSERT_EQ(view_data.wifi_color, lv_palette_main(LV_PALETTE_RED));
 }
 
 TEST(HomePresenterTests, UpdateWifiIcon_Connected) {
   MockHomeView::Data view_data;
   auto model = std::make_unique<MockHomeModel>();
-  HomeModel::WifiState& wifi_state_ = model->wifi_state_;
-  auto presenter = HomePresenter::Create(std::make_unique<MockHomeView>(view_data),
-                                         std::move(model));
+  WifiState &wifi_state_ = model->wifi_state_;
+  auto presenter = HomePresenter::Create(
+      std::make_unique<MockHomeView>(view_data), std::move(model));
   presenter->Init();
-  wifi_state_ = HomeModel::WifiState::CONNECTED;
+  wifi_state_ = WifiState::CONNECTED;
   presenter->UpdateWifiIcon();
 
   ASSERT_TRUE(view_data.set_wifi_color_called);
   ASSERT_TRUE(view_data.set_wifi_visible_called);
   ASSERT_TRUE(view_data.wifi_visible);
-  //ASSERT_EQ(view_data.wifi_color, lv_palette_main(LV_PALETTE_RED));
+  // ASSERT_EQ(view_data.wifi_color, lv_palette_main(LV_PALETTE_RED));
 }
 
 TEST(HomePresenterTests, UpdateWifiIcon_Disabled) {
   MockHomeView::Data view_data;
   auto model = std::make_unique<MockHomeModel>();
-  HomeModel::WifiState& wifi_state_ = model->wifi_state_;
-  auto presenter = HomePresenter::Create(std::make_unique<MockHomeView>(view_data),
-                                         std::move(model));
+  WifiState &wifi_state_ = model->wifi_state_;
+  auto presenter = HomePresenter::Create(
+      std::make_unique<MockHomeView>(view_data), std::move(model));
   presenter->Init();
-  
-  wifi_state_ = HomeModel::WifiState::DISABLED_;
+
+  wifi_state_ = WifiState::DISABLED_;
   presenter->UpdateWifiIcon();
 
   ASSERT_TRUE(view_data.set_wifi_color_called);
   ASSERT_TRUE(view_data.set_wifi_visible_called);
   ASSERT_FALSE(view_data.wifi_visible);
-  //ASSERT_EQ(view_data.wifi_color, lv_palette_main(LV_PALETTE_RED));
+  // ASSERT_EQ(view_data.wifi_color, lv_palette_main(LV_PALETTE_RED));
 }
 
 } // namespace

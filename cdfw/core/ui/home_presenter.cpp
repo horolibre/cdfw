@@ -25,11 +25,11 @@ public:
 
   virtual void UpdateWifiIcon() override final {
     switch (model_->GetWifiState()) {
-    case HomeModel::WifiState::CONNECTED:
+    case WifiState::CONNECTED:
       view_->SetWifiColor(lv_palette_main(LV_PALETTE_GREEN));
       view_->SetWifiVisible(true);
       break;
-    case HomeModel::WifiState::DISABLED_:
+    case WifiState::DISABLED_:
       view_->SetWifiVisible(false);
       break;
     default: // Assume Wifi is disconnected.

@@ -2,11 +2,10 @@
 // Use of this source code is governed by a GPLv3 license that can be found in
 // the LICENSE file.
 
-#ifndef CDFW_CORE_UI_HOME_MODEL_H
-#define CDFW_CORE_UI_HOME_MODEL_H
+#ifndef CDFW_CORE_UI_SETTINGS_MODEL_H
+#define CDFW_CORE_UI_SETTINGS_MODEL_H
 
 // Local Headers
-#include "cdfw/core/ui/settings_model.h"
 #include "cdfw/core/wifi.h"
 
 // C++ Standard Library Headers
@@ -15,19 +14,19 @@
 namespace cdfw {
 namespace core {
 namespace ui {
-class HomeModel {
+class SettingsModel {
 public:
   // Factory method.
-  static std::unique_ptr<HomeModel>
-  Create(std::shared_ptr<SettingsModel> settings);
+  static std::shared_ptr<SettingsModel> Create();
 
   // Virtual d'tor.
-  virtual ~HomeModel() = default;
+  virtual ~SettingsModel() = default;
 
   virtual WifiState GetWifiState() = 0;
+  virtual void SetWifiState(WifiState state) = 0;
 };
 } // namespace ui
 } // namespace core
 } // namespace cdfw
 
-#endif // CDFW_CORE_UI_HOME_MODEL_H
+#endif // CDFW_CORE_UI_SETTINGS_MODEL_H

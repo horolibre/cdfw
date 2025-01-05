@@ -4,6 +4,7 @@
 
 // Local Headers
 #include "cdfw/core/ui/home_model.h"
+#include "cdfw/core/wifi.h"
 
 // C++ Standard Library Headers
 #include <memory>
@@ -14,20 +15,22 @@ namespace ui {
 namespace {
 class HomeModelImpl : public HomeModel {
 public:
-  HomeModelImpl() : state_(WifiState::DISCONNECTED) {}
+  HomeModelImpl(std::shared_ptr<SettingsModel> settings)
+      : settings_(settings) {}
   virtual ~HomeModelImpl() = default;
 
-  virtual WifiState GetWifiState() override final { return state_; }
-
-  virtual void SetWifiState(WifiState state) override final { state_ = state; };
+  virtual WifiState GetWifiState() override final {
+    return settings_->GetWifiState();
+  }
 
 private:
-  WifiState state_;
+  std::shared_ptr<SettingsModel> settings_;
 };
 } // namespace
 
-std::unique_ptr<HomeModel> HomeModel::Create() {
-  return std::make_unique<HomeModelImpl>();
+std::unique_ptr<HomeModel>
+HomeModel::Create(std::shared_ptr<SettingsModel> settings) {
+  return std::make_unique<HomeModelImpl>(settings);
 }
 } // namespace ui
 } // namespace core
