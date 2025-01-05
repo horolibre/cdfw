@@ -22,7 +22,8 @@ namespace {
 // Static device pointers.
 cdfw::hal::Touchscreen *touchscreen = nullptr;
 
-std::unique_ptr<cdfw::gui::screen::HomeView> home_view = nullptr;
+std::unique_ptr<cdfw::core::ui::HomePresenter> home_presenter = nullptr;
+//std::unique_ptr<cdfw::gui::screen::HomeView> home_view = nullptr;
 } // namespace
 
 #ifndef PIO_UNIT_TESTING
@@ -55,8 +56,11 @@ void setup() {
                                         cdfw::core::ui::BootModel::Create())
       ->Init();
 
-  home_view = cdfw::gui::screen::HomeView::Register();
-  home_view->DelayedShow();
+  home_presenter = cdfw::core::ui::HomePresenter::Create(
+      cdfw::gui::screen::HomeView::Create(),
+      cdfw::core::ui::HomeModel::Create());
+  // Initialization for the home screen queues a delayed show.
+  home_presenter->Init();
 }
 
 void loop() {

@@ -24,6 +24,7 @@ public:
   enum class WifiState { DISABLED_, DISCONNECTED, CONNECTED };
 
   virtual WifiState GetWifiState() = 0;
+  virtual void SetWifiState(WifiState state) = 0;
 };
 } // namespace ui
 } // namespace core

@@ -5,6 +5,7 @@
 // Local Headers
 #include "cdfw/gui/screen/home_view.h"
 #include "cdfw/gui/color.h"
+#include "cdfw/core/ui/home_presenter.h"
 
 // Third Party Headers
 #include <lvgl.h>
@@ -166,7 +167,7 @@ private:
 };
 } // namespace
 
-std::unique_ptr<HomeView> HomeView::Register() {
+std::unique_ptr<core::ui::HomePresenterView> HomeView::Create() {
   auto view = std::make_unique<HomeViewImpl>();
   view->Init();
   return view;

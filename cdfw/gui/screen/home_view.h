@@ -7,6 +7,7 @@
 
 // Local Headers
 #include "cdfw/core/ui/home_model.h"
+#include "cdfw/core/ui/home_presenter.h"
 
 // Third Party Headers
 #include <lvgl.h>
@@ -17,10 +18,10 @@
 namespace cdfw {
 namespace gui {
 namespace screen {
-class HomeView {
+class HomeView : public core::ui::HomePresenterView {
 public:
   // Factory method.
-  static std::unique_ptr<HomeView> Register();
+  static std::unique_ptr<HomePresenterView> Create();
 
   // Virtual d'tor.
   virtual ~HomeView() = default;

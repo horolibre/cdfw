@@ -9,6 +9,7 @@
 #include "cdfw/core/ui/boot_model.h"
 #include "cdfw/core/ui/boot_presenter.h"
 #include "cdfw/core/ui/home_model.h"
+#include "cdfw/core/ui/home_presenter.h"
 #include "cdfw/core/version.h"
 
 #endif // CDFW_CORE_CORE_H

@@ -14,12 +14,15 @@ namespace ui {
 namespace {
 class HomeModelImpl : public HomeModel {
 public:
-  HomeModelImpl() = default;
+  HomeModelImpl() : state_(WifiState::DISCONNECTED) {}
   virtual ~HomeModelImpl() = default;
 
-  virtual WifiState GetWifiState() override final {
-    return WifiState::DISCONNECTED;
-  }
+  virtual WifiState GetWifiState() override final { return state_; }
+
+  virtual void SetWifiState(WifiState state) override final { state_ = state; };
+
+private:
+  WifiState state_;
 };
 } // namespace
 
