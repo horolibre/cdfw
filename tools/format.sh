@@ -10,6 +10,7 @@ function main {
   cd "${script_dir}/.."
 
   find cdfw/ -iname '*.h' -o -iname '*.cpp' | xargs clang-format --style=file -i
+  find test/ -iname '*.h' -o -iname '*.cpp' | xargs clang-format --style=file -i
 }
 
 main

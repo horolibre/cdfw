@@ -3,15 +3,15 @@
 // the LICENSE file.
 
 // Local Headers
-#include "cdfw/core/ui/boot_model.h"
 #include "cdfw/core/ui/boot_presenter.h"
+#include "cdfw/core/ui/boot_model.h"
 #include "cdfw/core/version.h"
 
 // Third Party Headers
 #include <gtest/gtest.h>
 
 namespace cdfw {
-namespace core{
+namespace core {
 namespace ui {
 namespace {
 class MockBootModel : public BootModel {
@@ -42,9 +42,7 @@ public:
     data_.version = version;
   }
 
-  virtual void Show() override final {
-    data_.show_called = true;
-  }
+  virtual void Show() override final { data_.show_called = true; }
 
 private:
   Data &data_;
@@ -52,9 +50,9 @@ private:
 
 TEST(BootPresenterTests, InitNotCalled) {
   MockBootView::Data view_data;
-  auto presenter = BootPresenter::Create(
-    std::make_unique<MockBootView>(view_data),
-    std::make_unique<MockBootModel>());
+  auto presenter =
+      BootPresenter::Create(std::make_unique<MockBootView>(view_data),
+                            std::make_unique<MockBootModel>());
 
   ASSERT_EQ(view_data.desc, String());
   ASSERT_EQ(view_data.version, String());
@@ -64,9 +62,9 @@ TEST(BootPresenterTests, InitNotCalled) {
 
 TEST(BootPresenterTests, InitCalled) {
   MockBootView::Data view_data;
-  auto presenter = BootPresenter::Create(
-    std::make_unique<MockBootView>(view_data),
-    std::make_unique<MockBootModel>());
+  auto presenter =
+      BootPresenter::Create(std::make_unique<MockBootView>(view_data),
+                            std::make_unique<MockBootModel>());
   presenter->Init();
 
   ASSERT_EQ(view_data.desc, "sw_desc");

@@ -9,7 +9,7 @@
 #include <gtest/gtest.h>
 
 namespace cdfw {
-namespace core{
+namespace core {
 namespace ui {
 namespace {
 TEST(HomeModelTests, DefaultState) {
