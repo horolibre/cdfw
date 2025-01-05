@@ -73,7 +73,7 @@ public:
 
   void Init() {
     scr_ = lv_obj_create(NULL);
-    lv_obj_set_style_bg_color(scr_, lv_color_hex(0x002c40), LV_PART_MAIN);
+    lv_obj_set_style_bg_color(scr_, color::DARK_BLUE, LV_PART_MAIN);
     lv_obj_set_style_text_color(scr_, lv_color_white(), LV_PART_MAIN);
 
     // Add status bar.
@@ -88,7 +88,6 @@ public:
       lv_obj_t *tb = lv_obj_create(scr_);
       lv_obj_set_size(tb, 320, 40);
       lv_obj_add_style(tb, &style, 0);
-      // lv_obj_set_style_bg_color(tb, lv_color_hex(0x002c40), LV_PART_MAIN);
       lv_obj_align(tb, LV_ALIGN_TOP_MID, 0, 0);
       // lv_obj_remove_flag(tb, LV_OBJ_FLAG_SCROLLABLE);
 
@@ -128,7 +127,7 @@ public:
       lv_obj_t *panel = lv_obj_create(scr_);
       lv_obj_set_size(panel, 320, 200);
       lv_obj_add_style(panel, &style, 0);
-      lv_obj_set_style_bg_color(panel, color::DARK_BLUE, LV_PART_MAIN);
+      lv_obj_set_style_bg_color(panel, color::MED_BLUE, LV_PART_MAIN);
       lv_obj_align(panel, LV_ALIGN_BOTTOM_MID, 0, 0);
       lv_obj_set_layout(panel, LV_LAYOUT_FLEX);
       lv_obj_set_flex_flow(panel, LV_FLEX_FLOW_ROW);
@@ -155,7 +154,7 @@ public:
 
   void DelayedShow() override final {
     // Queue timed animation to show the home screen.
-    lv_screen_load_anim(scr_, LV_SCR_LOAD_ANIM_FADE_OUT, /*time*/ 200,
+    lv_screen_load_anim(scr_, LV_SCR_LOAD_ANIM_FADE_IN, /*time*/ 200,
                         /*delay*/ 1500,
                         /*auto_del*/ true);
   }

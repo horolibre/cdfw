@@ -11,7 +11,8 @@
 namespace cdfw {
 namespace gui {
 namespace color {
-const lv_color_t DARK_BLUE = lv_color_hex(0x003a57);
+const lv_color_t MED_BLUE = lv_color_hex(0x003a57);
+const lv_color_t DARK_BLUE = lv_color_hex(0x002c40);
 } // namespace color
 } // namespace gui
 } // namespace cdfw
