@@ -8,6 +8,9 @@
 // Local Headers
 #include "cdfw/core/ui/home_model.h"
 
+// Third Party Headers
+#include <lvgl.h>
+
 // C++ Standard Library Headers
 #include <memory>
 
@@ -24,7 +27,8 @@ public:
 
   virtual void DelayedShow() = 0;
   virtual void Show() = 0;
-  virtual void SetWifiIcon(const char *icon) = 0;
+  virtual void SetWifiColor(const lv_color_t &color) = 0;
+  virtual void SetWifiVisible(bool visible) = 0;
 };
 } // namespace screen
 } // namespace gui

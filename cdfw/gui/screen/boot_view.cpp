@@ -6,6 +6,7 @@
 #include "cdfw/gui/screen/boot_view.h"
 #include "cdfw/core/ui/boot_presenter.h"
 #include "cdfw/core/version.h"
+#include "cdfw/gui/color.h"
 
 // Third Party Headers
 #include <lvgl.h>
@@ -26,8 +27,8 @@ public:
   virtual void Init(const String &desc, const String &version) override final {
     // We use the default screen for the boot screen.
     scr_ = lv_screen_active();
-    lv_obj_set_style_bg_color(scr_, lv_color_hex(0xffffff), LV_PART_MAIN);
-    lv_obj_set_style_text_color(scr_, lv_color_hex(0x003a57), LV_PART_MAIN);
+    lv_obj_set_style_bg_color(scr_, lv_color_white(), LV_PART_MAIN);
+    lv_obj_set_style_text_color(scr_, color::DARK_BLUE, LV_PART_MAIN);
 
     lv_obj_t *label = lv_label_create(scr_);
     lv_label_set_text(label, desc.c_str());
