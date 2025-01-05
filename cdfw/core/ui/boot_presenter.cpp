@@ -2,9 +2,6 @@
 #include "cdfw/core/ui/boot_presenter.h"
 #include "cdfw/core/ui/boot_model.h"
 
-// Third Party Headers
-// #include <Arduino.h>
-
 // C++ Standard Library Headers
 #include <memory>
 
@@ -14,17 +11,10 @@ namespace ui {
 namespace {
 class BootPresenterImpl : public BootPresenter {
 public:
-  // BootPresenterImpl() : view_(nullptr), model_(nullptr) {}
-  BootPresenterImpl() : view_(nullptr) {}
+  BootPresenterImpl(std::unique_ptr<BootPresenterView> view,
+                    std::unique_ptr<BootModel> model)
+      : view_(std::move(view)), model_(std::move(model)) {}
   virtual ~BootPresenterImpl() = default;
-
-  virtual void SetView(std::unique_ptr<BootPresenterView> view) override final {
-    view_ = std::move(view);
-  }
-
-  virtual void SetModel(std::unique_ptr<BootModel> model) override final {
-    model_ = std::move(model);
-  }
 
   virtual void Init() override final {
     // The boot model does not need to be explicitly initialized.
@@ -38,8 +28,10 @@ private:
 };
 } // namespace
 
-std::unique_ptr<BootPresenter> BootPresenter::Create() {
-  return std::make_unique<BootPresenterImpl>();
+std::unique_ptr<BootPresenter>
+BootPresenter::Create(std::unique_ptr<BootPresenterView> view,
+                      std::unique_ptr<BootModel> model) {
+  return std::make_unique<BootPresenterImpl>(std::move(view), std::move(model));
 }
 } // namespace ui
 } // namespace core

@@ -36,14 +36,12 @@ public:
 class BootPresenter {
 public:
   // Factory method.
-  static std::unique_ptr<BootPresenter> Create();
+  static std::unique_ptr<BootPresenter>
+  Create(std::unique_ptr<BootPresenterView> view,
+         std::unique_ptr<BootModel> model);
 
   // Virtual d'tor.
   virtual ~BootPresenter() = default;
-
-  // Set required dependencies.
-  virtual void SetView(std::unique_ptr<BootPresenterView> view) = 0;
-  virtual void SetModel(std::unique_ptr<BootModel> model) = 0;
 
   // Initialize the presenter and its dependencies.
   // Note: For the boot presenter, the view is shown as soon as it is

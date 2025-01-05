@@ -40,7 +40,10 @@ public:
     lv_obj_align(label2, LV_ALIGN_CENTER, 0, 16);
   }
 
-  virtual void Show() override final { lv_scr_load(scr_); }
+  virtual void Show() override final {
+    // We don't need to do anything here because the boot screen is the default
+    // active screen at boot.
+  }
 
 private:
   lv_obj_t *scr_;

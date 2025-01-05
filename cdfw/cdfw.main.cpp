@@ -23,8 +23,6 @@ namespace {
 cdfw::hal::Touchscreen *touchscreen = nullptr;
 
 std::unique_ptr<cdfw::gui::screen::HomeView> home_view = nullptr;
-
-std::unique_ptr<cdfw::core::ui::BootPresenter> boot_presenter = nullptr;
 } // namespace
 
 #ifndef PIO_UNIT_TESTING
@@ -51,11 +49,14 @@ void setup() {
   lv_indev_set_type(indev, LV_INDEV_TYPE_POINTER);
   lv_indev_set_read_cb(indev, &cdfw::hal::Touchscreen::ReadCallbackRouter);
 
-  // Register GUI screens.
-  boot_presenter = cdfw::core::ui::BootPresenter::Create();
-  boot_presenter->SetView(cdfw::gui::screen::BootView::Create());
+  // The boot screen is shown as soon as it is initialized. After that, we have
+  // no use for the wrapping classes, so we let them destruct after use.
+  cdfw::core::ui::BootPresenter::Create(cdfw::gui::screen::BootView::Create(),
+                                        cdfw::core::ui::BootModel::Create())
+      ->Init();
 
   home_view = cdfw::gui::screen::HomeView::Register();
+  home_view->DelayedShow();
 }
 
 void loop() {
@@ -68,7 +69,9 @@ void loop() {
   // Update the UI.
   lv_timer_handler();
 
-  // Not sure why the delay.
+  // Delay seems to be suggested by others online, but I'm not sure on its
+  // purpose/implications. Therefore, I'm currently not able to make a judgement
+  // call on the delay time.
   delay(5);
 }
 

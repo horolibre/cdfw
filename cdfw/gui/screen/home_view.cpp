@@ -48,8 +48,8 @@ public:
 
   void DelayedShow() override final {
     // Queue timed animation to show the home screen.
-    lv_screen_load_anim(scr_, LV_SCR_LOAD_ANIM_FADE_OUT, /*time*/ 1000,
-                        /*delay*/ 2000,
+    lv_screen_load_anim(scr_, LV_SCR_LOAD_ANIM_FADE_OUT, /*time*/ 200,
+                        /*delay*/ 1500,
                         /*auto_del*/ true);
   }
 

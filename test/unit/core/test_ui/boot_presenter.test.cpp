@@ -51,10 +51,10 @@ private:
 };
 
 TEST(BootPresenterTests, InitNotCalled) {
-  auto presenter = BootPresenter::Create();
   MockBootView::Data view_data;
-  presenter->SetView(std::make_unique<MockBootView>(view_data));
-  presenter->SetModel(std::make_unique<MockBootModel>());
+  auto presenter = BootPresenter::Create(
+    std::make_unique<MockBootView>(view_data),
+    std::make_unique<MockBootModel>());
 
   ASSERT_EQ(view_data.desc, String());
   ASSERT_EQ(view_data.version, String());
@@ -63,10 +63,10 @@ TEST(BootPresenterTests, InitNotCalled) {
 }
 
 TEST(BootPresenterTests, InitCalled) {
-  auto presenter = BootPresenter::Create();
   MockBootView::Data view_data;
-  presenter->SetView(std::make_unique<MockBootView>(view_data));
-  presenter->SetModel(std::make_unique<MockBootModel>());
+  auto presenter = BootPresenter::Create(
+    std::make_unique<MockBootView>(view_data),
+    std::make_unique<MockBootModel>());
   presenter->Init();
 
   ASSERT_EQ(view_data.desc, "sw_desc");
