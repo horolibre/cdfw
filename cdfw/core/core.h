@@ -6,6 +6,7 @@
 #define CDFW_CORE_CORE_H
 
 // Local Headers
+#include "cdfw/core/debug.h"
 #include "cdfw/core/ui/boot_model.h"
 #include "cdfw/core/ui/boot_presenter.h"
 #include "cdfw/core/ui/home_model.h"

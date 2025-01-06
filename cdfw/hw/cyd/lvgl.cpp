@@ -20,17 +20,20 @@ namespace cdfw {
 namespace hw {
 namespace cyd {
 namespace {
-// Using the LVGL suggest 1/10th screen size for the draw buffer.
-std::array<std::uint8_t, CDFW_SCR_W * CDFW_SCR_H / 10> draw_buf = {0};
-
 class LVGLInitializer : public hal::LVGLInitializer {
 public:
   LVGLInitializer() = default;
   virtual ~LVGLInitializer() = default;
 
   virtual void Init() override final {
+    lv_init();
 
-    // Initialise display driver.
+    // Using the LVGL suggest 1/10th screen size for the draw buffer.
+    // Note: The buffer must be aligned to LV_DRAW_BUF_ALIGN, otherwise setting
+    // the displauy buffer will fail.
+    alignas(LV_DRAW_BUF_ALIGN) static std::array<std::uint8_t,
+                                                 CDFW_SCR_W * CDFW_SCR_H / 10>
+        draw_buf = {0};
     lv_display_t *disp =
         lv_tft_espi_create(CDFW_SCR_W, CDFW_SCR_H, &draw_buf, draw_buf.size());
     lv_display_set_rotation(disp, LV_DISPLAY_ROTATION_90);

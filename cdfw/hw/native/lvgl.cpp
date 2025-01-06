@@ -31,7 +31,7 @@ public:
   virtual ~LVGLInitializer() = default;
 
   virtual void Init() override final {
-    // lv_init();
+    lv_init();
 
     lvDisplay = lv_sdl_window_create(SDL_HOR_RES, SDL_VER_RES);
     lvMouse = lv_sdl_mouse_create();

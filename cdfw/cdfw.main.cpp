@@ -40,10 +40,9 @@ int main() {
 
   Serial.begin(115200);
 
-  lv_init();
-
   // Initialise LVGL.
   cdfw::hw::lvgl::Init();
+  mem_report();
 
   // Initialise devices.
   touchscreen = cdfw::hw::touchscreen::Create();

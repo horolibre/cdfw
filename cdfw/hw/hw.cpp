@@ -12,20 +12,23 @@
 #include "cdfw/hw/native/touchscreen.h"
 #endif // CDFW_CYD
 
+// Third Party Headers
+#include <array>
+#include <cstdint>
+#include <lvgl.h>
+#include <memory>
+
 namespace cdfw {
 namespace hw {
 namespace lvgl {
-namespace {
-std::unique_ptr<hal::LVGLInitializer> lvgl_initializer = nullptr;
-}
+namespace {} // namespace
+
 void Init() {
-  lvgl_initializer =
 #ifdef CDFW_CYD
-      cyd::Create();
+  cyd::Create()->Init();
 #elif defined(CDFW_NATIVE)
-      native::Create();
+  native::Create()->Init();
 #endif // CDFW_CYD
-  lvgl_initializer->Init();
 }
 } // namespace lvgl
 

@@ -9,7 +9,7 @@ namespace cdfw {
 namespace hal {
 class LVGLInitializer {
 public:
-  ~LVGLInitializer() = default;
+  virtual ~LVGLInitializer() = default;
   virtual void Init() = 0;
 };
 } // namespace hal
