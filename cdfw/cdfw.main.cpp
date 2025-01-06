@@ -4,6 +4,8 @@
 
 // Main file for Horolibre Cleaner display firmware.
 
+#ifndef PIO_UNIT_TESTING
+
 // Local Headers
 #include "cdfw/core/core.h"
 #include "cdfw/gui/gui.h"
@@ -26,8 +28,7 @@ std::shared_ptr<cdfw::core::ui::SettingsModel> settings_model = nullptr;
 std::unique_ptr<cdfw::core::ui::HomePresenter> home_presenter = nullptr;
 } // namespace
 
-#ifndef PIO_UNIT_TESTING
-
+#ifdef ARDUINO
 void setup() {
   Serial.begin(115200);
 
@@ -79,5 +80,8 @@ void loop() {
   // call on the delay time.
   delay(5);
 }
+#else  // ARDUINO
+int main() {}
+#endif // ARDUINO
 
 #endif // PIO_UNIT_TESTING

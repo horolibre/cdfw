@@ -1,0 +1,11 @@
+{
+    "name": "Native",
+    "version": "0.1.0",
+    "description": "Library to substitute embedded dependencies on native platforms.",
+    "keywords": "native",  
+    "authors": {
+      "name": "Ian Dinwoodie",
+      "url": "https://github.com/iandinwoodie"
+    },
+    "headers": ["Arduino.h"]
+  }

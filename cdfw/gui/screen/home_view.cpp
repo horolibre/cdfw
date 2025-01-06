@@ -72,7 +72,7 @@ public:
   HomeViewImpl() : scr_(nullptr), wifi_btn_(nullptr), wifi_label_(nullptr) {}
   virtual ~HomeViewImpl() = default;
 
-  void Init() {
+  void Init() override final {
     scr_ = lv_obj_create(NULL);
     lv_obj_set_style_bg_color(scr_, color::DARK_BLUE, LV_PART_MAIN);
     lv_obj_set_style_text_color(scr_, lv_color_white(), LV_PART_MAIN);
