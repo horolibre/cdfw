@@ -10,6 +10,10 @@
 
 namespace cdfw {
 namespace hw {
+namespace lvgl {
+void Init();
+} // namespace lvgl
+
 namespace touchscreen {
 hal::Touchscreen *Create();
 } // namespace touchscreen

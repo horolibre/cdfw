@@ -5,8 +5,8 @@
 #ifndef CDFW_CORE_UI_BOOT_MODEL_H
 #define CDFW_CORE_UI_BOOT_MODEL_H
 
-// Third Party Headers
-#include <Arduino.h>
+// Local Headers
+#include "cdfw/core/arduino.h"
 
 // C++ Standard Library Headers
 #include <memory>

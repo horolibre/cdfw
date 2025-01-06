@@ -2,66 +2,44 @@
 // Use of this source code is governed by a GPLv3 license that can be found in
 // the LICENSE file.
 
-#ifdef CDFW_CYD
+#ifdef CDFW_NATIVE
 
 // Local Headers
-#include "cdfw/hw/cyd/touchscreen.h"
+#include "cdfw/hw/native/touchscreen.h"
 #include "cdfw/hal/point.h"
 #include "cdfw/hal/touchscreen.h"
 
 // Third Party Headers
-#include <XPT2046_Bitbang.h>
 #include <lvgl.h>
 
 // C++ Standard Library Headers
 #include <cstdint>
 
-// Touchscreen SPI pins.
-#define XPT2046_CLK 25
-#define XPT2046_CS 33
-#define XPT2046_IRQ 36
-#define XPT2046_MISO 39
-#define XPT2046_MOSI 32
-
 namespace cdfw {
 namespace hw {
 namespace touchscreen {
-namespace cyd {
+namespace native {
 namespace {
-struct XPT2046PointAdaptor : public hal::Point {
-  XPT2046PointAdaptor(TouchPoint point) : hal::Point(point.x, point.y) {}
-};
-
 hal::Point Rotate(hal::Point point) {
   if (point.x == 0 && point.y == 0) {
     return hal::Point(-1, -1);
   }
   // Currently assumes LV_DISPLAY_ROTATION_90.
-  return hal::Point(point.y, TFT_HEIGHT - point.x - 1);
+  return hal::Point(point.y, CDFW_SCR_H - point.x - 1);
 }
 
 class Touchscreen : public hal::Touchscreen {
 public:
-  Touchscreen()
-      : driver_(XPT2046_Bitbang(XPT2046_MOSI, XPT2046_MISO, XPT2046_CLK,
-                                XPT2046_CS)) {}
+  Touchscreen() {}
 
   virtual ~Touchscreen() {}
 
-  void Init() {
-    driver_.begin();
+  void Init() {}
 
-    // Register input device with LVGL.
-    auto indev = lv_indev_create();
-    lv_indev_set_user_data(indev, this);
-    lv_indev_set_type(indev, LV_INDEV_TYPE_POINTER);
-    lv_indev_set_read_cb(indev, &cdfw::hal::Touchscreen::ReadCallbackRouter);
-  }
-
-  virtual bool Touched() override final { return driver_.getTouch().zRaw != 0; }
+  virtual bool Touched() override final { return false; }
 
   virtual hal::Point GetPoint() override final {
-    return Rotate(XPT2046PointAdaptor(driver_.getTouch()));
+    return Rotate(hal::Point(0, 0));
   }
 
   virtual void ReadCallback(lv_indev_t *indev,
@@ -75,20 +53,17 @@ public:
       data->state = LV_INDEV_STATE_RELEASED;
     }
   }
-
-private:
-  XPT2046_Bitbang driver_;
 };
 } // namespace
 
 hal::Touchscreen *Create() {
-  auto touchscreen = new cyd::Touchscreen();
+  auto touchscreen = new native::Touchscreen();
   touchscreen->Init();
   return touchscreen;
 }
-} // namespace cyd
+} // namespace native
 } // namespace touchscreen
 } // namespace hw
 } // namespace cdfw
 
-#endif // CDFW_CYD
+#endif // CDFW_NATIVE

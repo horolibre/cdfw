@@ -4,6 +4,7 @@
 
 // Local Headers
 #include "cdfw/gui/screen/boot_view.h"
+#include "cdfw/core/arduino.h"
 #include "cdfw/core/ui/boot_presenter.h"
 #include "cdfw/core/version.h"
 #include "cdfw/gui/color.h"

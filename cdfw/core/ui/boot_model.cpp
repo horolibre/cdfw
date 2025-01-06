@@ -4,6 +4,7 @@
 
 // Local Headers
 #include "cdfw/core/ui/boot_model.h"
+#include "cdfw/core/arduino.h"
 #include "cdfw/core/version.h"
 
 // C++ Standard Library Headers
