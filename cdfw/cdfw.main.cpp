@@ -13,9 +13,6 @@
 
 // Third Party Headers
 #include <lvgl.h>
-#ifdef CDFW_NATIVE
-#include <SDL2/SDL.h>
-#endif // CDFW_NATIVE
 
 // C++ Standard Library Headers
 #include <cstdint>
@@ -70,12 +67,7 @@ void loop() {
 
   // Update the tick timer.
   lv_tick_inc(millis() - last_tick);
-  last_tick =
-#ifdef CDFW_NATIVE
-      SDL_GetTicks();
-#else  // CDFW_NATIVE
-      millis();
-#endif // CDFW_NATIVE
+  last_tick = millis();
 
   // Update the UI.
   lv_timer_handler();
@@ -83,11 +75,7 @@ void loop() {
   // Delay seems to be suggested by others online, but I'm not sure on its
   // purpose/implications. Therefore, I'm currently not able to make a judgement
   // call on the delay time.
-#ifdef CDFW_NATIVE
-  SDL_Delay(5);
-#else  // CDFW_NATIVE
   delay(5);
-#endif // CDFW_NATIVE
 }
 
 #ifdef ARDUINO
