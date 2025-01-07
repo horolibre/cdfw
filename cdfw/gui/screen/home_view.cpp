@@ -11,7 +11,7 @@
 #include <lvgl.h>
 
 // C++ Standard Library Headers
-#include <cstdint>
+#include <memory>
 
 namespace cdfw {
 namespace gui {

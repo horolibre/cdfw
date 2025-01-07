@@ -55,6 +55,10 @@ public:
   // Initialize the presenter and its dependencies.
   virtual void Init() = 0;
 
+  // Show the view.
+  virtual void Show() = 0;
+
+  // Update the wifi icon.
   virtual void UpdateWifiIcon() = 0;
 };
 } // namespace ui

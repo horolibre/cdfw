@@ -6,6 +6,7 @@
 #define CDFW_CORE_UI_SETTINGS_PRESENTER_H
 
 // Local Headers
+#include "cdfw/core/ui/internal/back_btn_presenter.h"
 #include "cdfw/core/ui/settings_model.h"
 #include "cdfw/core/wifi.h"
 
@@ -18,7 +19,8 @@
 namespace cdfw {
 namespace core {
 namespace ui {
-// Forward declaration of the presenter.
+// Forward declarations.
+class AppPresenter;
 class SettingsPresenter;
 
 // Presenter defines a minimum interface for the view.
@@ -28,7 +30,7 @@ public:
   virtual ~SettingsPresenterView() = default;
 
   // Initializes the view.
-  virtual void Init() = 0;
+  virtual void Init(SettingsPresenter *presenter) = 0;
 
   // Shows the view.
   virtual void Show() = 0;
@@ -42,7 +44,8 @@ public:
   virtual void SetWifiStatus(const String &status) = 0;
 };
 
-class SettingsPresenter : public SettingsModelSubscriber {
+class SettingsPresenter : public SettingsModelSubscriber,
+                          public BackBtnPresenter {
 public:
   // Factory method.
   static std::shared_ptr<SettingsPresenter>
@@ -53,7 +56,7 @@ public:
   virtual ~SettingsPresenter() = default;
 
   // Initializes the presenter and its dependencies.
-  virtual void Init() = 0;
+  virtual void Init(AppPresenter *app_presenter) = 0;
 
   // Show the view.
   virtual void Show() = 0;

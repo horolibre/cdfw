@@ -25,8 +25,11 @@ namespace {
 // Static device pointers.
 std::unique_ptr<cdfw::hal::Touchscreen> touchscreen = nullptr;
 
+// Models.
 std::shared_ptr<cdfw::core::ui::SettingsModel> settings_model = nullptr;
-std::unique_ptr<cdfw::core::ui::HomePresenter> home_presenter = nullptr;
+
+// Presenters.
+std::unique_ptr<cdfw::core::ui::AppPresenter> app_presenter = nullptr;
 } // namespace
 
 #ifdef ARDUINO
@@ -52,12 +55,18 @@ int main() {
                                         cdfw::core::ui::BootModel::Create())
       ->Init();
 
+  // Initialize the other GUI components.
   settings_model = cdfw::core::ui::SettingsModel::Create();
-  home_presenter = cdfw::core::ui::HomePresenter::Create(
-      cdfw::gui::screen::HomeView::Create(),
-      cdfw::core::ui::HomeModel::Create(settings_model));
+  app_presenter = cdfw::core::ui::AppPresenter::Create(
+      cdfw::core::ui::HomePresenter::Create(
+          cdfw::gui::screen::HomeView::Create(),
+          cdfw::core::ui::HomeModel::Create(settings_model)),
+      cdfw::core::ui::SettingsPresenter::Create(
+          cdfw::gui::screen::SettingsView::Create(), settings_model));
+  app_presenter->Init();
+
   // Initialization for the home screen queues a delayed show.
-  home_presenter->Init();
+  app_presenter->ShowHomeDelayed();
 
 #ifndef ARDUINO
   while (true) {

@@ -16,12 +16,13 @@ public:
       : view_(std::move(view)), model_(std::move(model)) {}
   virtual ~HomePresenterImpl() = default;
 
-  // Initialize the presenter and its dependencies.
   virtual void Init() override final {
     view_->Init();
     UpdateWifiIcon();
     view_->DelayedShow();
   }
+
+  virtual void Show() override final { view_->Show(); }
 
   virtual void UpdateWifiIcon() override final {
     switch (model_->GetWifiState()) {

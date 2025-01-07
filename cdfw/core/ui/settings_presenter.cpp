@@ -4,6 +4,7 @@
 
 // Local Headers
 #include "cdfw/core/ui/settings_presenter.h"
+#include "cdfw/core/ui/app_presenter.h"
 #include "cdfw/core/ui/settings_model.h"
 #include "cdfw/core/wifi.h"
 
@@ -22,12 +23,15 @@ class SettingsPresenterImpl : public SettingsPresenter {
 public:
   SettingsPresenterImpl(std::unique_ptr<SettingsPresenterView> view,
                         std::shared_ptr<SettingsModel> model)
-      : view_(std::move(view)), model_(model) {}
+      : app_presenter_(nullptr), view_(std::move(view)), model_(model) {}
   virtual ~SettingsPresenterImpl() = default;
 
-  virtual void Init() override final {
+  virtual void Init(AppPresenter *app_presenter) override final {
+    // Record the app presenter.
+    app_presenter_ = app_presenter;
+
     // Setup the view.
-    view_->Init();
+    view_->Init(this);
     view_->SetWifiCredentials(model_->GetWifiCredentials());
     WifiStateChanged(model_->GetWifiState());
 
@@ -51,7 +55,10 @@ public:
     model_->SetWifiCredentials(credentials);
   }
 
+  virtual void OnBackClicked() override final { app_presenter_->ShowHome(); }
+
 private:
+  AppPresenter *app_presenter_;
   std::unique_ptr<SettingsPresenterView> view_;
   std::shared_ptr<SettingsModel> model_;
 };

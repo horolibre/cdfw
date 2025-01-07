@@ -2,11 +2,11 @@
 // Use of this source code is governed by a GPLv3 license that can be found in
 // the LICENSE file.
 
-#ifndef CDFW_GUI_SCREEN_HOME_VIEW_H
-#define CDFW_GUI_SCREEN_HOME_VIEW_H
+#ifndef CDFW_GUI_SCREEN_SETTINGS_VIEW_H
+#define CDFW_GUI_SCREEN_SETTINGS_VIEW_H
 
 // Local Headers
-#include "cdfw/core/ui/home_presenter.h"
+#include "cdfw/core/ui/settings_presenter.h"
 
 // Third Party Headers
 #include <lvgl.h>
@@ -17,16 +17,16 @@
 namespace cdfw {
 namespace gui {
 namespace screen {
-class HomeView : public core::ui::HomePresenterView {
+class SettingsView : public core::ui::SettingsPresenterView {
 public:
   // Factory method.
-  static std::unique_ptr<HomePresenterView> Create();
+  static std::unique_ptr<SettingsPresenterView> Create();
 
   // Virtual d'tor.
-  virtual ~HomeView() = default;
+  virtual ~SettingsView() = default;
 };
 } // namespace screen
 } // namespace gui
 } // namespace cdfw
 
-#endif // CDFW_GUI_SCREEN_HOME_VIEW_H
+#endif // CDFW_GUI_SCREEN_SETTINGS_VIEW_H
