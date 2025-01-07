@@ -21,18 +21,23 @@ namespace {
 class SettingsPresenterImpl : public SettingsPresenter {
 public:
   SettingsPresenterImpl(std::unique_ptr<SettingsPresenterView> view,
-                        std::unique_ptr<SettingsModel> model)
-      : view_(std::move(view)), model_(std::move(model)) {}
+                        std::shared_ptr<SettingsModel> model)
+      : view_(std::move(view)), model_(model) {}
   virtual ~SettingsPresenterImpl() = default;
 
   virtual void Init() override final {
+    // Setup the view.
     view_->Init();
-    OnWifiStateChange(model_->GetWifiState());
-    OnWifiCredentialsChange(model_->GetWifiCredentials());
+    view_->SetWifiCredentials(model_->GetWifiCredentials());
+    WifiStateChanged(model_->GetWifiState());
+
+    // Register the presenter as a subscriber to the model.
+    model_->RegisterSubscriber(this);
   }
 
-  virtual void OnWifiStateChange(WifiState state) override final {
-    model_->SetWifiState(state);
+  virtual void Show() override final { view_->Show(); }
+
+  virtual void WifiStateChanged(WifiState state) override final {
     view_->SetWifiEnabled(state != WifiState::DISABLED_);
     std::map<WifiState, String> state_map = {
         {WifiState::DISABLED_, "Disabled"},
@@ -44,20 +49,18 @@ public:
   virtual void
   OnWifiCredentialsChange(const WifiCredentials &credentials) override final {
     model_->SetWifiCredentials(credentials);
-    view_->SetWifiCredentials(credentials);
   }
 
 private:
   std::unique_ptr<SettingsPresenterView> view_;
-  std::unique_ptr<SettingsModel> model_;
+  std::shared_ptr<SettingsModel> model_;
 };
 } // namespace
 
 std::shared_ptr<SettingsPresenter>
 SettingsPresenter::Create(std::unique_ptr<SettingsPresenterView> view,
-                          std::unique_ptr<SettingsModel> model) {
-  return std::make_shared<SettingsPresenterImpl>(std::move(view),
-                                                 std::move(model));
+                          std::shared_ptr<SettingsModel> model) {
+  return std::make_shared<SettingsPresenterImpl>(std::move(view), model);
 }
 } // namespace ui
 } // namespace core

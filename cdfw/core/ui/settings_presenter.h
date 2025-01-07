@@ -42,12 +42,12 @@ public:
   virtual void SetWifiStatus(const String &status) = 0;
 };
 
-class SettingsPresenter {
+class SettingsPresenter : public SettingsModelSubscriber {
 public:
   // Factory method.
   static std::shared_ptr<SettingsPresenter>
   Create(std::unique_ptr<SettingsPresenterView> view,
-         std::unique_ptr<SettingsModel> model);
+         std::shared_ptr<SettingsModel> model);
 
   // Virtual d'tor.
   virtual ~SettingsPresenter() = default;
@@ -55,12 +55,8 @@ public:
   // Initializes the presenter and its dependencies.
   virtual void Init() = 0;
 
-  // ---------------------------------------------------------------------------
-  // Model -> Presenter Interface
-  // ---------------------------------------------------------------------------
-
-  // Inform the presenter of a change in the wifi state.
-  virtual void OnWifiStateChange(WifiState state) = 0;
+  // Show the view.
+  virtual void Show() = 0;
 
   // ---------------------------------------------------------------------------
   // View -> Presenter Interface

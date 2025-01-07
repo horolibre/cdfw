@@ -10,38 +10,54 @@
 // Third Party Headers
 #include <gtest/gtest.h>
 
+// C++ Standard Library Headers
+#include <memory>
+#include <vector>
+
 namespace cdfw {
 namespace core {
 namespace ui {
 namespace {
-String ssid = "ssid";
-String password = "password";
-
 class MockSettingsModel : public SettingsModel {
 public:
-  struct Data {
-    bool set_wifi_credentials_called = false;
-    WifiState wifi_state = WifiState::DISCONNECTED;
-    WifiCredentials wifi_credentials = {ssid, password};
-  };
+  bool set_wifi_credentials_called = false;
+  bool register_subscriber_called = false;
+  std::vector<SettingsModelSubscriber *> subscribers;
+  WifiState wifi_state;
+  WifiCredentials wifi_credentials;
 
-  MockSettingsModel(Data &data) : data_(data) {}
+  MockSettingsModel(WifiState state, WifiCredentials credentials)
+      : wifi_state(state), wifi_credentials(credentials),
+        model_(SettingsModel::Create()) {
+    model_->SetWifiState(wifi_state);
+    model_->SetWifiCredentials(wifi_credentials);
+  }
   virtual ~MockSettingsModel() = default;
 
-  virtual WifiState GetWifiState() override final { return data_.wifi_state; }
+  virtual void
+  RegisterSubscriber(SettingsModelSubscriber *subscriber) override final {
+    register_subscriber_called = true;
+    subscribers.push_back(subscriber);
+    model_->RegisterSubscriber(subscriber);
+  }
+
+  virtual WifiState GetWifiState() override final { return wifi_state; }
   virtual void SetWifiState(WifiState state) override final {
-    data_.wifi_state = state;
+    wifi_state = state;
+    model_->SetWifiState(state);
   }
   virtual WifiCredentials GetWifiCredentials() override final {
-    return data_.wifi_credentials;
+    return wifi_credentials;
   }
   virtual void
   SetWifiCredentials(const WifiCredentials &credentials) override final {
-    data_.wifi_credentials = credentials;
+    wifi_credentials = credentials;
+    model_->SetWifiCredentials(credentials);
   }
 
 private:
-  Data &data_;
+  // Use a real model object for the subscriber propogation.
+  std::shared_ptr<SettingsModel> model_;
 };
 
 class MockSettingsView : public SettingsPresenterView {
@@ -84,13 +100,23 @@ private:
   Data &data_;
 };
 
-TEST(SettingsPresenterTests, InitNotCalled) {
-  MockSettingsModel::Data model_data;
+class SettingsPresenterTests : public ::testing::Test {
+protected:
+  String ssid = "ssid";
+  String password = "password";
+  std::shared_ptr<MockSettingsModel> model;
+  std::shared_ptr<SettingsPresenter> presenter;
   MockSettingsView::Data view_data;
-  auto presenter = SettingsPresenter::Create(
-      std::make_unique<MockSettingsView>(view_data),
-      std::make_unique<MockSettingsModel>(model_data));
 
+  void SetUp() override final {
+    model = std::make_shared<MockSettingsModel>(
+        WifiState::DISCONNECTED, WifiCredentials{ssid, password});
+    presenter = SettingsPresenter::Create(
+        std::make_unique<MockSettingsView>(view_data), model);
+  }
+};
+
+TEST_F(SettingsPresenterTests, InitNotCalled) {
   // Assertions for the view.
   EXPECT_FALSE(view_data.init_called);
   EXPECT_FALSE(view_data.show_called);
@@ -103,19 +129,16 @@ TEST(SettingsPresenterTests, InitNotCalled) {
   EXPECT_TRUE(view_data.wifi_status.empty());
 
   // Assertions for the model.
-  EXPECT_EQ(model_data.set_wifi_credentials_called, false);
-  EXPECT_EQ(model_data.wifi_state, WifiState::DISCONNECTED);
-  EXPECT_EQ(model_data.wifi_credentials.ssid, ssid);
-  EXPECT_EQ(model_data.wifi_credentials.password, password);
+  EXPECT_FALSE(model->set_wifi_credentials_called);
+  EXPECT_FALSE(model->register_subscriber_called);
+  EXPECT_TRUE(model->subscribers.empty());
+  EXPECT_EQ(model->wifi_state, WifiState::DISCONNECTED);
+  EXPECT_EQ(model->wifi_credentials.ssid, ssid);
+  EXPECT_EQ(model->wifi_credentials.password, password);
 }
 
-TEST(SettingsPresenterTests, InitCalled_WifiDisabled) {
-  MockSettingsModel::Data model_data;
-  model_data.wifi_state = WifiState::DISABLED_;
-  MockSettingsView::Data view_data;
-  auto presenter = SettingsPresenter::Create(
-      std::make_unique<MockSettingsView>(view_data),
-      std::make_unique<MockSettingsModel>(model_data));
+TEST_F(SettingsPresenterTests, InitCalled_WifiDisabled) {
+  model->SetWifiState(WifiState::DISABLED_);
   presenter->Init();
 
   // Assertions for the view.
@@ -130,20 +153,19 @@ TEST(SettingsPresenterTests, InitCalled_WifiDisabled) {
   EXPECT_EQ(view_data.wifi_status, "Disabled");
 
   // Assertions for the model.
-  EXPECT_EQ(model_data.set_wifi_credentials_called, false);
-  EXPECT_EQ(model_data.wifi_state, WifiState::DISABLED_);
-  EXPECT_EQ(model_data.wifi_credentials.ssid, ssid);
-  EXPECT_EQ(model_data.wifi_credentials.password, password);
+  EXPECT_FALSE(model->set_wifi_credentials_called);
+  EXPECT_TRUE(model->register_subscriber_called);
+  EXPECT_EQ(model->subscribers.size(), 1);
+  EXPECT_EQ(model->wifi_state, WifiState::DISABLED_);
+  EXPECT_EQ(model->wifi_credentials.ssid, ssid);
+  EXPECT_EQ(model->wifi_credentials.password, password);
 }
 
-TEST(SettingsPresenterTests, InitCalled_WifiDisconnected) {
-  MockSettingsModel::Data model_data;
-  MockSettingsView::Data view_data;
-  auto presenter = SettingsPresenter::Create(
-      std::make_unique<MockSettingsView>(view_data),
-      std::make_unique<MockSettingsModel>(model_data));
+TEST_F(SettingsPresenterTests, InitCalled_WifiDisconnected) {
+  model->SetWifiState(WifiState::DISCONNECTED);
   presenter->Init();
 
+  // Assertions for the view.
   EXPECT_TRUE(view_data.init_called);
   EXPECT_FALSE(view_data.show_called);
   EXPECT_TRUE(view_data.set_wifi_enabled_called);
@@ -154,21 +176,20 @@ TEST(SettingsPresenterTests, InitCalled_WifiDisconnected) {
   EXPECT_EQ(view_data.wifi_credentials.password, password);
   EXPECT_EQ(view_data.wifi_status, "Disconnected");
 
-  EXPECT_EQ(model_data.set_wifi_credentials_called, false);
-  EXPECT_EQ(model_data.wifi_state, WifiState::DISCONNECTED);
-  EXPECT_EQ(model_data.wifi_credentials.ssid, ssid);
-  EXPECT_EQ(model_data.wifi_credentials.password, password);
+  // Assertions for the model.
+  EXPECT_FALSE(model->set_wifi_credentials_called);
+  EXPECT_TRUE(model->register_subscriber_called);
+  EXPECT_EQ(model->subscribers.size(), 1);
+  EXPECT_EQ(model->wifi_state, WifiState::DISCONNECTED);
+  EXPECT_EQ(model->wifi_credentials.ssid, ssid);
+  EXPECT_EQ(model->wifi_credentials.password, password);
 }
 
-TEST(SettingsPresenterTests, InitCalled_WifiConnected) {
-  MockSettingsModel::Data model_data;
-  model_data.wifi_state = WifiState::CONNECTED;
-  MockSettingsView::Data view_data;
-  auto presenter = SettingsPresenter::Create(
-      std::make_unique<MockSettingsView>(view_data),
-      std::make_unique<MockSettingsModel>(model_data));
+TEST_F(SettingsPresenterTests, InitCalled_WifiConnected) {
+  model->SetWifiState(WifiState::CONNECTED);
   presenter->Init();
 
+  // Assertions for the view.
   EXPECT_TRUE(view_data.init_called);
   EXPECT_FALSE(view_data.show_called);
   EXPECT_TRUE(view_data.set_wifi_enabled_called);
@@ -179,30 +200,36 @@ TEST(SettingsPresenterTests, InitCalled_WifiConnected) {
   EXPECT_EQ(view_data.wifi_credentials.password, password);
   EXPECT_EQ(view_data.wifi_status, "Connected");
 
-  EXPECT_EQ(model_data.set_wifi_credentials_called, false);
-  EXPECT_EQ(model_data.wifi_state, WifiState::CONNECTED);
-  EXPECT_EQ(model_data.wifi_credentials.ssid, ssid);
-  EXPECT_EQ(model_data.wifi_credentials.password, password);
+  // Assertions for the model.
+  EXPECT_FALSE(model->set_wifi_credentials_called);
+  EXPECT_TRUE(model->register_subscriber_called);
+  EXPECT_EQ(model->subscribers.size(), 1);
+  EXPECT_EQ(model->wifi_state, WifiState::CONNECTED);
+  EXPECT_EQ(model->wifi_credentials.ssid, ssid);
+  EXPECT_EQ(model->wifi_credentials.password, password);
 }
 
-TEST(SettingsPresenterTests, InitCalled_WifiStateChange) {
-  MockSettingsModel::Data model_data;
-  MockSettingsView::Data view_data;
-  auto presenter = SettingsPresenter::Create(
-      std::make_unique<MockSettingsView>(view_data),
-      std::make_unique<MockSettingsModel>(model_data));
+TEST_F(SettingsPresenterTests, WifiStateChange) {
   presenter->Init();
 
+  model->SetWifiState(WifiState::DISCONNECTED);
   EXPECT_TRUE(view_data.wifi_enabled);
   EXPECT_EQ(view_data.wifi_status, "Disconnected");
 
-  model_data.wifi_state = WifiState::DISABLED_;
+  model->SetWifiState(WifiState::DISABLED_);
   EXPECT_FALSE(view_data.wifi_enabled);
   EXPECT_EQ(view_data.wifi_status, "Disabled");
 
-  model_data.wifi_state = WifiState::DISCONNECTED;
+  model->SetWifiState(WifiState::CONNECTED);
   EXPECT_TRUE(view_data.wifi_enabled);
   EXPECT_EQ(view_data.wifi_status, "Connected");
+}
+
+TEST_F(SettingsPresenterTests, ShowCalled) {
+  presenter->Init();
+  presenter->Show();
+
+  EXPECT_TRUE(view_data.show_called);
 }
 } // namespace
 } // namespace ui

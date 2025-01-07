@@ -14,6 +14,13 @@
 namespace cdfw {
 namespace core {
 namespace ui {
+// Interface for a subscriber to the settings model.
+class SettingsModelSubscriber {
+public:
+  virtual ~SettingsModelSubscriber() = default;
+  virtual void WifiStateChanged(WifiState state) = 0;
+};
+
 class SettingsModel {
 public:
   // Factory method.
@@ -21,6 +28,9 @@ public:
 
   // Virtual d'tor.
   virtual ~SettingsModel() = default;
+
+  // Register a subscriber to the model.
+  virtual void RegisterSubscriber(SettingsModelSubscriber *subscriber) = 0;
 
   virtual WifiState GetWifiState() = 0;
   virtual void SetWifiState(WifiState state) = 0;

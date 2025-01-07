@@ -7,6 +7,7 @@
 
 // C++ Standard Library Headers
 #include <memory>
+#include <vector>
 
 namespace cdfw {
 namespace core {
@@ -17,9 +18,19 @@ public:
   SettingsModelImpl() : state_(WifiState::DISCONNECTED), credentials_() {}
   virtual ~SettingsModelImpl() = default;
 
+  virtual void
+  RegisterSubscriber(SettingsModelSubscriber *subscriber) override final {
+    subscribers_.push_back(subscriber);
+  }
+
   virtual WifiState GetWifiState() override final { return state_; }
 
-  virtual void SetWifiState(WifiState state) override final { state_ = state; };
+  virtual void SetWifiState(WifiState state) override final {
+    state_ = state;
+    for (auto subscriber : subscribers_) {
+      subscriber->WifiStateChanged(state_);
+    }
+  };
 
   virtual WifiCredentials GetWifiCredentials() override final {
     return credentials_;
@@ -33,6 +44,7 @@ public:
 private:
   WifiState state_;
   WifiCredentials credentials_;
+  std::vector<SettingsModelSubscriber *> subscribers_;
 };
 } // namespace
 
