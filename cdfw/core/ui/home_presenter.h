@@ -58,6 +58,9 @@ public:
   // Show the view.
   virtual void Show() = 0;
 
+  // Show the view after a delay.
+  virtual void DelayedShow() = 0;
+
   // Update the wifi icon.
   virtual void UpdateWifiIcon() = 0;
 };

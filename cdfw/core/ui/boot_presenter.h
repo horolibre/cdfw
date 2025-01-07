@@ -26,9 +26,6 @@ public:
 
   // Initializes the view.
   virtual void Init(const String &desc, const String &version) = 0;
-
-  // Shows the view.
-  virtual void Show() = 0;
 };
 
 class BootPresenter {

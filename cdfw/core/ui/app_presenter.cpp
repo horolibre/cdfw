@@ -29,7 +29,7 @@ public:
 
   virtual void ShowHome() override final { home_presenter_->Show(); }
   virtual void ShowHomeDelayed() override final {
-    // TODO
+    home_presenter_->DelayedShow();
   }
   virtual void ShowSettings() override final { settings_presenter_->Show(); }
 

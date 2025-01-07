@@ -19,10 +19,11 @@ public:
   virtual void Init() override final {
     view_->Init();
     UpdateWifiIcon();
-    view_->DelayedShow();
   }
 
   virtual void Show() override final { view_->Show(); }
+
+  virtual void DelayedShow() override final { view_->DelayedShow(); }
 
   virtual void UpdateWifiIcon() override final {
     switch (model_->GetWifiState()) {
