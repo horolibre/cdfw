@@ -17,7 +17,8 @@
 namespace cdfw {
 namespace core {
 namespace ui {
-// Forward declaration of the presenter.
+// Forward declarations.
+class AppPresenter;
 class HomePresenter;
 
 // Presenter defines a minimum interface for the view.
@@ -26,19 +27,14 @@ public:
   // Virtual d'tor.
   virtual ~HomePresenterView() = default;
 
-  // Initializes the view.
-  virtual void Init() = 0;
+  // ---------------------------------------------------------------------------
+  // Presenter -> View Interface
+  // ---------------------------------------------------------------------------
 
-  // Shows the view.
+  virtual void Init(HomePresenter *presenter) = 0;
   virtual void Show() = 0;
-
-  // Shows the view after a delay.
   virtual void DelayedShow() = 0;
-
-  // Sets the color of the wifi icon.
   virtual void SetWifiColor(const lv_color_t &color) = 0;
-
-  // Sets the visibility of the wifi icon.
   virtual void SetWifiVisible(bool visible) = 0;
 };
 
@@ -52,16 +48,23 @@ public:
   // Virtual d'tor.
   virtual ~HomePresenter() = default;
 
-  // Initialize the presenter and its dependencies.
-  virtual void Init() = 0;
+  // ---------------------------------------------------------------------------
+  // AppPresenter -> Presenter Interface
+  // ---------------------------------------------------------------------------
 
-  // Show the view.
+  virtual void Init(AppPresenter *app_presenter) = 0;
   virtual void Show() = 0;
-
-  // Show the view after a delay.
   virtual void DelayedShow() = 0;
 
-  // Update the wifi icon.
+  // ---------------------------------------------------------------------------
+  // View -> Presenter Interface
+  // ---------------------------------------------------------------------------
+
+  virtual void OnSettingsClicked() = 0;
+
+  // ---------------------------------------------------------------------------
+  // TO BE REMOVED
+  // ---------------------------------------------------------------------------
   virtual void UpdateWifiIcon() = 0;
 };
 } // namespace ui

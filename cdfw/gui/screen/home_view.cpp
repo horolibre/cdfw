@@ -30,24 +30,10 @@ void wifi_btn_cb(lv_event_t *e) {
     click_cnt = 0;
   }
   ++click_cnt;
-
-  // lv_obj_t * wifi_label_ = (lv_obj_t *)lv_event_get_user_data(e);
-  // lv_obj_set_style_text_color(wifi_label_, lv_palette_main(LV_PALETTE_RED),
-  // LV_PART_MAIN);
-
-  // get user data
-  // AddProgramData *data = (AddProgramData *)lv_event_get_user_data(e);
-  // lv_obj_t *list = data->list;
-  //::hal::SD *fs = data->fs;
-
-  // String prog = "Program " + String(list_size) + ".json";
-  // lv_list_add_button(list, LV_SYMBOL_FILE, prog.c_str());
-
-  // fs->CreateProgram(prog);
-  //++list_size;
 }
 
-void AddNavButton(const lv_style_t &style, lv_obj_t *parent, const char *icon) {
+void AddNavButton(const lv_style_t &style, lv_obj_t *parent, const char *icon,
+                  lv_event_cb_t cb, core::ui::HomePresenter *user_data) {
   lv_obj_t *btn = lv_button_create(parent);
   lv_obj_set_size(btn, 80, 80);
   lv_obj_add_style(btn, &style, 0);
@@ -55,16 +41,34 @@ void AddNavButton(const lv_style_t &style, lv_obj_t *parent, const char *icon) {
   lv_label_set_text(label, icon);
   lv_obj_center(label);
   lv_obj_set_style_text_font(label, &lv_font_montserrat_28, 0);
+  lv_obj_add_event_cb(btn, cb, LV_EVENT_CLICKED, user_data);
 }
 
-void AddNavButtons(lv_obj_t *parent) {
+void AddNavButtons(lv_obj_t *parent, core::ui::HomePresenter *presenter) {
   static lv_style_t style;
   lv_style_init(&style);
   lv_style_set_radius(&style, 20);
 
-  AddNavButton(style, parent, LV_SYMBOL_PLAY);
-  AddNavButton(style, parent, LV_SYMBOL_EDIT);
-  AddNavButton(style, parent, LV_SYMBOL_SETTINGS);
+  AddNavButton(
+      style, parent, LV_SYMBOL_PLAY,
+      [](lv_event_t *e) {
+        // TODO
+      },
+      presenter);
+  AddNavButton(
+      style, parent, LV_SYMBOL_EDIT,
+      [](lv_event_t *e) {
+        // TODO
+      },
+      presenter);
+  AddNavButton(
+      style, parent, LV_SYMBOL_SETTINGS,
+      [](lv_event_t *e) {
+        auto pres =
+            static_cast<core::ui::HomePresenter *>(lv_event_get_user_data(e));
+        pres->OnSettingsClicked();
+      },
+      presenter);
 }
 
 class HomeViewImpl : public HomeView {
@@ -72,7 +76,7 @@ public:
   HomeViewImpl() : scr_(nullptr), wifi_btn_(nullptr), wifi_label_(nullptr) {}
   virtual ~HomeViewImpl() = default;
 
-  void Init() override final {
+  void Init(core::ui::HomePresenter *presenter) override final {
     scr_ = lv_obj_create(NULL);
     lv_obj_set_style_bg_color(scr_, color::DARK_BLUE, LV_PART_MAIN);
     lv_obj_set_style_text_color(scr_, lv_color_white(), LV_PART_MAIN);
@@ -135,7 +139,7 @@ public:
       lv_obj_set_flex_align(panel, LV_FLEX_ALIGN_SPACE_EVENLY,
                             LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
 
-      AddNavButtons(panel);
+      AddNavButtons(panel, presenter);
     }
   }
 
@@ -169,7 +173,6 @@ private:
 
 std::unique_ptr<core::ui::HomePresenterView> HomeView::Create() {
   auto view = std::make_unique<HomeViewImpl>();
-  view->Init();
   return view;
 }
 } // namespace screen

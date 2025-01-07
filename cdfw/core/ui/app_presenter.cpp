@@ -23,7 +23,7 @@ public:
   ~AppPresenterImpl() = default;
 
   virtual void Init() override final {
-    home_presenter_->Init();
+    home_presenter_->Init(this);
     settings_presenter_->Init(this);
   }
 

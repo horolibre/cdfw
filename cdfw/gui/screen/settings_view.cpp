@@ -36,14 +36,11 @@ void AddBackButton(lv_obj_t *parent, core::ui::SettingsPresenter *presenter) {
   lv_label_set_text(label, LV_SYMBOL_LEFT);
   lv_obj_center(label);
 
-  LV_LOG_INFO("AddBackButton: presenter: %p", presenter);
   lv_obj_add_event_cb(
       btn,
       [](lv_event_t *e) {
-        LV_LOG_INFO("Back button clicked");
         auto pres = static_cast<core::ui::SettingsPresenter *>(
             lv_event_get_user_data(e));
-        LV_LOG_INFO("AddBackButton::cb: pres: %p", pres);
         pres->OnBackClicked();
       },
       LV_EVENT_CLICKED, presenter);

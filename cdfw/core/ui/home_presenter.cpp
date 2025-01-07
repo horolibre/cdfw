@@ -1,5 +1,6 @@
 // Local Headers
 #include "cdfw/core/ui/home_presenter.h"
+#include "cdfw/core/ui/app_presenter.h"
 #include "cdfw/core/ui/home_model.h"
 
 // C++ Standard Library Headers
@@ -13,11 +14,16 @@ class HomePresenterImpl : public HomePresenter {
 public:
   HomePresenterImpl(std::unique_ptr<HomePresenterView> view,
                     std::unique_ptr<HomeModel> model)
-      : view_(std::move(view)), model_(std::move(model)) {}
+      : app_presenter_(nullptr), view_(std::move(view)),
+        model_(std::move(model)) {}
   virtual ~HomePresenterImpl() = default;
 
-  virtual void Init() override final {
-    view_->Init();
+  virtual void Init(AppPresenter *app_presenter) override final {
+    // Record the app presenter.
+    app_presenter_ = app_presenter;
+
+    // Setup the view.
+    view_->Init(this);
     UpdateWifiIcon();
   }
 
@@ -41,7 +47,12 @@ public:
     }
   }
 
+  virtual void OnSettingsClicked() override final {
+    app_presenter_->ShowSettings();
+  }
+
 private:
+  AppPresenter *app_presenter_;
   std::unique_ptr<HomePresenterView> view_;
   std::unique_ptr<HomeModel> model_;
 };

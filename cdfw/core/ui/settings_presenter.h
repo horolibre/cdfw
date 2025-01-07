@@ -29,16 +29,12 @@ public:
   // Virtual d'tor.
   virtual ~SettingsPresenterView() = default;
 
-  // Initializes the view.
-  virtual void Init(SettingsPresenter *presenter) = 0;
-
-  // Shows the view.
-  virtual void Show() = 0;
-
   // ---------------------------------------------------------------------------
   // Presenter -> View Interface
   // ---------------------------------------------------------------------------
 
+  virtual void Init(SettingsPresenter *presenter) = 0;
+  virtual void Show() = 0;
   virtual void SetWifiEnabled(bool enabled) = 0;
   virtual void SetWifiCredentials(const WifiCredentials &credentials) = 0;
   virtual void SetWifiStatus(const String &status) = 0;
@@ -55,17 +51,17 @@ public:
   // Virtual d'tor.
   virtual ~SettingsPresenter() = default;
 
-  // Initializes the presenter and its dependencies.
-  virtual void Init(AppPresenter *app_presenter) = 0;
+  // ---------------------------------------------------------------------------
+  // AppPresenter -> Presenter Interface
+  // ---------------------------------------------------------------------------
 
-  // Show the view.
+  virtual void Init(AppPresenter *app_presenter) = 0;
   virtual void Show() = 0;
 
   // ---------------------------------------------------------------------------
   // View -> Presenter Interface
   // ---------------------------------------------------------------------------
 
-  // Inform the presenter of a change in the wifi credentials.
   virtual void OnWifiCredentialsChange(const WifiCredentials &credentials) = 0;
 };
 } // namespace ui
