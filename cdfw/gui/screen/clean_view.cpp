@@ -3,8 +3,8 @@
 // the LICENSE file.
 
 // Local Headers
-#include "cdfw/gui/screen/routines_view.h"
-#include "cdfw/core/ui/routines_presenter.h"
+#include "cdfw/gui/screen/clean_view.h"
+#include "cdfw/core/ui/clean_presenter.h"
 #include "cdfw/gui/internal/color.h"
 #include "cdfw/gui/internal/styles.h"
 
@@ -18,7 +18,7 @@ namespace cdfw {
 namespace gui {
 namespace screen {
 namespace {
-void AddBackButton(lv_obj_t *parent, core::ui::RoutinesPresenter *presenter) {
+void AddBackButton(lv_obj_t *parent, core::ui::CleanPresenter *presenter) {
   lv_obj_t *btn = lv_button_create(parent);
   lv_obj_set_size(btn, 40, 40);
   lv_obj_set_pos(btn, 0, 0);
@@ -31,19 +31,19 @@ void AddBackButton(lv_obj_t *parent, core::ui::RoutinesPresenter *presenter) {
   lv_obj_add_event_cb(
       btn,
       [](lv_event_t *e) {
-        auto pres = static_cast<core::ui::RoutinesPresenter *>(
-            lv_event_get_user_data(e));
+        auto pres =
+            static_cast<core::ui::CleanPresenter *>(lv_event_get_user_data(e));
         pres->OnBackClicked();
       },
       LV_EVENT_CLICKED, presenter);
 }
 
-class RoutinesViewImpl : public RoutinesView {
+class CleanViewImpl : public CleanView {
 public:
-  RoutinesViewImpl() : scr_(nullptr) {}
-  virtual ~RoutinesViewImpl() = default;
+  CleanViewImpl() : scr_(nullptr) {}
+  virtual ~CleanViewImpl() = default;
 
-  void Init(core::ui::RoutinesPresenter *presenter) override final {
+  void Init(core::ui::CleanPresenter *presenter) override final {
     scr_ = lv_obj_create(NULL);
     lv_obj_set_style_bg_color(scr_, color::DARK_BLUE, LV_PART_MAIN);
     lv_obj_set_style_text_color(scr_, lv_color_white(), LV_PART_MAIN);
@@ -60,7 +60,7 @@ public:
       // Title centered in top bar.
       {
         lv_obj_t *label = lv_label_create(scr_);
-        lv_label_set_text(label, "Routines");
+        lv_label_set_text(label, "Clean");
         lv_obj_align(label, LV_ALIGN_TOP_MID, 0, 13);
       }
 
@@ -88,8 +88,8 @@ private:
 };
 } // namespace
 
-std::unique_ptr<core::ui::RoutinesPresenterView> RoutinesView::Create() {
-  auto view = std::make_unique<RoutinesViewImpl>();
+std::unique_ptr<core::ui::CleanPresenterView> CleanView::Create() {
+  auto view = std::make_unique<CleanViewImpl>();
   return view;
 }
 } // namespace screen
