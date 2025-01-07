@@ -7,6 +7,7 @@
 #include "cdfw/core/ui/settings_presenter.h"
 #include "cdfw/core/wifi.h"
 #include "cdfw/gui/internal/color.h"
+#include "cdfw/gui/internal/styles.h"
 
 // Third Party Headers
 #include <lvgl.h>
@@ -23,15 +24,11 @@ void back_btn_cb(lv_event_t *e) {
 }
 
 void AddBackButton(lv_obj_t *parent, core::ui::SettingsPresenter *presenter) {
-  static lv_style_t style;
-  lv_style_init(&style);
-  lv_style_set_radius(&style, 0);
-  lv_style_set_bg_opa(&style, LV_OPA_TRANSP);
-
   lv_obj_t *btn = lv_button_create(parent);
   lv_obj_set_size(btn, 40, 40);
   lv_obj_set_pos(btn, 0, 0);
-  lv_obj_add_style(btn, &style, 0);
+  lv_obj_add_style(btn, &Styles::GetInstance().style1, 0);
+
   lv_obj_t *label = lv_label_create(btn);
   lv_label_set_text(label, LV_SYMBOL_LEFT);
   lv_obj_center(label);
@@ -58,16 +55,10 @@ public:
 
     // Add nav bar.
     {
-      static lv_style_t style;
-      lv_style_init(&style);
-      lv_style_set_radius(&style, 0);
-      lv_style_set_border_opa(&style, LV_OPA_TRANSP);
-      lv_style_set_bg_opa(&style, LV_OPA_TRANSP);
-
       // Top bar object.
       lv_obj_t *tb = lv_obj_create(scr_);
       lv_obj_set_size(tb, 320, 40);
-      lv_obj_add_style(tb, &style, 0);
+      lv_obj_add_style(tb, &Styles::GetInstance().style1, 0);
       lv_obj_align(tb, LV_ALIGN_TOP_MID, 0, 0);
       // lv_obj_remove_flag(tb, LV_OBJ_FLAG_SCROLLABLE);
 
@@ -83,14 +74,9 @@ public:
 
     // Add wifi settings panel.
     {
-      static lv_style_t style;
-      lv_style_init(&style);
-      lv_style_set_radius(&style, 0);
-      lv_style_set_border_opa(&style, LV_OPA_TRANSP);
-
       lv_obj_t *panel = lv_obj_create(scr_);
       lv_obj_set_size(panel, 320, 200);
-      lv_obj_add_style(panel, &style, 0);
+      lv_obj_add_style(panel, &Styles::GetInstance().style1, 0);
       lv_obj_set_style_bg_color(panel, color::MED_BLUE, LV_PART_MAIN);
       lv_obj_align(panel, LV_ALIGN_BOTTOM_MID, 0, 0);
       lv_obj_set_layout(panel, LV_LAYOUT_FLEX);

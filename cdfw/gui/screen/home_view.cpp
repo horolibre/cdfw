@@ -6,6 +6,7 @@
 #include "cdfw/gui/screen/home_view.h"
 #include "cdfw/core/ui/home_presenter.h"
 #include "cdfw/gui/internal/color.h"
+#include "cdfw/gui/internal/styles.h"
 
 // Third Party Headers
 #include <lvgl.h>
@@ -37,6 +38,7 @@ void AddNavButton(const lv_style_t &style, lv_obj_t *parent, const char *icon,
   lv_obj_t *btn = lv_button_create(parent);
   lv_obj_set_size(btn, 80, 80);
   lv_obj_add_style(btn, &style, 0);
+
   lv_obj_t *label = lv_label_create(btn);
   lv_label_set_text(label, icon);
   lv_obj_center(label);
@@ -83,16 +85,10 @@ public:
 
     // Add status bar.
     {
-      static lv_style_t style;
-      lv_style_init(&style);
-      lv_style_set_radius(&style, 0);
-      lv_style_set_border_opa(&style, LV_OPA_TRANSP);
-      lv_style_set_bg_opa(&style, LV_OPA_TRANSP);
-
       // Top bar object.
       lv_obj_t *tb = lv_obj_create(scr_);
       lv_obj_set_size(tb, 320, 40);
-      lv_obj_add_style(tb, &style, 0);
+      lv_obj_add_style(tb, &Styles::GetInstance().style1, 0);
       lv_obj_align(tb, LV_ALIGN_TOP_MID, 0, 0);
       // lv_obj_remove_flag(tb, LV_OBJ_FLAG_SCROLLABLE);
 
@@ -110,7 +106,7 @@ public:
 
         lv_obj_set_size(wifi_btn_, 40, 40);
         lv_obj_set_pos(wifi_btn_, 280, 0);
-        lv_obj_add_style(wifi_btn_, &style, 0);
+        lv_obj_add_style(wifi_btn_, &Styles::GetInstance().style1, 0);
 
         wifi_label_ = lv_label_create(wifi_btn_);
         lv_label_set_text(wifi_label_, LV_SYMBOL_WIFI);
@@ -124,14 +120,9 @@ public:
 
     // Add nav button panel.
     {
-      static lv_style_t style;
-      lv_style_init(&style);
-      lv_style_set_radius(&style, 0);
-      lv_style_set_border_opa(&style, LV_OPA_TRANSP);
-
       lv_obj_t *panel = lv_obj_create(scr_);
       lv_obj_set_size(panel, 320, 200);
-      lv_obj_add_style(panel, &style, 0);
+      lv_obj_add_style(panel, &Styles::GetInstance().style1, 0);
       lv_obj_set_style_bg_color(panel, color::MED_BLUE, LV_PART_MAIN);
       lv_obj_align(panel, LV_ALIGN_BOTTOM_MID, 0, 0);
       lv_obj_set_layout(panel, LV_LAYOUT_FLEX);
