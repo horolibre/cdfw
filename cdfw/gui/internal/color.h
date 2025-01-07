@@ -2,8 +2,8 @@
 // Use of this source code is governed by a GPLv3 license that can be found in
 // the LICENSE file.
 
-#ifndef CDFW_GUI_COLOR_H
-#define CDFW_GUI_COLOR_H
+#ifndef CDFW_GUI_INTERNAL_COLOR_H
+#define CDFW_GUI_INTERNAL_COLOR_H
 
 // Third Party Headers
 #include <lvgl.h>
@@ -17,4 +17,4 @@ const lv_color_t DARK_BLUE = lv_color_hex(0x002c40);
 } // namespace gui
 } // namespace cdfw
 
-#endif // CDFW_GUI_COLOR_H
+#endif // CDFW_GUI_INTERNAL_COLOR_H

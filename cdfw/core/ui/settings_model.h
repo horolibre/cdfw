@@ -24,6 +24,8 @@ public:
 
   virtual WifiState GetWifiState() = 0;
   virtual void SetWifiState(WifiState state) = 0;
+  virtual WifiCredentials GetWifiCredentials() = 0;
+  virtual void SetWifiCredentials(const WifiCredentials &credentials) = 0;
 };
 } // namespace ui
 } // namespace core

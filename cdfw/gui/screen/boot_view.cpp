@@ -7,7 +7,7 @@
 #include "cdfw/core/arduino.h"
 #include "cdfw/core/ui/boot_presenter.h"
 #include "cdfw/core/version.h"
-#include "cdfw/gui/color.h"
+#include "cdfw/gui/internal/color.h"
 
 // Third Party Headers
 #include <lvgl.h>

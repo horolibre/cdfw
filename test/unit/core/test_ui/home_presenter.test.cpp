@@ -66,13 +66,13 @@ TEST(HomePresenterTests, InitNotCalled) {
       HomePresenter::Create(std::make_unique<MockHomeView>(view_data),
                             std::make_unique<MockHomeModel>());
 
-  ASSERT_FALSE(view_data.init_called);
-  ASSERT_FALSE(view_data.show_called);
-  ASSERT_FALSE(view_data.delayed_show_called);
-  ASSERT_FALSE(view_data.set_wifi_color_called);
-  ASSERT_FALSE(view_data.set_wifi_visible_called);
-  ASSERT_TRUE(view_data.wifi_visible);
-  // ASSERT_EQ(view_data.wifi_color, lv_palette_main(LV_PALETTE_RED));
+  EXPECT_FALSE(view_data.init_called);
+  EXPECT_FALSE(view_data.show_called);
+  EXPECT_FALSE(view_data.delayed_show_called);
+  EXPECT_FALSE(view_data.set_wifi_color_called);
+  EXPECT_FALSE(view_data.set_wifi_visible_called);
+  EXPECT_TRUE(view_data.wifi_visible);
+  // EXPECT_EQ(view_data.wifi_color, lv_palette_main(LV_PALETTE_RED));
 }
 
 TEST(HomePresenterTests, InitCalled) {
@@ -82,13 +82,13 @@ TEST(HomePresenterTests, InitCalled) {
                             std::make_unique<MockHomeModel>());
   presenter->Init();
 
-  ASSERT_TRUE(view_data.init_called);
-  ASSERT_FALSE(view_data.show_called);
-  ASSERT_TRUE(view_data.delayed_show_called);
-  ASSERT_TRUE(view_data.set_wifi_color_called);
-  ASSERT_TRUE(view_data.set_wifi_visible_called);
-  ASSERT_TRUE(view_data.wifi_visible);
-  // ASSERT_EQ(view_data.wifi_color, lv_palette_main(LV_PALETTE_RED));
+  EXPECT_TRUE(view_data.init_called);
+  EXPECT_FALSE(view_data.show_called);
+  EXPECT_TRUE(view_data.delayed_show_called);
+  EXPECT_TRUE(view_data.set_wifi_color_called);
+  EXPECT_TRUE(view_data.set_wifi_visible_called);
+  EXPECT_TRUE(view_data.wifi_visible);
+  // EXPECT_EQ(view_data.wifi_color, lv_palette_main(LV_PALETTE_RED));
 }
 
 TEST(HomePresenterTests, UpdateWifiIcon_Connected) {
@@ -101,10 +101,10 @@ TEST(HomePresenterTests, UpdateWifiIcon_Connected) {
   wifi_state_ = WifiState::CONNECTED;
   presenter->UpdateWifiIcon();
 
-  ASSERT_TRUE(view_data.set_wifi_color_called);
-  ASSERT_TRUE(view_data.set_wifi_visible_called);
-  ASSERT_TRUE(view_data.wifi_visible);
-  // ASSERT_EQ(view_data.wifi_color, lv_palette_main(LV_PALETTE_RED));
+  EXPECT_TRUE(view_data.set_wifi_color_called);
+  EXPECT_TRUE(view_data.set_wifi_visible_called);
+  EXPECT_TRUE(view_data.wifi_visible);
+  // EXPECT_EQ(view_data.wifi_color, lv_palette_main(LV_PALETTE_RED));
 }
 
 TEST(HomePresenterTests, UpdateWifiIcon_Disabled) {
@@ -118,10 +118,10 @@ TEST(HomePresenterTests, UpdateWifiIcon_Disabled) {
   wifi_state_ = WifiState::DISABLED_;
   presenter->UpdateWifiIcon();
 
-  ASSERT_TRUE(view_data.set_wifi_color_called);
-  ASSERT_TRUE(view_data.set_wifi_visible_called);
-  ASSERT_FALSE(view_data.wifi_visible);
-  // ASSERT_EQ(view_data.wifi_color, lv_palette_main(LV_PALETTE_RED));
+  EXPECT_TRUE(view_data.set_wifi_color_called);
+  EXPECT_TRUE(view_data.set_wifi_visible_called);
+  EXPECT_FALSE(view_data.wifi_visible);
+  // EXPECT_EQ(view_data.wifi_color, lv_palette_main(LV_PALETTE_RED));
 }
 
 } // namespace

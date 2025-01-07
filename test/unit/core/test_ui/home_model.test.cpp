@@ -16,7 +16,7 @@ namespace {
 TEST(HomeModelTests, DefaultState) {
   auto settings_model = SettingsModel::Create();
   auto home_model = HomeModel::Create(settings_model);
-  ASSERT_EQ(home_model->GetWifiState(), WifiState::DISCONNECTED);
+  EXPECT_EQ(home_model->GetWifiState(), WifiState::DISCONNECTED);
 }
 
 TEST(HomeModelTests, ReflectsSettingsState) {
@@ -24,13 +24,13 @@ TEST(HomeModelTests, ReflectsSettingsState) {
   auto home_model = HomeModel::Create(settings_model);
 
   settings_model->SetWifiState(WifiState::CONNECTED);
-  ASSERT_EQ(home_model->GetWifiState(), WifiState::CONNECTED);
+  EXPECT_EQ(home_model->GetWifiState(), WifiState::CONNECTED);
 
   settings_model->SetWifiState(WifiState::DISCONNECTED);
-  ASSERT_EQ(home_model->GetWifiState(), WifiState::DISCONNECTED);
+  EXPECT_EQ(home_model->GetWifiState(), WifiState::DISCONNECTED);
 
   settings_model->SetWifiState(WifiState::DISABLED_);
-  ASSERT_EQ(home_model->GetWifiState(), WifiState::DISABLED_);
+  EXPECT_EQ(home_model->GetWifiState(), WifiState::DISABLED_);
 }
 } // namespace
 } // namespace ui

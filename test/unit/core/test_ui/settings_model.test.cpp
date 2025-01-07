@@ -4,6 +4,7 @@
 
 // Local Headers
 #include "cdfw/core/ui/settings_model.h"
+#include "cdfw/core/arduino.h"
 
 // Third Party Headers
 #include <gtest/gtest.h>
@@ -14,7 +15,9 @@ namespace ui {
 namespace {
 TEST(SettingsModelTests, DefaultState) {
   auto model = SettingsModel::Create();
-  ASSERT_EQ(model->GetWifiState(), WifiState::DISCONNECTED);
+  EXPECT_EQ(model->GetWifiState(), WifiState::DISCONNECTED);
+  EXPECT_EQ(model->GetWifiCredentials().ssid, String());
+  EXPECT_EQ(model->GetWifiCredentials().password, String());
 }
 } // namespace
 } // namespace ui

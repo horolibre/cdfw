@@ -54,10 +54,10 @@ TEST(BootPresenterTests, InitNotCalled) {
       BootPresenter::Create(std::make_unique<MockBootView>(view_data),
                             std::make_unique<MockBootModel>());
 
-  ASSERT_EQ(view_data.desc, String());
-  ASSERT_EQ(view_data.version, String());
-  ASSERT_FALSE(view_data.init_called);
-  ASSERT_FALSE(view_data.show_called);
+  EXPECT_EQ(view_data.desc, String());
+  EXPECT_EQ(view_data.version, String());
+  EXPECT_FALSE(view_data.init_called);
+  EXPECT_FALSE(view_data.show_called);
 }
 
 TEST(BootPresenterTests, InitCalled) {
@@ -67,11 +67,11 @@ TEST(BootPresenterTests, InitCalled) {
                             std::make_unique<MockBootModel>());
   presenter->Init();
 
-  ASSERT_EQ(view_data.desc, "sw_desc");
-  ASSERT_EQ(view_data.version, "sw_version");
-  ASSERT_TRUE(view_data.init_called);
+  EXPECT_EQ(view_data.desc, "sw_desc");
+  EXPECT_EQ(view_data.version, "sw_version");
+  EXPECT_TRUE(view_data.init_called);
   // The boot presenter shows the view as soon as it is initialized.
-  ASSERT_TRUE(view_data.show_called);
+  EXPECT_TRUE(view_data.show_called);
 }
 } // namespace
 } // namespace ui

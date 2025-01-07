@@ -14,15 +14,25 @@ namespace ui {
 namespace {
 class SettingsModelImpl : public SettingsModel {
 public:
-  SettingsModelImpl() : state_(WifiState::DISCONNECTED) {}
+  SettingsModelImpl() : state_(WifiState::DISCONNECTED), credentials_() {}
   virtual ~SettingsModelImpl() = default;
 
   virtual WifiState GetWifiState() override final { return state_; }
 
   virtual void SetWifiState(WifiState state) override final { state_ = state; };
 
+  virtual WifiCredentials GetWifiCredentials() override final {
+    return credentials_;
+  }
+
+  virtual void
+  SetWifiCredentials(const WifiCredentials &credentials) override final {
+    credentials_ = credentials;
+  }
+
 private:
   WifiState state_;
+  WifiCredentials credentials_;
 };
 } // namespace
 

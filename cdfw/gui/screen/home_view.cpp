@@ -5,7 +5,7 @@
 // Local Headers
 #include "cdfw/gui/screen/home_view.h"
 #include "cdfw/core/ui/home_presenter.h"
-#include "cdfw/gui/color.h"
+#include "cdfw/gui/internal/color.h"
 
 // Third Party Headers
 #include <lvgl.h>
