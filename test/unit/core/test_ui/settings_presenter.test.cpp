@@ -5,6 +5,7 @@
 // Local Headers
 #include "cdfw/core/ui/settings_presenter.h"
 #include "cdfw/core/arduino.h"
+#include "cdfw/core/ui/app_presenter.h"
 #include "cdfw/core/ui/settings_model.h"
 
 // Third Party Headers
@@ -76,7 +77,9 @@ public:
   MockSettingsView(Data &data) : data_(data) {}
   virtual ~MockSettingsView() = default;
 
-  virtual void Init() override final { data_.init_called = true; }
+  virtual void Init(SettingsPresenter *presenter) override final {
+    data_.init_called = true;
+  }
 
   virtual void Show() override final { data_.show_called = true; }
 
@@ -100,17 +103,32 @@ private:
   Data &data_;
 };
 
+class MockAppPresenter : public AppPresenter {
+public:
+  virtual ~MockAppPresenter() = default;
+
+  virtual void Init() override final {}
+  virtual void ShowHome() override final {}
+  virtual void ShowHomeDelayed() override final {}
+  virtual void ShowClean() override final {}
+  virtual void ShowRoutines() override final {}
+  virtual void ShowSettings() override final {}
+};
+
 class SettingsPresenterTests : public ::testing::Test {
 protected:
   String ssid = "ssid";
   String password = "password";
-  std::shared_ptr<MockSettingsModel> model;
-  std::shared_ptr<SettingsPresenter> presenter;
+  std::unique_ptr<AppPresenter> app_presenter = nullptr;
+  std::shared_ptr<MockSettingsModel> model = nullptr;
+  std::shared_ptr<SettingsPresenter> presenter = nullptr;
   MockSettingsView::Data view_data;
 
   void SetUp() override final {
+    app_presenter = std::make_unique<MockAppPresenter>();
     model = std::make_shared<MockSettingsModel>(
         WifiState::DISCONNECTED, WifiCredentials{ssid, password});
+    view_data = MockSettingsView::Data();
     presenter = SettingsPresenter::Create(
         std::make_unique<MockSettingsView>(view_data), model);
   }
@@ -139,7 +157,7 @@ TEST_F(SettingsPresenterTests, InitNotCalled) {
 
 TEST_F(SettingsPresenterTests, InitCalled_WifiDisabled) {
   model->SetWifiState(WifiState::DISABLED_);
-  presenter->Init();
+  presenter->Init(app_presenter.get());
 
   // Assertions for the view.
   EXPECT_TRUE(view_data.init_called);
@@ -163,7 +181,7 @@ TEST_F(SettingsPresenterTests, InitCalled_WifiDisabled) {
 
 TEST_F(SettingsPresenterTests, InitCalled_WifiDisconnected) {
   model->SetWifiState(WifiState::DISCONNECTED);
-  presenter->Init();
+  presenter->Init(app_presenter.get());
 
   // Assertions for the view.
   EXPECT_TRUE(view_data.init_called);
@@ -187,7 +205,7 @@ TEST_F(SettingsPresenterTests, InitCalled_WifiDisconnected) {
 
 TEST_F(SettingsPresenterTests, InitCalled_WifiConnected) {
   model->SetWifiState(WifiState::CONNECTED);
-  presenter->Init();
+  presenter->Init(app_presenter.get());
 
   // Assertions for the view.
   EXPECT_TRUE(view_data.init_called);
@@ -210,7 +228,7 @@ TEST_F(SettingsPresenterTests, InitCalled_WifiConnected) {
 }
 
 TEST_F(SettingsPresenterTests, WifiStateChange) {
-  presenter->Init();
+  presenter->Init(app_presenter.get());
 
   model->SetWifiState(WifiState::DISCONNECTED);
   EXPECT_TRUE(view_data.wifi_enabled);
@@ -226,7 +244,7 @@ TEST_F(SettingsPresenterTests, WifiStateChange) {
 }
 
 TEST_F(SettingsPresenterTests, ShowCalled) {
-  presenter->Init();
+  presenter->Init(app_presenter.get());
   presenter->Show();
 
   EXPECT_TRUE(view_data.show_called);

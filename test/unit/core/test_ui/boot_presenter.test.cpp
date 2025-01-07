@@ -4,11 +4,15 @@
 
 // Local Headers
 #include "cdfw/core/ui/boot_presenter.h"
+#include "cdfw/core/arduino.h"
 #include "cdfw/core/ui/boot_model.h"
 #include "cdfw/core/version.h"
 
 // Third Party Headers
 #include <gtest/gtest.h>
+
+// C++ Standard Library Headers
+#include <memory>
 
 namespace cdfw {
 namespace core {
@@ -16,12 +20,26 @@ namespace ui {
 namespace {
 class MockBootModel : public BootModel {
 public:
-  MockBootModel() = default;
+  struct Data {
+    bool get_description_called = false;
+    bool get_version_called = false;
+  };
+  MockBootModel(Data &data, String desc, String version)
+      : data_(data), desc_(desc), version_(version) {}
   virtual ~MockBootModel() = default;
+  virtual String GetDescription() override final {
+    data_.get_description_called = true;
+    return desc_;
+  }
+  virtual String GetVersion() override final {
+    data_.get_version_called = true;
+    return version_;
+  }
 
-  virtual String GetDescription() { return "sw_desc"; }
-
-  virtual String GetVersion() { return "sw_version"; }
+private:
+  Data &data_;
+  String desc_;
+  String version_;
 };
 
 class MockBootView : public BootPresenterView {
@@ -30,48 +48,72 @@ public:
     String desc;
     String version;
     bool init_called = false;
-    bool show_called = false;
+    bool set_description_called = false;
+    bool set_version_called = false;
   };
 
   MockBootView(Data &data) : data_(data) {}
   virtual ~MockBootView() = default;
 
-  virtual void Init(const String &desc, const String &version) override final {
-    data_.init_called = true;
+  virtual void Init() override final { data_.init_called = true; }
+
+  virtual void SetDescription(const String &desc) override final {
+    data_.set_description_called = true;
     data_.desc = desc;
-    data_.version = version;
   }
 
-  virtual void Show() override final { data_.show_called = true; }
+  virtual void SetVersion(const String &version) override final {
+    data_.set_version_called = true;
+    data_.version = version;
+  }
 
 private:
   Data &data_;
 };
 
-TEST(BootPresenterTests, InitNotCalled) {
+class BootPresenterTests : public ::testing::Test {
+protected:
+  String desc = "sw_desc";
+  String version = "sw_version";
+  MockBootModel::Data model_data;
   MockBootView::Data view_data;
-  auto presenter =
-      BootPresenter::Create(std::make_unique<MockBootView>(view_data),
-                            std::make_unique<MockBootModel>());
+  std::shared_ptr<BootPresenter> presenter = nullptr;
 
-  EXPECT_EQ(view_data.desc, String());
-  EXPECT_EQ(view_data.version, String());
+  void SetUp() override final {
+    model_data = MockBootModel::Data();
+    view_data = MockBootView::Data();
+    presenter = BootPresenter::Create(
+        std::make_unique<MockBootView>(view_data),
+        std::make_unique<MockBootModel>(model_data, desc, version));
+  }
+};
+
+TEST_F(BootPresenterTests, InitNotCalled) {
+  // Assertions for the view.
   EXPECT_FALSE(view_data.init_called);
-  EXPECT_FALSE(view_data.show_called);
+  EXPECT_FALSE(view_data.set_description_called);
+  EXPECT_FALSE(view_data.set_version_called);
+  EXPECT_TRUE(view_data.desc.empty());
+  EXPECT_TRUE(view_data.version.empty());
+
+  // Assertions for the model.
+  EXPECT_FALSE(model_data.get_description_called);
+  EXPECT_FALSE(model_data.get_version_called);
 }
 
-TEST(BootPresenterTests, InitCalled) {
-  MockBootView::Data view_data;
-  auto presenter =
-      BootPresenter::Create(std::make_unique<MockBootView>(view_data),
-                            std::make_unique<MockBootModel>());
+TEST_F(BootPresenterTests, InitCalled) {
   presenter->Init();
 
-  EXPECT_EQ(view_data.desc, "sw_desc");
-  EXPECT_EQ(view_data.version, "sw_version");
+  // Assertions for the view.
   EXPECT_TRUE(view_data.init_called);
-  // The boot presenter shows the view as soon as it is initialized.
-  EXPECT_TRUE(view_data.show_called);
+  EXPECT_TRUE(view_data.set_description_called);
+  EXPECT_TRUE(view_data.set_version_called);
+  EXPECT_EQ(view_data.desc, desc);
+  EXPECT_EQ(view_data.version, version);
+
+  // Assertions for the model.
+  EXPECT_TRUE(model_data.get_description_called);
+  EXPECT_TRUE(model_data.get_version_called);
 }
 } // namespace
 } // namespace ui
