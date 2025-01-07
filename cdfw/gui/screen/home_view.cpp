@@ -54,13 +54,17 @@ void AddNavButtons(lv_obj_t *parent, core::ui::HomePresenter *presenter) {
   AddNavButton(
       style, parent, LV_SYMBOL_PLAY,
       [](lv_event_t *e) {
-        // TODO
+        auto pres =
+            static_cast<core::ui::HomePresenter *>(lv_event_get_user_data(e));
+        pres->OnCleanClicked();
       },
       presenter);
   AddNavButton(
       style, parent, LV_SYMBOL_EDIT,
       [](lv_event_t *e) {
-        // TODO
+        auto pres =
+            static_cast<core::ui::HomePresenter *>(lv_event_get_user_data(e));
+        pres->OnRoutinesClicked();
       },
       presenter);
   AddNavButton(

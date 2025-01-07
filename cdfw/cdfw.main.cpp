@@ -25,9 +25,6 @@ namespace {
 // Static device pointers.
 std::unique_ptr<cdfw::hal::Touchscreen> touchscreen = nullptr;
 
-// Models.
-std::shared_ptr<cdfw::core::ui::SettingsModel> settings_model = nullptr;
-
 // Presenters.
 std::unique_ptr<cdfw::core::ui::AppPresenter> app_presenter = nullptr;
 } // namespace
@@ -56,11 +53,17 @@ int main() {
       ->Init();
 
   // Initialize the other GUI components.
-  settings_model = cdfw::core::ui::SettingsModel::Create();
+  auto settings_model = cdfw::core::ui::SettingsModel::Create();
   app_presenter = cdfw::core::ui::AppPresenter::Create(
       cdfw::core::ui::HomePresenter::Create(
           cdfw::gui::screen::HomeView::Create(),
           cdfw::core::ui::HomeModel::Create(settings_model)),
+      cdfw::core::ui::CleanPresenter::Create(
+          cdfw::gui::screen::CleanView::Create(),
+          cdfw::core::ui::CleanModel::Create()),
+      cdfw::core::ui::RoutinesPresenter::Create(
+          cdfw::gui::screen::RoutinesView::Create(),
+          cdfw::core::ui::RoutinesModel::Create()),
       cdfw::core::ui::SettingsPresenter::Create(
           cdfw::gui::screen::SettingsView::Create(), settings_model));
   app_presenter->Init();

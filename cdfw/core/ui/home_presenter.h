@@ -61,6 +61,8 @@ public:
   // ---------------------------------------------------------------------------
 
   virtual void OnSettingsClicked() = 0;
+  virtual void OnCleanClicked() = 0;
+  virtual void OnRoutinesClicked() = 0;
 
   // ---------------------------------------------------------------------------
   // TO BE REMOVED

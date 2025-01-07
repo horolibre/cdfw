@@ -28,8 +28,14 @@ public:
   }
 
   virtual void Show() override final { view_->Show(); }
-
   virtual void DelayedShow() override final { view_->DelayedShow(); }
+  virtual void OnSettingsClicked() override final {
+    app_presenter_->ShowSettings();
+  }
+  virtual void OnCleanClicked() override final { app_presenter_->ShowClean(); }
+  virtual void OnRoutinesClicked() override final {
+    app_presenter_->ShowRoutines();
+  }
 
   virtual void UpdateWifiIcon() override final {
     switch (model_->GetWifiState()) {
@@ -45,10 +51,6 @@ public:
       view_->SetWifiVisible(true);
       break;
     }
-  }
-
-  virtual void OnSettingsClicked() override final {
-    app_presenter_->ShowSettings();
   }
 
 private:

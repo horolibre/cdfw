@@ -14,8 +14,12 @@
 #include "cdfw/core/ui/app_presenter.h"
 #include "cdfw/core/ui/boot_model.h"
 #include "cdfw/core/ui/boot_presenter.h"
+#include "cdfw/core/ui/clean_model.h"
+#include "cdfw/core/ui/clean_presenter.h"
 #include "cdfw/core/ui/home_model.h"
 #include "cdfw/core/ui/home_presenter.h"
+#include "cdfw/core/ui/routines_model.h"
+#include "cdfw/core/ui/routines_presenter.h"
 #include "cdfw/core/ui/settings_model.h"
 #include "cdfw/core/ui/settings_presenter.h"
 

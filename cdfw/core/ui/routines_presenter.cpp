@@ -19,6 +19,10 @@ public:
   virtual ~RoutinesPresenterImpl() = default;
 
   virtual void Init(AppPresenter *app_presenter) override final {
+    // Record the app presenter.
+    app_presenter_ = app_presenter;
+
+    // Setup the view.
     view_->Init(this);
   }
 
