@@ -17,8 +17,9 @@ public:
   virtual ~BootPresenterImpl() = default;
 
   virtual void Init() override final {
-    // The boot model does not need to be explicitly initialized.
-    view_->Init(model_->GetDescription(), model_->GetVersion());
+    view_->Init();
+    view_->SetDescription(model_->GetDescription());
+    view_->SetVersion(model_->GetVersion());
   }
 
 private:

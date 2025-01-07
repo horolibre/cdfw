@@ -22,28 +22,35 @@ namespace screen {
 namespace {
 class BootViewImpl : public BootView {
 public:
-  BootViewImpl() : scr_(nullptr) {}
+  BootViewImpl() : desc_lbl_(nullptr), ver_lbl_(nullptr) {}
   virtual ~BootViewImpl() = default;
 
-  virtual void Init(const String &desc, const String &version) override final {
+  virtual void Init() override final {
     // We use the default screen for the boot screen.
-    scr_ = lv_screen_active();
-    lv_obj_set_style_bg_color(scr_, color::DARK_BLUE, LV_PART_MAIN);
-    lv_obj_set_style_text_color(scr_, lv_color_white(), LV_PART_MAIN);
+    auto scr = lv_screen_active();
+    lv_obj_set_style_bg_color(scr, color::DARK_BLUE, LV_PART_MAIN);
+    lv_obj_set_style_text_color(scr, lv_color_white(), LV_PART_MAIN);
 
-    lv_obj_t *label = lv_label_create(scr_);
-    lv_label_set_text(label, desc.c_str());
-    lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
+    desc_lbl_ = lv_label_create(scr);
+    lv_obj_align(desc_lbl_, LV_ALIGN_CENTER, 0, 0);
 
-    lv_obj_t *label2 = lv_label_create(scr_);
+    ver_lbl_ = lv_label_create(scr);
+    lv_obj_align(ver_lbl_, LV_ALIGN_CENTER, 0, 16);
+  }
+
+  virtual void SetDescription(const String &desc) override final {
+    lv_label_set_text(desc_lbl_, desc.c_str());
+  }
+
+  virtual void SetVersion(const String &version) override final {
     char str_buf[8];
     std::sprintf(str_buf, "v%s", version.c_str());
-    lv_label_set_text(label2, str_buf);
-    lv_obj_align(label2, LV_ALIGN_CENTER, 0, 16);
+    lv_label_set_text(ver_lbl_, str_buf);
   }
 
 private:
-  lv_obj_t *scr_;
+  lv_obj_t *desc_lbl_;
+  lv_obj_t *ver_lbl_;
 };
 } // namespace
 

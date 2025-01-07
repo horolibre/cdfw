@@ -24,8 +24,13 @@ public:
   // Virtual d'tor.
   virtual ~BootPresenterView() = default;
 
-  // Initializes the view.
-  virtual void Init(const String &desc, const String &version) = 0;
+  // ---------------------------------------------------------------------------
+  // Presenter -> View Interface
+  // ---------------------------------------------------------------------------
+
+  virtual void Init() = 0;
+  virtual void SetDescription(const String &desc) = 0;
+  virtual void SetVersion(const String &version) = 0;
 };
 
 class BootPresenter {
