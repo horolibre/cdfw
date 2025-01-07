@@ -2,11 +2,11 @@
 // Use of this source code is governed by a GPLv3 license that can be found in
 // the LICENSE file.
 
-#ifndef CDFW_GUI_SCREEN_BOOT_VIEW_H
-#define CDFW_GUI_SCREEN_BOOT_VIEW_H
+#ifndef CDFW_GUI_SCREEN_ROUTINES_VIEW_H
+#define CDFW_GUI_SCREEN_ROUTINES_VIEW_H
 
 // Local Headers
-#include "cdfw/core/ui/boot_presenter.h"
+#include "cdfw/core/ui/routines_presenter.h"
 
 // C++ Standard Library Headers
 #include <memory>
@@ -14,16 +14,16 @@
 namespace cdfw {
 namespace gui {
 namespace screen {
-class BootView : public core::ui::BootPresenterView {
+class RoutinesView : public core::ui::RoutinesPresenterView {
 public:
   // Factory method.
-  static std::unique_ptr<BootPresenterView> Create();
+  static std::unique_ptr<RoutinesPresenterView> Create();
 
-  // Virtual d'tor.
-  virtual ~BootView() = default;
+  // Pure virtual d'tor to prevent instantiation.
+  virtual ~RoutinesView() = default;
 };
 } // namespace screen
 } // namespace gui
 } // namespace cdfw
 
-#endif // CDFW_GUI_SCREEN_BOOT_VIEW_H
+#endif // CDFW_GUI_SCREEN_ROUTINES_VIEW_H

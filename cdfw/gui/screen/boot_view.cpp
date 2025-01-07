@@ -54,9 +54,6 @@ private:
 };
 } // namespace
 
-// Implement the pure virtual d'tor to allow destruction from derived classes.
-BootView::~BootView() = default;
-
 std::unique_ptr<core::ui::BootPresenterView> BootView::Create() {
   auto view = std::make_unique<BootViewImpl>();
   return view;
