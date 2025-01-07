@@ -13,23 +13,30 @@
 // Third Party Headers
 #include <lvgl.h>
 
+// C++ Standard Library Headers
+#include <memory>
+
 namespace cdfw {
 namespace hal {
+// Representation of a touchscreen device.
+// Initialization of this device should handle setting up the display as well as
+// LVGL input device registration.
 class Touchscreen {
 public:
+  // Factory method.
+  static std::unique_ptr<Touchscreen> Create();
+
+  // Virtual d'tor.
   virtual ~Touchscreen() = default;
-  virtual bool Touched() = 0;
-  virtual Point GetPoint() = 0;
+
+  // Initializes the touchscreen device.
+  virtual void Init() = 0;
 
   // Callback for reading the touchscreen.
   virtual void ReadCallback(lv_indev_t *indev, lv_indev_data_t *data) = 0;
 
   // Routes a read event to the appropriate instance.
   static void ReadCallbackRouter(lv_indev_t *indev, lv_indev_data_t *data);
-
-  // private:
-  //   Touchscreen(Touchscreen const&) = default;
-  //   Touchscreen& operator=(Touchscreen const&) = default;
 };
 } // namespace hal
 } // namespace cdfw

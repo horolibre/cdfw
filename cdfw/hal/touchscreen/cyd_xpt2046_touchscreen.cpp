@@ -5,7 +5,6 @@
 #ifdef CDFW_CYD
 
 // Local Headers
-#include "cdfw/hw/cyd/touchscreen.h"
 #include "cdfw/hal/point.h"
 #include "cdfw/hal/touchscreen.h"
 
@@ -14,7 +13,9 @@
 #include <lvgl.h>
 
 // C++ Standard Library Headers
+#include <array>
 #include <cstdint>
+#include <memory>
 
 // Touchscreen SPI pins.
 #define XPT2046_CLK 25
@@ -24,8 +25,7 @@
 #define XPT2046_MOSI 32
 
 namespace cdfw {
-namespace hw {
-namespace touchscreen {
+namespace hal {
 namespace cyd {
 namespace {
 struct XPT2046PointAdaptor : public hal::Point {
@@ -45,23 +45,28 @@ public:
   Touchscreen()
       : driver_(XPT2046_Bitbang(XPT2046_MOSI, XPT2046_MISO, XPT2046_CLK,
                                 XPT2046_CS)) {}
-
   virtual ~Touchscreen() {}
 
-  void Init() {
+  virtual void Init() override final {
+    // Initialize the touchscreen driver.
     driver_.begin();
+
+    // Register the display with LVGL.
+    // Using the LVGL suggest 1/10th screen size for the draw buffer.
+    // Note: The buffer must be aligned to LV_DRAW_BUF_ALIGN, otherwise setting
+    // the displauy buffer will fail.
+    alignas(LV_DRAW_BUF_ALIGN) static std::array<std::uint8_t,
+                                                 CDFW_SCR_W * CDFW_SCR_H / 10>
+        draw_buf = {0};
+    lv_display_t *disp =
+        lv_tft_espi_create(CDFW_SCR_W, CDFW_SCR_H, &draw_buf, draw_buf.size());
+    lv_display_set_rotation(disp, LV_DISPLAY_ROTATION_90);
 
     // Register input device with LVGL.
     auto indev = lv_indev_create();
     lv_indev_set_user_data(indev, this);
     lv_indev_set_type(indev, LV_INDEV_TYPE_POINTER);
     lv_indev_set_read_cb(indev, &cdfw::hal::Touchscreen::ReadCallbackRouter);
-  }
-
-  virtual bool Touched() override final { return driver_.getTouch().zRaw != 0; }
-
-  virtual hal::Point GetPoint() override final {
-    return Rotate(XPT2046PointAdaptor(driver_.getTouch()));
   }
 
   virtual void ReadCallback(lv_indev_t *indev,
@@ -78,17 +83,24 @@ public:
 
 private:
   XPT2046_Bitbang driver_;
+
+  // Returns true if the touchscreen is currently being touched.
+  bool Touched() { return driver_.getTouch().zRaw != 0; }
+
+  // Returns the current touch point.
+  hal::Point GetPoint() {
+    return Rotate(XPT2046PointAdaptor(driver_.getTouch()));
+  }
 };
 } // namespace
-
-hal::Touchscreen *Create() {
-  auto touchscreen = new cyd::Touchscreen();
-  touchscreen->Init();
-  return touchscreen;
-}
 } // namespace cyd
-} // namespace touchscreen
-} // namespace hw
+
+std::unique_ptr<hal::Touchscreen> Touchscreen::Create() {
+  auto ts = std::make_unique<cyd::Touchscreen>();
+  ts->Init();
+  return ts;
+}
+} // namespace hal
 } // namespace cdfw
 
 #endif // CDFW_CYD

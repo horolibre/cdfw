@@ -10,7 +10,6 @@
 #include "cdfw/core/core.h"
 #include "cdfw/gui/gui.h"
 #include "cdfw/hal/hal.h"
-#include "cdfw/hw/hw.h"
 
 // Third Party Headers
 #include <lvgl.h>
@@ -24,7 +23,7 @@
 
 namespace {
 // Static device pointers.
-cdfw::hal::Touchscreen *touchscreen = nullptr;
+std::unique_ptr<cdfw::hal::Touchscreen> touchscreen = nullptr;
 
 std::shared_ptr<cdfw::core::ui::SettingsModel> settings_model = nullptr;
 std::unique_ptr<cdfw::core::ui::HomePresenter> home_presenter = nullptr;
@@ -41,11 +40,11 @@ int main() {
   Serial.begin(115200);
 
   // Initialise LVGL.
-  cdfw::hw::lvgl::Init();
-  mem_report();
+  lv_init();
+  // mem_report();
 
-  // Initialise devices.
-  touchscreen = cdfw::hw::touchscreen::Create();
+  // Initialise the hardware.
+  touchscreen = cdfw::hal::Touchscreen::Create();
 
   // The boot screen is shown as soon as it is initialized. After that, we have
   // no use for the wrapping classes, so we let them destruct after use.
