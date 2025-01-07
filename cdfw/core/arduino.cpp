@@ -16,13 +16,9 @@
 // Global variables.
 SimulatedSerial Serial;
 
-unsigned long millis() {
-  return SDL_GetTicks();
-}
+unsigned long millis() { return SDL_GetTicks(); }
 
-void delay(std::uint32_t ms) {
-  SDL_Delay(ms);
-}
+void delay(std::uint32_t ms) { SDL_Delay(ms); }
 
 void SimulatedSerial::begin(unsigned long) { return; }
 

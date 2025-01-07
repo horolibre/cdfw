@@ -40,7 +40,7 @@ void AddBackButton(lv_obj_t *parent, core::ui::SettingsPresenter *presenter) {
             lv_event_get_user_data(e));
         pres->OnBackClicked();
       },
-      LV_EVENT_CLICKED, presenter);
+      LV_EVENT_PRESSED, presenter);
 }
 
 class SettingsViewImpl : public SettingsView {

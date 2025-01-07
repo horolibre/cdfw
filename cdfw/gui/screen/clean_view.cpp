@@ -35,7 +35,7 @@ void AddBackButton(lv_obj_t *parent, core::ui::CleanPresenter *presenter) {
             static_cast<core::ui::CleanPresenter *>(lv_event_get_user_data(e));
         pres->OnBackClicked();
       },
-      LV_EVENT_CLICKED, presenter);
+      LV_EVENT_PRESSED, presenter);
 }
 
 class CleanViewImpl : public CleanView {

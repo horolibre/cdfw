@@ -35,7 +35,7 @@ void AddBackButton(lv_obj_t *parent, core::ui::RoutinesPresenter *presenter) {
             lv_event_get_user_data(e));
         pres->OnBackClicked();
       },
-      LV_EVENT_CLICKED, presenter);
+      LV_EVENT_PRESSED, presenter);
 }
 
 class RoutinesViewImpl : public RoutinesView {

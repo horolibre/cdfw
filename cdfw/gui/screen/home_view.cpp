@@ -43,7 +43,7 @@ void AddNavButton(const lv_style_t &style, lv_obj_t *parent, const char *icon,
   lv_label_set_text(label, icon);
   lv_obj_center(label);
   lv_obj_set_style_text_font(label, &lv_font_montserrat_28, 0);
-  lv_obj_add_event_cb(btn, cb, LV_EVENT_CLICKED, user_data);
+  lv_obj_add_event_cb(btn, cb, LV_EVENT_PRESSED, user_data);
 }
 
 void AddNavButtons(lv_obj_t *parent, core::ui::HomePresenter *presenter) {
@@ -118,7 +118,7 @@ public:
         lv_obj_set_style_text_color(
             wifi_label_, lv_palette_main(LV_PALETTE_RED), LV_PART_MAIN);
 
-        lv_obj_add_event_cb(wifi_btn_, wifi_btn_cb, LV_EVENT_CLICKED, this);
+        lv_obj_add_event_cb(wifi_btn_, wifi_btn_cb, LV_EVENT_PRESSED, this);
       }
     }
 
