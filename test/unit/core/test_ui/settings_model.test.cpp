@@ -13,11 +13,41 @@ namespace cdfw {
 namespace core {
 namespace ui {
 namespace {
-TEST(SettingsModelTests, DefaultState) {
-  auto model = SettingsModel::Create();
+class MockSettingsModelSubscriber : public SettingsModelSubscriber {
+public:
+  bool wifi_state_changed_called = false;
+  WifiState wifi_state = WifiState::DISCONNECTED;
+
+  virtual void WifiStateChanged() override final {
+    wifi_state_changed_called = true;
+  }
+};
+
+class SettingsModelTests : public ::testing::Test {
+protected:
+  std::shared_ptr<SettingsModel> model = nullptr;
+  std::unique_ptr<MockSettingsModelSubscriber> subscriber = nullptr;
+
+  void SetUp() override final {
+    model = SettingsModel::Create();
+    subscriber = std::make_unique<MockSettingsModelSubscriber>();
+    model->RegisterSubscriber(subscriber.get());
+  }
+};
+
+TEST_F(SettingsModelTests, DefaultState) {
   EXPECT_EQ(model->GetWifiState(), WifiState::DISCONNECTED);
-  EXPECT_EQ(model->GetWifiCredentials().ssid, String());
-  EXPECT_EQ(model->GetWifiCredentials().password, String());
+  EXPECT_TRUE(model->GetWifiCredentials().ssid.empty());
+  EXPECT_TRUE(model->GetWifiCredentials().password.empty());
+  EXPECT_FALSE(subscriber->wifi_state_changed_called);
+}
+
+TEST_F(SettingsModelTests, SetWifiState_NotifiesSubscribers) {
+  auto wifi_state = WifiState::CONNECTED;
+  model->SetWifiState(wifi_state);
+
+  EXPECT_EQ(model->GetWifiState(), wifi_state);
+  EXPECT_TRUE(subscriber->wifi_state_changed_called);
 }
 } // namespace
 } // namespace ui

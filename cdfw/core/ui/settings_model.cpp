@@ -28,7 +28,7 @@ public:
   virtual void SetWifiState(WifiState state) override final {
     state_ = state;
     for (auto subscriber : subscribers_) {
-      subscriber->WifiStateChanged(state_);
+      subscriber->WifiStateChanged();
     }
   };
 

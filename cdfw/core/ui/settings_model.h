@@ -18,7 +18,12 @@ namespace ui {
 class SettingsModelSubscriber {
 public:
   virtual ~SettingsModelSubscriber() = default;
-  virtual void WifiStateChanged(WifiState state) = 0;
+
+  // ---------------------------------------------------------------------------
+  // Model -> Subscriber Interface
+  // ---------------------------------------------------------------------------
+
+  virtual void WifiStateChanged() = 0;
 };
 
 class SettingsModel {

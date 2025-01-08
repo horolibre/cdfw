@@ -33,7 +33,7 @@ public:
     // Setup the view.
     view_->Init(this);
     view_->SetWifiCredentials(model_->GetWifiCredentials());
-    WifiStateChanged(model_->GetWifiState());
+    SetViewWifiState(model_->GetWifiState());
 
     // Register the presenter as a subscriber to the model.
     model_->RegisterSubscriber(this);
@@ -41,13 +41,9 @@ public:
 
   virtual void Show() override final { view_->Show(); }
 
-  virtual void WifiStateChanged(WifiState state) override final {
-    view_->SetWifiEnabled(state != WifiState::DISABLED_);
-    std::map<WifiState, String> state_map = {
-        {WifiState::DISABLED_, "Disabled"},
-        {WifiState::DISCONNECTED, "Disconnected"},
-        {WifiState::CONNECTED, "Connected"}};
-    view_->SetWifiStatus(state_map[state]);
+  virtual void WifiStateChanged() override final {
+    const WifiState &state = model_->GetWifiState();
+    SetViewWifiState(state);
   }
 
   virtual void
@@ -61,6 +57,15 @@ private:
   AppPresenter *app_presenter_;
   std::unique_ptr<SettingsPresenterView> view_;
   std::shared_ptr<SettingsModel> model_;
+
+  void SetViewWifiState(const WifiState &state) {
+    view_->SetWifiEnabled(state != WifiState::DISABLED_);
+    std::map<WifiState, String> state_map = {
+        {WifiState::DISABLED_, "Disabled"},
+        {WifiState::DISCONNECTED, "Disconnected"},
+        {WifiState::CONNECTED, "Connected"}};
+    view_->SetWifiStatus(state_map[state]);
+  }
 };
 } // namespace
 
