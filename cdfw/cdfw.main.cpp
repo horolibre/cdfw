@@ -19,8 +19,9 @@
 #include <memory>
 
 namespace cdfw {
-// Static device pointers.
+// Hawdware.
 std::unique_ptr<hal::Touchscreen> touchscreen = nullptr;
+std::unique_ptr<hal::SD> sd = nullptr;
 
 // Presenters.
 std::unique_ptr<core::ui::AppPresenter> app_presenter = nullptr;
@@ -32,8 +33,12 @@ void InitHardware() {
   lv_init();
   // mem_report();
 
-  // Initialise the hardware.
+  // Hardware is initialized on creation.
   touchscreen = hal::Touchscreen::Create();
+  sd = hal::SD::Create();
+  LV_LOG_INFO("SD capacity: %llu bytes", sd->GetCapacity());
+  LV_LOG_INFO("SD available: %llu bytes", sd->GetAvailable());
+  LV_LOG_INFO("SD used: %llu bytes", sd->GetUsed());
 }
 
 void InitGUI() {
