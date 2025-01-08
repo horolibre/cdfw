@@ -15,7 +15,19 @@
 namespace cdfw {
 namespace core {
 namespace ui {
-class HomeModel {
+// Interface for a subscriber to the home model.
+class HomeModelSubscriber {
+public:
+  virtual ~HomeModelSubscriber() = default;
+
+  // ---------------------------------------------------------------------------
+  // Model -> Subscriber Interface
+  // ---------------------------------------------------------------------------
+
+  virtual void WifiStateChanged() = 0;
+};
+
+class HomeModel : public SettingsModelSubscriber {
 public:
   // Factory method.
   static std::unique_ptr<HomeModel>
@@ -23,6 +35,11 @@ public:
 
   // Virtual d'tor.
   virtual ~HomeModel() = default;
+
+  virtual void Init() = 0;
+
+  // Register a subscriber to the model.
+  virtual void RegisterSubscriber(HomeModelSubscriber *subscriber) = 0;
 
   virtual WifiState GetWifiState() = 0;
 };

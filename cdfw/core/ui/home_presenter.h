@@ -38,7 +38,7 @@ public:
   virtual void SetWifiVisible(bool visible) = 0;
 };
 
-class HomePresenter {
+class HomePresenter : public HomeModelSubscriber {
 public:
   // Factory method.
   static std::unique_ptr<HomePresenter>
@@ -63,11 +63,6 @@ public:
   virtual void OnSettingsClicked() = 0;
   virtual void OnCleanClicked() = 0;
   virtual void OnRoutinesClicked() = 0;
-
-  // ---------------------------------------------------------------------------
-  // TO BE REMOVED
-  // ---------------------------------------------------------------------------
-  virtual void UpdateWifiIcon() = 0;
 };
 } // namespace ui
 } // namespace core

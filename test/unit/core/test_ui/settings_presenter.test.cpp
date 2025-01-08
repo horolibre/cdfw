@@ -13,7 +13,6 @@
 
 // C++ Standard Library Headers
 #include <memory>
-#include <vector>
 
 namespace cdfw {
 namespace core {
@@ -23,7 +22,7 @@ class MockSettingsModel : public SettingsModel {
 public:
   bool set_wifi_credentials_called = false;
   bool register_subscriber_called = false;
-  std::vector<SettingsModelSubscriber *> subscribers;
+  SettingsModelSubscriber *subscriber = nullptr;
   WifiState wifi_state;
   WifiCredentials wifi_credentials;
 
@@ -35,10 +34,9 @@ public:
   }
   virtual ~MockSettingsModel() = default;
 
-  virtual void
-  RegisterSubscriber(SettingsModelSubscriber *subscriber) override final {
+  virtual void RegisterSubscriber(SettingsModelSubscriber *sub) override final {
     register_subscriber_called = true;
-    subscribers.push_back(subscriber);
+    subscriber = sub;
     model_->RegisterSubscriber(subscriber);
   }
 
@@ -149,7 +147,7 @@ TEST_F(SettingsPresenterTests, InitNotCalled) {
   // Assertions for the model.
   EXPECT_FALSE(model->set_wifi_credentials_called);
   EXPECT_FALSE(model->register_subscriber_called);
-  EXPECT_TRUE(model->subscribers.empty());
+  EXPECT_EQ(model->subscriber, nullptr);
   EXPECT_EQ(model->wifi_state, WifiState::DISCONNECTED);
   EXPECT_EQ(model->wifi_credentials.ssid, ssid);
   EXPECT_EQ(model->wifi_credentials.password, password);
@@ -173,7 +171,7 @@ TEST_F(SettingsPresenterTests, InitCalled_WifiDisabled) {
   // Assertions for the model.
   EXPECT_FALSE(model->set_wifi_credentials_called);
   EXPECT_TRUE(model->register_subscriber_called);
-  EXPECT_EQ(model->subscribers.size(), 1);
+  EXPECT_NE(model->subscriber, nullptr);
   EXPECT_EQ(model->wifi_state, WifiState::DISABLED_);
   EXPECT_EQ(model->wifi_credentials.ssid, ssid);
   EXPECT_EQ(model->wifi_credentials.password, password);
@@ -197,7 +195,7 @@ TEST_F(SettingsPresenterTests, InitCalled_WifiDisconnected) {
   // Assertions for the model.
   EXPECT_FALSE(model->set_wifi_credentials_called);
   EXPECT_TRUE(model->register_subscriber_called);
-  EXPECT_EQ(model->subscribers.size(), 1);
+  EXPECT_NE(model->subscriber, nullptr);
   EXPECT_EQ(model->wifi_state, WifiState::DISCONNECTED);
   EXPECT_EQ(model->wifi_credentials.ssid, ssid);
   EXPECT_EQ(model->wifi_credentials.password, password);
@@ -221,7 +219,7 @@ TEST_F(SettingsPresenterTests, InitCalled_WifiConnected) {
   // Assertions for the model.
   EXPECT_FALSE(model->set_wifi_credentials_called);
   EXPECT_TRUE(model->register_subscriber_called);
-  EXPECT_EQ(model->subscribers.size(), 1);
+  EXPECT_NE(model->subscriber, nullptr);
   EXPECT_EQ(model->wifi_state, WifiState::CONNECTED);
   EXPECT_EQ(model->wifi_credentials.ssid, ssid);
   EXPECT_EQ(model->wifi_credentials.password, password);

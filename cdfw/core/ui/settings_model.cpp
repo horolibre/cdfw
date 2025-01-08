@@ -6,8 +6,8 @@
 #include "cdfw/core/ui/settings_model.h"
 
 // C++ Standard Library Headers
+#include <list>
 #include <memory>
-#include <vector>
 
 namespace cdfw {
 namespace core {
@@ -44,7 +44,7 @@ public:
 private:
   WifiState state_;
   WifiCredentials credentials_;
-  std::vector<SettingsModelSubscriber *> subscribers_;
+  std::list<SettingsModelSubscriber *> subscribers_;
 };
 } // namespace
 

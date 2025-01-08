@@ -22,9 +22,14 @@ public:
     // Record the app presenter.
     app_presenter_ = app_presenter;
 
+    // Initialize the model and register as a subscriber.
+    model_->Init();
+    model_->RegisterSubscriber(this);
+
     // Setup the view.
     view_->Init(this);
-    UpdateWifiIcon();
+
+    // Register the presenter as a subscriber to the model.
   }
 
   virtual void Show() override final { view_->Show(); }
@@ -36,8 +41,14 @@ public:
   virtual void OnRoutinesClicked() override final {
     app_presenter_->ShowRoutines();
   }
+  virtual void WifiStateChanged() { UpdateWifiIcon(); }
 
-  virtual void UpdateWifiIcon() override final {
+private:
+  AppPresenter *app_presenter_;
+  std::unique_ptr<HomePresenterView> view_;
+  std::unique_ptr<HomeModel> model_;
+
+  void UpdateWifiIcon() {
     switch (model_->GetWifiState()) {
     case WifiState::CONNECTED:
       view_->SetWifiColor(lv_palette_main(LV_PALETTE_GREEN));
@@ -52,11 +63,6 @@ public:
       break;
     }
   }
-
-private:
-  AppPresenter *app_presenter_;
-  std::unique_ptr<HomePresenterView> view_;
-  std::unique_ptr<HomeModel> model_;
 };
 } // namespace
 

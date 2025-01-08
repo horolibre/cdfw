@@ -7,6 +7,7 @@
 #include "cdfw/core/wifi.h"
 
 // C++ Standard Library Headers
+#include <list>
 #include <memory>
 
 namespace cdfw {
@@ -17,13 +18,29 @@ class HomeModelImpl : public HomeModel {
 public:
   HomeModelImpl(std::shared_ptr<SettingsModel> settings)
       : settings_(settings) {}
+
+  virtual void Init() override final { settings_->RegisterSubscriber(this); }
+
+  virtual void
+  RegisterSubscriber(HomeModelSubscriber *subscriber) override final {
+    subscribers_.push_back(subscriber);
+  }
+
   virtual ~HomeModelImpl() = default;
 
   virtual WifiState GetWifiState() override final {
     return settings_->GetWifiState();
   }
 
+  virtual void WifiStateChanged() override final {
+    // Propogate the notification to the subscribers.
+    for (auto subscriber : subscribers_) {
+      subscriber->WifiStateChanged();
+    }
+  }
+
 private:
+  std::list<HomeModelSubscriber *> subscribers_;
   std::shared_ptr<SettingsModel> settings_;
 };
 } // namespace
