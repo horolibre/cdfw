@@ -14,8 +14,9 @@ void lvgl_heap_report(void) {
   auto used_pct = mon.used_pct;
   auto max_used = mon.max_used;
   auto max_used_pct = (max_used * 100) / total;
-  LV_LOG_INFO("Heap Total: %d, Free: %d, Used: %d (%d%%), Max Used: %d (%d%%)",
-              total, free, used, used_pct, max_used, max_used_pct);
+  LV_LOG_INFO(
+      "Heap Total: %zu, Free: %zu, Used: %zu (%d%%), Max Used: %zu (%zu%%)",
+      total, free, used, used_pct, max_used, max_used_pct);
 }
 
 #ifdef ARDUINO
@@ -26,8 +27,9 @@ void esp32_heap_report(void) {
   auto used_pct = (used * 100) / total;
   auto max_used = total - ESP.getMinFreeHeap();
   auto max_used_pct = (max_used * 100) / total;
-  LV_LOG_INFO("Heap Total: %d, Free: %d, Used: %d (%d%%), Max Used: %d (%d%%)",
-              total, free, used, used_pct, max_used, max_used_pct);
+  LV_LOG_INFO(
+      "Heap Total: %zu, Free: %zu, Used: %zu (%d%%), Max Used: %zu (%zu%%)",
+      total, free, used, used_pct, max_used, max_used_pct);
 }
 #endif // ARDUINO
 

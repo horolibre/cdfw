@@ -43,8 +43,9 @@ public:
   }
 
   virtual void SetVersion(const String &version) override final {
-    char str_buf[8];
-    std::sprintf(str_buf, "v%s", version.c_str());
+    std::uint8_t buf_size = 8;
+    char str_buf[buf_size];
+    std::snprintf(str_buf, buf_size, "v%s", version.c_str());
     lv_label_set_text(ver_lbl_, str_buf);
   }
 
