@@ -51,6 +51,22 @@ public:
     model_->SetWifiCredentials(credentials);
   }
 
+  virtual void OnWifiEnabled(bool enabled) override final {
+    if (enabled) {
+      model_->SetWifiState(WifiState::DISCONNECTED);
+    } else {
+      model_->SetWifiState(WifiState::DISABLED_);
+    }
+  }
+
+  virtual void OnWifiConnectRequest(bool connected) override final {
+    if (connected) {
+      model_->SetWifiState(WifiState::CONNECTED);
+    } else {
+      model_->SetWifiState(WifiState::DISCONNECTED);
+    }
+  }
+
   virtual void OnBackClicked() override final { app_presenter_->ShowHome(); }
 
 private:

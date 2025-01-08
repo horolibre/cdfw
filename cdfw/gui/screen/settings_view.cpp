@@ -19,10 +19,6 @@ namespace cdfw {
 namespace gui {
 namespace screen {
 namespace {
-void back_btn_cb(lv_event_t *e) {
-  // TODO
-}
-
 void AddBackButton(lv_obj_t *parent, core::ui::SettingsPresenter *presenter) {
   lv_obj_t *btn = lv_button_create(parent);
   lv_obj_set_size(btn, 40, 40);
@@ -83,6 +79,37 @@ public:
       lv_obj_set_flex_flow(panel, LV_FLEX_FLOW_ROW);
       lv_obj_set_flex_align(panel, LV_FLEX_ALIGN_SPACE_EVENLY,
                             LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+
+      // This is just for testing the propogation of the wifi state.
+      auto sw = lv_switch_create(panel);
+      lv_obj_add_state(sw, LV_STATE_CHECKED);
+      lv_obj_add_event_cb(
+          sw,
+          [](lv_event_t *e) {
+            lv_event_code_t code = lv_event_get_code(e);
+            lv_obj_t *obj = static_cast<lv_obj_t *>(lv_event_get_target(e));
+            if (code == LV_EVENT_PRESSED) {
+              auto pres = static_cast<core::ui::SettingsPresenter *>(
+                  lv_event_get_user_data(e));
+              pres->OnWifiEnabled(!lv_obj_has_state(obj, LV_STATE_CHECKED));
+            }
+          },
+          LV_EVENT_PRESSED, presenter);
+
+      sw = lv_switch_create(panel);
+      lv_obj_add_event_cb(
+          sw,
+          [](lv_event_t *e) {
+            lv_event_code_t code = lv_event_get_code(e);
+            lv_obj_t *obj = static_cast<lv_obj_t *>(lv_event_get_target(e));
+            if (code == LV_EVENT_PRESSED) {
+              auto pres = static_cast<core::ui::SettingsPresenter *>(
+                  lv_event_get_user_data(e));
+              pres->OnWifiConnectRequest(
+                  !lv_obj_has_state(obj, LV_STATE_CHECKED));
+            }
+          },
+          LV_EVENT_PRESSED, presenter);
     }
   }
 

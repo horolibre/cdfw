@@ -41,7 +41,7 @@ public:
   virtual void OnRoutinesClicked() override final {
     app_presenter_->ShowRoutines();
   }
-  virtual void WifiStateChanged() { UpdateWifiIcon(); }
+  virtual void WifiStateChanged() override final { UpdateWifiIcon(); }
 
 private:
   AppPresenter *app_presenter_;

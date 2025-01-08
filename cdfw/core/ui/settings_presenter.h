@@ -63,6 +63,8 @@ public:
   // ---------------------------------------------------------------------------
 
   virtual void OnWifiCredentialsChange(const WifiCredentials &credentials) = 0;
+  virtual void OnWifiEnabled(bool enabled) = 0;
+  virtual void OnWifiConnectRequest(bool connected) = 0;
 };
 } // namespace ui
 } // namespace core
