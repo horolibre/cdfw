@@ -34,11 +34,11 @@ public:
   virtual std::uint64_t GetCapacity() override final { return sd_.cardSize(); }
 
   virtual std::uint64_t GetAvailable() override final {
-    return sd_.available();
+    return sd_.totalBytes();
   }
 
   virtual std::uint64_t GetUsed() override final {
-    return GetCapacity() - GetAvailability();
+    return GetCapacity() - GetAvailable();
   }
 
 private:
