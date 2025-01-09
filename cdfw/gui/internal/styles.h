@@ -12,9 +12,11 @@ namespace cdfw {
 namespace gui {
 // Singleton holding the GUI styles.
 struct Styles {
-  // Screen background style.
+  // Screen style.
+  lv_style_t style_scr;
 
   // Top bar style.
+  lv_style_t style_top_bar;
 
   // Transparent background.
   lv_style_t style1;

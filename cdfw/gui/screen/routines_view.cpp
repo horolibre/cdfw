@@ -45,17 +45,15 @@ public:
 
   void Init(core::ui::RoutinesPresenter *presenter) override final {
     scr_ = lv_obj_create(NULL);
-    lv_obj_set_style_bg_color(scr_, color::DARK_BLUE, LV_PART_MAIN);
-    lv_obj_set_style_text_color(scr_, lv_color_white(), LV_PART_MAIN);
+    lv_obj_add_style(scr_, &Styles::GetInstance().style_scr, 0);
 
     // Add nav bar.
     {
       // Top bar object.
       lv_obj_t *tb = lv_obj_create(scr_);
       lv_obj_set_size(tb, 320, 40);
-      lv_obj_add_style(tb, &Styles::GetInstance().style1, 0);
+      lv_obj_add_style(tb, &Styles::GetInstance().style_top_bar, 0);
       lv_obj_align(tb, LV_ALIGN_TOP_MID, 0, 0);
-      // lv_obj_remove_flag(tb, LV_OBJ_FLAG_SCROLLABLE);
 
       // Title centered in top bar.
       {
