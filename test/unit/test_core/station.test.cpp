@@ -77,5 +77,31 @@ TEST(DryStationConfigTests, Enabled_Configured) {
   EXPECT_EQ(config.spin, spin);
 }
 
+TEST(StationSerializerTests, Serialize_WetStation) {
+  std::string name = "wet_configured";
+  std::uint32_t time = 1000;
+  auto agitation = WetStationConfig::AgitationLevel::HIGH;
+  WetStationConfig config(name, time, agitation);
+  auto serializer = StationSerializer::Create();
+  auto json_str = serializer->Serialize(config);
+
+  std::string expected =
+      R"({"name":"wet_configured","enabled":true,"time":1000,"agitation":3})";
+  EXPECT_EQ(json_str, expected);
+}
+
+TEST(StationSerializerTests, Serialize_DryStation) {
+  std::string name = "dry_configured";
+  std::uint32_t time = 1000;
+  auto spin = DryStationConfig::SpinType::BIDIRECTIONAL;
+  DryStationConfig config(name, time, spin);
+  auto serializer = StationSerializer::Create();
+  auto json_str = serializer->Serialize(config);
+
+  std::string expected =
+      R"({"name":"dry_configured","enabled":true,"time":1000,"spin":2})";
+  EXPECT_EQ(json_str, expected);
+}
+
 } // namespace
 } // namespace cdfw

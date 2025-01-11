@@ -91,6 +91,22 @@ struct DryStationConfig : StationConfig {
   DryStationConfig(std::string name)
       : StationConfig(name, true, 360), spin(SpinType::UNIDIRECTIONAL) {}
 };
+
+class StationSerializer {
+public:
+  // Factory method.
+  static std::shared_ptr<StationSerializer> Create();
+
+  // Virtual destructor.
+  virtual ~StationSerializer() = default;
+
+  // Serializes/Deserializes the given wet station configuration.
+  virtual std::string Serialize(const WetStationConfig &config) = 0;
+
+  // Serializes the given dry station configuration.
+  virtual std::string Serialize(const DryStationConfig &config) = 0;
+};
+
 } // namespace cdfw
 
 #endif // CDFW_CORE_STATION_H
