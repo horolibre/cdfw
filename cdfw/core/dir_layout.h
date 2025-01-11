@@ -7,6 +7,7 @@
 
 // C++ Standard Library Headers
 #include <filesystem>
+#include <memory>
 
 namespace cdfw {
 namespace stdfs = std::filesystem;
@@ -17,6 +18,18 @@ struct DirLayout {
   const stdfs::path data_dir;
 
   DirLayout(const stdfs::path &mount_dir);
+};
+
+class DirLayoutValidator {
+public:
+  // Factory method.
+  static std::unique_ptr<DirLayoutValidator> Create();
+
+  // Virtual destructor.
+  virtual ~DirLayoutValidator() = default;
+
+  // Validates the given directory layout.
+  virtual bool Validate(const DirLayout &dir_layout) = 0;
 };
 } // namespace cdfw
 

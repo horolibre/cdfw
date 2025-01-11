@@ -30,7 +30,7 @@ public:
 };
 
 class DirWriterStrategyTests : public ::testing::Test {
-public:
+protected:
   stdfs::path tmp_dir = stdfs::temp_directory_path() / "test";
   std::shared_ptr<DirWriterStrategy> strategy = DirWriterStrategy::Create();
 
