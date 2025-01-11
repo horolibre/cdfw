@@ -28,8 +28,7 @@ public:
 
     // Setup the view.
     view_->Init(this);
-
-    // Register the presenter as a subscriber to the model.
+    UpdateWifiIcon();
   }
 
   virtual void Show() override final { view_->Show(); }
