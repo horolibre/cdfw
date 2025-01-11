@@ -38,8 +38,8 @@ struct RoutineConfig {
   // Returns a routine with all stations disabled.
   static RoutineConfig GetDisabled(void) { return RoutineConfig(); }
 
-private:
-  RoutineConfig() = default;
+protected:
+  RoutineConfig();
 };
 } // namespace cdfw
 

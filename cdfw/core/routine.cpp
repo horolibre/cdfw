@@ -58,10 +58,16 @@ RoutineConfig RoutineConfig::GetDefault(void) {
   RoutineConfig config;
   std::string names[4] = {"Clean", "Rinse 1", "Rinse 2", "Rinse 3"};
   for (std::size_t i = 0; i < 4; ++i) {
-    config.wet_stations[i] = WetStationConfig(names[i]);
+    config.wet_stations[i] = WetStationConfig::GetDefault(names[i]);
   }
-  config.dry_station = DryStationConfig("Dry");
+  config.dry_station = DryStationConfig::GetDefault("Dry");
   return config;
 }
+
+RoutineConfig::RoutineConfig() : wet_stations{WetStationConfig::GetDisabled(),
+                                                WetStationConfig::GetDisabled(),
+                                                WetStationConfig::GetDisabled(),
+                                                WetStationConfig::GetDisabled()},
+                                 dry_station(DryStationConfig::GetDisabled()) {}
 
 } // namespace cdfw

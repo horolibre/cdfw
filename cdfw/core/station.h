@@ -51,10 +51,19 @@ struct WetStationConfig : StationConfig {
 
   virtual ~WetStationConfig() = default;
 
+  static WetStationConfig GetDefault(std::string name) { return WetStationConfig(name); }
+  static WetStationConfig GetDisabled() { return WetStationConfig(); }
+  static WetStationConfig GetConfigured(std::string name, std::uint32_t time,
+                                 AgitationLevel agitation) {
+    return WetStationConfig(name, time, agitation);
+  }
+
+private:
   // Default constructor creates a disabled station.
   WetStationConfig()
       : StationConfig("Disabled", false, 0), agitation(AgitationLevel::NONE) {}
 
+  // Constructor for a configured station.
   WetStationConfig(std::string name, std::uint32_t time,
                    AgitationLevel agitation)
       : StationConfig(name, true, time), agitation(agitation) {}
@@ -78,10 +87,19 @@ struct DryStationConfig : StationConfig {
 
   virtual ~DryStationConfig() = default;
 
+  static DryStationConfig GetDefault(std::string name) { return DryStationConfig(name); }
+  static DryStationConfig GetDisabled() { return DryStationConfig(); }
+  static DryStationConfig GetConfigured(std::string name, std::uint32_t time,
+                                  SpinType spin) {
+    return DryStationConfig(name, time, spin);
+  }
+
+private:
   // Default constructor creates a disabled station.
   DryStationConfig()
       : StationConfig("Disabled", false, 0), spin(SpinType::NONE) {}
 
+  // Constructor for a configured station.
   DryStationConfig(std::string name, std::uint32_t time, SpinType spin)
       : StationConfig(name, true, time), spin(spin) {}
 

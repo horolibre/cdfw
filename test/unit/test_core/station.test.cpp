@@ -16,7 +16,7 @@ namespace {
 namespace stdfs = std::filesystem;
 
 TEST(WetStationConfigTests, Disabled) {
-  WetStationConfig config;
+  auto config = WetStationConfig::GetDisabled();
 
   EXPECT_EQ(config.name, "Disabled");
   EXPECT_FALSE(config.enabled);
@@ -26,7 +26,7 @@ TEST(WetStationConfigTests, Disabled) {
 
 TEST(WetStationConfigTests, Enabled_Default) {
   std::string name = "wet_default";
-  WetStationConfig config(name);
+  auto config = WetStationConfig::GetDefault(name);
 
   EXPECT_EQ(config.name, name);
   EXPECT_TRUE(config.enabled);
@@ -38,7 +38,7 @@ TEST(WetStationConfigTests, Enabled_Configured) {
   std::string name = "wet_configured";
   std::uint32_t time = 1000;
   auto agitation = WetStationConfig::AgitationLevel::HIGH;
-  WetStationConfig config(name, time, agitation);
+  auto config = WetStationConfig::GetConfigured(name, time, agitation);
 
   EXPECT_EQ(config.name, name);
   EXPECT_TRUE(config.enabled);
@@ -47,7 +47,7 @@ TEST(WetStationConfigTests, Enabled_Configured) {
 }
 
 TEST(DryStationConfigTests, Disabled) {
-  DryStationConfig config;
+  auto config = DryStationConfig::GetDisabled();
 
   EXPECT_EQ(config.name, "Disabled");
   EXPECT_FALSE(config.enabled);
@@ -57,7 +57,7 @@ TEST(DryStationConfigTests, Disabled) {
 
 TEST(DryStationConfigTests, Enabled_Default) {
   std::string name = "dry_default";
-  DryStationConfig config(name);
+  auto config = DryStationConfig::GetDefault(name);
 
   EXPECT_EQ(config.name, name);
   EXPECT_TRUE(config.enabled);
@@ -69,7 +69,7 @@ TEST(DryStationConfigTests, Enabled_Configured) {
   std::string name = "dry_configured";
   std::uint32_t time = 1000;
   auto spin = DryStationConfig::SpinType::BIDIRECTIONAL;
-  DryStationConfig config(name, time, spin);
+  auto config = DryStationConfig::GetConfigured(name, time, spin);
 
   EXPECT_EQ(config.name, name);
   EXPECT_TRUE(config.enabled);
@@ -81,7 +81,7 @@ TEST(StationSerializerTests, Serialize_WetStation) {
   std::string name = "wet_configured";
   std::uint32_t time = 1000;
   auto agitation = WetStationConfig::AgitationLevel::HIGH;
-  WetStationConfig config(name, time, agitation);
+  auto config = WetStationConfig::GetConfigured(name, time, agitation);
   auto serializer = StationSerializer::Create();
   auto json_str = serializer->Serialize(config);
 
@@ -94,7 +94,7 @@ TEST(StationSerializerTests, Serialize_DryStation) {
   std::string name = "dry_configured";
   std::uint32_t time = 1000;
   auto spin = DryStationConfig::SpinType::BIDIRECTIONAL;
-  DryStationConfig config(name, time, spin);
+  auto config = DryStationConfig::GetConfigured(name, time, spin);
   auto serializer = StationSerializer::Create();
   auto json_str = serializer->Serialize(config);
 
