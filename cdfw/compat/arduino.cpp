@@ -12,6 +12,11 @@
 
 // C++ Standard Library Headers
 #include <cstdint>
+#include <cstdio>
+#include <iostream>
+
+// C Standard Library Headers
+#include <stdarg.h>
 
 // Global variables.
 SimulatedSerial Serial;
@@ -29,7 +34,9 @@ void SimulatedSerial::printf(const char *format, ...) {
   va_end(args);
 }
 
-void SimulatedSerial::print(const char *message) { printf("%s", message); }
-void SimulatedSerial::println(const char *message) { printf("%s\n", message); }
+void SimulatedSerial::print(const char *message) { std::cout << message; }
+void SimulatedSerial::println(const char *message) {
+  std::cout << message << std::endl;
+}
 
 #endif // ARDUINO
