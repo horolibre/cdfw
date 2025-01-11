@@ -30,11 +30,16 @@ struct RoutineConfig {
   // Turntable position 5.
   DryStationConfig dry_station;
 
-  RoutineConfig() = default;
   virtual ~RoutineConfig() = default;
 
   // Returns the factory default routine configuration.
   static RoutineConfig GetDefault(void);
+
+  // Returns a routine with all stations disabled.
+  static RoutineConfig GetDisabled(void) { return RoutineConfig(); }
+
+private:
+  RoutineConfig() = default;
 };
 } // namespace cdfw
 

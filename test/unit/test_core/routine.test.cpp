@@ -17,7 +17,7 @@ namespace {
 namespace stdfs = std::filesystem;
 
 TEST(RoutineConfigTests, Disabled) {
-  RoutineConfig config;
+  RoutineConfig config = RoutineConfig::GetDisabled();
 
   for (auto &station : config.wet_stations) {
     EXPECT_EQ(station.name, "Disabled");
