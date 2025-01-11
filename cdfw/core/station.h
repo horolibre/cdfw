@@ -14,35 +14,22 @@
 
 namespace cdfw {
 
-enum class StationType : std::uint8_t {
-  DISABLED = 0, // Indicates an inactive station.
-  WET = 1,
-  DRY = 2
-};
-
 // ---------------------------------------------------------------------------
-// Abstract Station Config Types
+// Abstract Station Config Type
 // ---------------------------------------------------------------------------
 
 // Every station has a name and a type.
-struct BaseStationConfig {
+struct StationConfig {
   std::string name;
-  StationType type;
-
-protected:
-  BaseStationConfig() = delete;
-  BaseStationConfig(std::string name, StationType type)
-      : name(name), type(type) {}
-};
-
-// Non-disabled stations have a time.
-struct TimedStationConfig : BaseStationConfig {
+  bool enabled;
   std::uint32_t time; // Time in seconds.
 
+  virtual ~StationConfig() = default;
+
 protected:
-  TimedStationConfig() = delete;
-  TimedStationConfig(std::string name, StationType type, std::uint32_t time)
-      : BaseStationConfig(name, type), time(time) {}
+  StationConfig() = delete;
+  StationConfig(std::string name, bool enabled, std::uint32_t time)
+      : name(name), enabled(enabled), time(time) {}
 };
 
 // ---------------------------------------------------------------------------
@@ -50,16 +37,9 @@ protected:
 // ---------------------------------------------------------------------------
 
 // Represents a disabled station.
-// Note: There only needs be one instance of this in the system at most.
-// However, this is currently just a statement for an optimization in the future
-// and not something enforced.
-struct DisabledStationConfig : BaseStationConfig {
-  DisabledStationConfig()
-      : BaseStationConfig("Disabled", StationType::DISABLED) {}
-};
 
 // Represents for clean and rinse stations.
-struct WetStationConfig : TimedStationConfig {
+struct WetStationConfig : StationConfig {
   enum class AgitationLevel : std::uint8_t {
     NONE = 0, // No agitation.
     LOW = 1,
@@ -69,21 +49,25 @@ struct WetStationConfig : TimedStationConfig {
 
   AgitationLevel agitation;
 
+  virtual ~WetStationConfig() = default;
+
+  // Default constructor creates a disabled station.
+  WetStationConfig()
+      : StationConfig("Disabled", false, 0), agitation(AgitationLevel::NONE) {}
+
   WetStationConfig(std::string name, std::uint32_t time,
                    AgitationLevel agitation)
-      : TimedStationConfig(name, StationType::WET, time), agitation(agitation) {
-  }
+      : StationConfig(name, true, time), agitation(agitation) {}
 
   // By default we assume:
   // - 3 minutes for the wet station.
   // - Medium agitation.
   WetStationConfig(std::string name)
-      : TimedStationConfig(name, StationType::WET, 180),
-        agitation(AgitationLevel::MEDIUM) {}
+      : StationConfig(name, true, 180), agitation(AgitationLevel::MEDIUM) {}
 };
 
 // Represents for dry stations.
-struct DryStationConfig : TimedStationConfig {
+struct DryStationConfig : StationConfig {
   enum class SpinType : std::uint8_t {
     NONE = 0,           // No spinning.
     UNIDIRECTIONAL = 1, // Spin in one direction.
@@ -92,15 +76,20 @@ struct DryStationConfig : TimedStationConfig {
 
   SpinType spin;
 
+  virtual ~DryStationConfig() = default;
+
+  // Default constructor creates a disabled station.
+  DryStationConfig()
+      : StationConfig("Disabled", false, 0), spin(SpinType::NONE) {}
+
   DryStationConfig(std::string name, std::uint32_t time, SpinType spin)
-      : TimedStationConfig(name, StationType::DRY, time), spin(spin) {}
+      : StationConfig(name, true, time), spin(spin) {}
 
   // By default we assume:
   // - 6 minutes for the dry station.
   // - Uni-directional spin.
   DryStationConfig(std::string name)
-      : TimedStationConfig(name, StationType::DRY, 360),
-        spin(SpinType::UNIDIRECTIONAL) {}
+      : StationConfig(name, true, 360), spin(SpinType::UNIDIRECTIONAL) {}
 };
 } // namespace cdfw
 
