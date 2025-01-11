@@ -38,15 +38,9 @@ public:
     }
   }
 
-  virtual std::uint64_t Capacity() override final {
-    Serial.println("Capacity: A");
-    return sd_.cardSize();
-  }
+  virtual std::uint64_t Capacity() override final { return sd_.cardSize(); }
 
-  virtual std::uint64_t Available() override final {
-    Serial.println("Available: A");
-    return sd_.totalBytes();
-  }
+  virtual std::uint64_t Available() override final { return sd_.totalBytes(); }
 
   virtual std::uint64_t Used() override final {
     return Capacity() - Available();

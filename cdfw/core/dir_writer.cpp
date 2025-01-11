@@ -49,4 +49,8 @@ std::shared_ptr<DirWriter>
 DirWriter::Create(std::shared_ptr<DirWriterStrategy> strategy) {
   return std::make_shared<DirWriterImpl>(strategy);
 }
+
+std::shared_ptr<DirWriter> DirWriter::Create() {
+  return std::make_shared<DirWriterImpl>(DirWriterStrategy::Create());
+}
 } // namespace cdfw

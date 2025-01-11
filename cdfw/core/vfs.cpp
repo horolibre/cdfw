@@ -57,6 +57,7 @@ std::unique_ptr<Volume> Volume::Create(Volume *volume) {
 void Volume::Walk() {
   Serial.println("Walking SD card...");
   WalkImpl(MountPoint());
+  Serial.println("Done walking SD card.");
 }
 
 void Volume::PrintInfo() {

@@ -32,6 +32,7 @@ public:
   // Factory method.
   static std::shared_ptr<DirWriter>
   Create(std::shared_ptr<DirWriterStrategy> strategy);
+  static std::shared_ptr<DirWriter> Create();
 
   // Virtual destructor.
   virtual ~DirWriter() = default;
