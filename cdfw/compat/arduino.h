@@ -2,8 +2,8 @@
 // Use of this source code is governed by a GPLv3 license that can be found in
 // the LICENSE file.
 
-#ifndef CDFW_CORE_ARDUINO_H
-#define CDFW_CORE_ARDUINO_H
+#ifndef CDFW_COMPAT_ARDUINO_H
+#define CDFW_COMPAT_ARDUINO_H
 
 #ifdef ARDUINO
 // Third Party Headers
@@ -14,11 +14,8 @@
 
 // C++ Standard Library Headers
 #include <cstdint>
-#include <string>
 
 // TYPES
-
-using String = std::string;
 
 // FREE FUNCTIONS
 
@@ -30,8 +27,9 @@ void delay(std::uint32_t ms);
 class SimulatedSerial {
 public:
   void begin(unsigned long baud);
-  // void print(const char *message);
-  // void println(const char *message);
+  void printf(const char *format, ...);
+  void print(const char *message);
+  void println(const char *message);
 };
 
 // GLOBAL VARIABLES
@@ -40,4 +38,4 @@ extern SimulatedSerial Serial;
 
 #endif // ARDUINO
 
-#endif // CDFW_CORE_ARDUINO_H
+#endif // CDFW_COMPAT_ARDUINO_H

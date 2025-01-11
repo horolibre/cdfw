@@ -5,7 +5,7 @@
 #ifndef ARDUINO
 
 // Local Headers
-#include "cdfw/core/arduino.h"
+#include "cdfw/compat/arduino.h"
 
 // Third Party Headers
 #include <SDL2/SDL.h>
@@ -21,5 +21,15 @@ unsigned long millis() { return SDL_GetTicks(); }
 void delay(std::uint32_t ms) { SDL_Delay(ms); }
 
 void SimulatedSerial::begin(unsigned long) { return; }
+
+void SimulatedSerial::printf(const char *format, ...) {
+  va_list args;
+  va_start(args, format);
+  vprintf(format, args);
+  va_end(args);
+}
+
+void SimulatedSerial::print(const char *message) { printf("%s", message); }
+void SimulatedSerial::println(const char *message) { printf("%s\n", message); }
 
 #endif // ARDUINO
