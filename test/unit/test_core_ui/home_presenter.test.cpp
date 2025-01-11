@@ -36,7 +36,7 @@ public:
       get_wifi_state_called = false;
       wifi_state_changed_called = false;
       register_subscriber_called = false;
-      WifiState wifi_state = WifiState::DISCONNECTED;
+      wifi_state = WifiState::DISCONNECTED;
       subscriber = nullptr;
     }
   };
@@ -163,17 +163,16 @@ TEST_F(HomePresenterTests, InitNotCalled) {
   EXPECT_EQ(model_data.subscriber, nullptr);
 }
 
-/*
 TEST_F(HomePresenterTests, InitCalled) {
-  // presenter->Init(app_presenter.get());
+  presenter->Init(app_presenter.get());
 
   // Assertions for the view.
   EXPECT_TRUE(view_data.init_called);
   EXPECT_FALSE(view_data.show_called);
   EXPECT_FALSE(view_data.delayed_show_called);
-  // EXPECT_TRUE(view_data.set_wifi_color_called);
-  // EXPECT_TRUE(view_data.set_wifi_visible_called);
-  // EXPECT_TRUE(view_data.wifi_visible);
+  EXPECT_TRUE(view_data.set_wifi_color_called);
+  EXPECT_TRUE(view_data.set_wifi_visible_called);
+  EXPECT_TRUE(view_data.wifi_visible);
   EXPECT_EQ(lv_color_to_u16(view_data.wifi_color), wifi_colors.disconnected);
 
   // Assertions for the model.
@@ -184,7 +183,6 @@ TEST_F(HomePresenterTests, InitCalled) {
   EXPECT_EQ(model_data.wifi_state, WifiState::DISCONNECTED);
   EXPECT_NE(model_data.subscriber, nullptr);
 }
-*/
 
 TEST_F(HomePresenterTests, UpdateWifiIcon) {
   presenter->Init(app_presenter.get());

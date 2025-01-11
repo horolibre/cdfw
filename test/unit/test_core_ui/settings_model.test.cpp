@@ -4,10 +4,13 @@
 
 // Local Headers
 #include "cdfw/core/ui/settings_model.h"
-#include "cdfw/core/arduino.h"
 
 // Third Party Headers
 #include <gtest/gtest.h>
+
+// C++ Standard Library Headers
+#include <memory>
+#include <string>
 
 namespace cdfw {
 namespace core {

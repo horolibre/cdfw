@@ -4,7 +4,6 @@
 
 // Local Headers
 #include "cdfw/core/ui/boot_presenter.h"
-#include "cdfw/core/arduino.h"
 #include "cdfw/core/ui/boot_model.h"
 #include "cdfw/core/version.h"
 
@@ -13,6 +12,7 @@
 
 // C++ Standard Library Headers
 #include <memory>
+#include <string>
 
 namespace cdfw {
 namespace core {
@@ -24,29 +24,29 @@ public:
     bool get_description_called = false;
     bool get_version_called = false;
   };
-  MockBootModel(Data &data, String desc, String version)
+  MockBootModel(Data &data, std::string desc, std::string version)
       : data_(data), desc_(desc), version_(version) {}
   virtual ~MockBootModel() = default;
-  virtual String GetDescription() override final {
+  virtual std::string GetDescription() override final {
     data_.get_description_called = true;
     return desc_;
   }
-  virtual String GetVersion() override final {
+  virtual std::string GetVersion() override final {
     data_.get_version_called = true;
     return version_;
   }
 
 private:
   Data &data_;
-  String desc_;
-  String version_;
+  std::string desc_;
+  std::string version_;
 };
 
 class MockBootView : public BootPresenterView {
 public:
   struct Data {
-    String desc;
-    String version;
+    std::string desc;
+    std::string version;
     bool init_called = false;
     bool set_description_called = false;
     bool set_version_called = false;
@@ -57,12 +57,12 @@ public:
 
   virtual void Init() override final { data_.init_called = true; }
 
-  virtual void SetDescription(const String &desc) override final {
+  virtual void SetDescription(const std::string &desc) override final {
     data_.set_description_called = true;
     data_.desc = desc;
   }
 
-  virtual void SetVersion(const String &version) override final {
+  virtual void SetVersion(const std::string &version) override final {
     data_.set_version_called = true;
     data_.version = version;
   }
@@ -73,8 +73,8 @@ private:
 
 class BootPresenterTests : public ::testing::Test {
 protected:
-  String desc = "sw_desc";
-  String version = "sw_version";
+  std::string desc = "sw_desc";
+  std::string version = "sw_version";
   MockBootModel::Data model_data;
   MockBootView::Data view_data;
   std::shared_ptr<BootPresenter> presenter = nullptr;

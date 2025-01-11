@@ -4,7 +4,6 @@
 
 // Local Headers
 #include "cdfw/core/ui/settings_presenter.h"
-#include "cdfw/core/arduino.h"
 #include "cdfw/core/ui/app_presenter.h"
 #include "cdfw/core/ui/settings_model.h"
 
@@ -13,6 +12,7 @@
 
 // C++ Standard Library Headers
 #include <memory>
+#include <string>
 
 namespace cdfw {
 namespace core {
@@ -69,7 +69,7 @@ public:
     bool set_wifi_status_called = false;
     bool wifi_enabled = false;
     WifiCredentials wifi_credentials;
-    String wifi_status;
+    std::string wifi_status;
   };
 
   MockSettingsView(Data &data) : data_(data) {}
@@ -92,7 +92,7 @@ public:
     data_.wifi_credentials = credentials;
   }
 
-  virtual void SetWifiStatus(const String &status) override final {
+  virtual void SetWifiStatus(const std::string &status) override final {
     data_.set_wifi_status_called = true;
     data_.wifi_status = status;
   }
@@ -115,8 +115,8 @@ public:
 
 class SettingsPresenterTests : public ::testing::Test {
 protected:
-  String ssid = "ssid";
-  String password = "password";
+  std::string ssid = "ssid";
+  std::string password = "password";
   std::unique_ptr<AppPresenter> app_presenter = nullptr;
   std::shared_ptr<MockSettingsModel> model = nullptr;
   std::shared_ptr<SettingsPresenter> presenter = nullptr;
