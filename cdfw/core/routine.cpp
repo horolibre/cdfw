@@ -22,10 +22,16 @@ public:
 
   virtual std::string Serialize(const RoutineConfig &config) override final {
     JsonDocument doc;
+    doc["name"] = config.name;
+
+    JsonArray wet_stations = doc["wet_stations"].to<JsonArray>();
     for (std::size_t i = 0; i < 4; ++i) {
-      station_serializer_->Serialize(doc, config.wet_stations[i]);
+      JsonObject wet_station = wet_stations.add<JsonObject>();
+      station_serializer_->Serialize(wet_station, config.wet_stations[i]);
     }
-    station_serializer_->Serialize(doc, config.dry_station);
+
+    JsonObject dry_station = doc["dry_station"].to<JsonObject>();
+    station_serializer_->Serialize(dry_station, config.dry_station);
 
     std::string json_str;
     serializeJson(doc, json_str);
@@ -43,19 +49,20 @@ std::shared_ptr<RoutineSerializer> RoutineSerializer::Create() {
 
 RoutineConfig RoutineConfig::GetDefault(void) {
   RoutineConfig config;
-  std::string names[4] = {"Clean", "Rinse 1", "Rinse 2", "Rinse 3"};
+  config.name = "Default";
+  std::string wet_names[4] = {"Clean", "Rinse 1", "Rinse 2", "Rinse 3"};
   for (std::size_t i = 0; i < 4; ++i) {
-    config.wet_stations[i] = WetStationConfig::GetDefault(names[i]);
+    config.wet_stations[i] = WetStationConfig::GetDefault(wet_names[i]);
   }
   config.dry_station = DryStationConfig::GetDefault("Dry");
   return config;
 }
 
 RoutineConfig::RoutineConfig()
-    : wet_stations{WetStationConfig::GetDisabled(),
-                   WetStationConfig::GetDisabled(),
-                   WetStationConfig::GetDisabled(),
-                   WetStationConfig::GetDisabled()},
+    : name("Disabled"), wet_stations{WetStationConfig::GetDisabled(),
+                                     WetStationConfig::GetDisabled(),
+                                     WetStationConfig::GetDisabled(),
+                                     WetStationConfig::GetDisabled()},
       dry_station(DryStationConfig::GetDisabled()) {}
 
 } // namespace cdfw

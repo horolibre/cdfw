@@ -19,37 +19,39 @@ public:
   StationSerializerImpl() = default;
   virtual ~StationSerializerImpl() = default;
 
-  virtual void Serialize(JsonDocument &doc,
+  virtual void Serialize(JsonObject &obj,
                          const WetStationConfig &config) override final {
-    doc["name"] = config.name;
-    doc["enabled"] = config.enabled;
-    doc["time"] = config.time;
-    doc["agitation"] = static_cast<std::uint8_t>(config.agitation);
+    obj["name"] = config.name;
+    obj["enabled"] = config.enabled;
+    obj["time"] = config.time;
+    obj["agitation"] = static_cast<std::uint8_t>(config.agitation);
   }
 
   virtual std::string Serialize(const WetStationConfig &config) override final {
     JsonDocument doc;
-    Serialize(doc, config);
+    JsonObject obj = doc.add<JsonObject>();
+    Serialize(obj, config);
 
     std::string json_str;
-    serializeJson(doc, json_str);
+    serializeJson(obj, json_str);
     return json_str;
   }
 
-  virtual void Serialize(JsonDocument &doc,
+  virtual void Serialize(JsonObject &obj,
                          const DryStationConfig &config) override final {
-    doc["name"] = config.name;
-    doc["enabled"] = config.enabled;
-    doc["time"] = config.time;
-    doc["spin"] = static_cast<std::uint8_t>(config.spin);
+    obj["name"] = config.name;
+    obj["enabled"] = config.enabled;
+    obj["time"] = config.time;
+    obj["spin"] = static_cast<std::uint8_t>(config.spin);
   }
 
   virtual std::string Serialize(const DryStationConfig &config) override final {
     JsonDocument doc;
-    Serialize(doc, config);
+    JsonObject obj = doc.add<JsonObject>();
+    Serialize(obj, config);
 
     std::string json_str;
-    serializeJson(doc, json_str);
+    serializeJson(obj, json_str);
     return json_str;
   }
 };

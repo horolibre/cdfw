@@ -51,19 +51,54 @@ TEST(RoutineConfigTests, Default) {
             DryStationConfig::SpinType::UNIDIRECTIONAL);
 }
 
-TEST(RoutineSerializerTests, Serialize) {
+TEST(RoutineSerializerTests, Serialize_Disabled) {
+  auto serializer = RoutineSerializer::Create();
+  RoutineConfig config = RoutineConfig::GetDisabled();
+  std::string json = serializer->Serialize(config);
+
+  std::string expected =
+      "{\"name\":\"Disabled\",\"wet_stations\":[{\"name\":\"Disabled\","
+      "\"enabled"
+      "\":false,\"time\":0,\"agitation\":0},{\"name\":\"Disabled\",\"enabled\":"
+      "false,\"time\":0,\"agitation\":0},{\"name\":\"Disabled\",\"enabled\":"
+      "false,\"time\":0,\"agitation\":0},{\"name\":\"Disabled\",\"enabled\":"
+      "false,\"time\":0,\"agitation\":0}],\"dry_station\":{\"name\":\"Disabled"
+      "\",\"enabled\":false,\"time\":0,\"spin\":0}}";
+  EXPECT_EQ(json, expected);
+}
+
+TEST(RoutineSerializerTests, Serialize_Default) {
   auto serializer = RoutineSerializer::Create();
   RoutineConfig config = RoutineConfig::GetDefault();
   std::string json = serializer->Serialize(config);
 
-  std::string wet_expected =
-      R"({"name":"wet_configured","enabled":true,"time":1000,"agitation":3})";
-  std::string dry_expected =
-      R"({"name":"dry_configured","enabled":true,"time":1000,"spin":2})";
-  std::string expected = R"({"wet_stations":[)" + wet_expected + R"(,)" +
-                         wet_expected + R"(,)" + wet_expected + R"(,)" +
-                         wet_expected + R"(],"dry_station":)" + dry_expected +
-                         R"(})";
+  std::string expected =
+      "{\"name\":\"Default\",\"wet_stations\":[{\"name\":\"Clean\",\"enabled\":"
+      "true,\"time\":180,\"agitation\":2},{\"name\":\"Rinse "
+      "1\",\"enabled\":true,\"time\":180,\"agitation\":2},{\"name\":\"Rinse "
+      "2\",\"enabled\":true,\"time\":180,\"agitation\":2},{\"name\":\"Rinse "
+      "3\",\"enabled\":true,\"time\":180,\"agitation\":2}],\"dry_station\":{"
+      "\"name\":\"Dry\",\"enabled\":true,\"time\":360,\"spin\":1}}";
+  EXPECT_EQ(json, expected);
+}
+
+TEST(RoutineSerializerTests, Serialize_Configured) {
+  auto serializer = RoutineSerializer::Create();
+  RoutineConfig config = RoutineConfig::GetDefault();
+  config.name = "routine_configured";
+  config.wet_stations[0] = WetStationConfig::GetConfigured(
+      "Clean", 1000, WetStationConfig::AgitationLevel::HIGH);
+  config.dry_station = DryStationConfig::GetConfigured(
+      "Dry", 1000, DryStationConfig::SpinType::BIDIRECTIONAL);
+  std::string json = serializer->Serialize(config);
+
+  std::string expected =
+      "{\"name\":\"routine_configured\",\"wet_stations\":[{\"name\":\"Clean\","
+      "\"enabled\":true,\"time\":1000,\"agitation\":3},{\"name\":\"Rinse "
+      "1\",\"enabled\":true,\"time\":180,\"agitation\":2},{\"name\":\"Rinse "
+      "2\",\"enabled\":true,\"time\":180,\"agitation\":2},{\"name\":\"Rinse "
+      "3\",\"enabled\":true,\"time\":180,\"agitation\":2}],\"dry_station\":{"
+      "\"name\":\"Dry\",\"enabled\":true,\"time\":1000,\"spin\":2}}";
   EXPECT_EQ(json, expected);
 }
 

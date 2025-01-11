@@ -127,11 +127,11 @@ public:
   virtual ~StationSerializer() = default;
 
   // Serializes/Deserializes the given wet station configuration.
-  virtual void Serialize(JsonDocument &doc, const WetStationConfig &config) = 0;
+  virtual void Serialize(JsonObject &obj, const WetStationConfig &config) = 0;
   virtual std::string Serialize(const WetStationConfig &config) = 0;
 
   // Serializes the given dry station configuration.
-  virtual void Serialize(JsonDocument &doc, const DryStationConfig &config) = 0;
+  virtual void Serialize(JsonObject &dobj, const DryStationConfig &config) = 0;
   virtual std::string Serialize(const DryStationConfig &config) = 0;
 };
 

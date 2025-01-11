@@ -23,10 +23,13 @@
 
 // C++ Standard Library Headers
 #include <memory>
+#include <string>
 
 namespace cdfw {
 
 struct RoutineConfig {
+  std::string name;
+
   // Turntable positions 1 - 4.
   WetStationConfig wet_stations[4];
 
