@@ -31,7 +31,7 @@ struct StationConfig {
   virtual ~StationConfig() = default;
 
 protected:
-  StationConfig() = delete;
+  StationConfig() = default;
   StationConfig(std::string name, bool enabled, std::uint32_t time)
       : name(name), enabled(enabled), time(time) {}
 };
@@ -45,10 +45,10 @@ protected:
 // Represents for clean and rinse stations.
 struct WetStationConfig : StationConfig {
   enum class AgitationLevel : std::uint8_t {
-    NONE = 0, // No agitation.
-    LOW = 1,
-    MEDIUM = 2,
-    HIGH = 3
+    kNONE = 0, // No agitation.
+    kLOW = 1,
+    kMEDIUM = 2,
+    kHIGH = 3
   };
 
   AgitationLevel agitation;
@@ -67,7 +67,7 @@ struct WetStationConfig : StationConfig {
 private:
   // Default constructor creates a disabled station.
   WetStationConfig()
-      : StationConfig("Disabled", false, 0), agitation(AgitationLevel::NONE) {}
+      : StationConfig("Disabled", false, 0), agitation(AgitationLevel::kNONE) {}
 
   // Constructor for a configured station.
   WetStationConfig(std::string name, std::uint32_t time,
@@ -78,15 +78,15 @@ private:
   // - 3 minutes for the wet station.
   // - Medium agitation.
   WetStationConfig(std::string name)
-      : StationConfig(name, true, 180), agitation(AgitationLevel::MEDIUM) {}
+      : StationConfig(name, true, 180), agitation(AgitationLevel::kMEDIUM) {}
 };
 
 // Represents for dry stations.
 struct DryStationConfig : StationConfig {
   enum class SpinType : std::uint8_t {
-    NONE = 0,           // No spinning.
-    UNIDIRECTIONAL = 1, // Spin in one direction.
-    BIDIRECTIONAL = 2   // Spin in both directions.
+    kNONE = 0,           // No spinning.
+    kUNIDIRECTIONAL = 1, // Spin in one direction.
+    kBIDIRECTIONAL = 2   // Spin in both directions.
   };
 
   SpinType spin;
@@ -105,7 +105,7 @@ struct DryStationConfig : StationConfig {
 private:
   // Default constructor creates a disabled station.
   DryStationConfig()
-      : StationConfig("Disabled", false, 0), spin(SpinType::NONE) {}
+      : StationConfig("Disabled", false, 0), spin(SpinType::kNONE) {}
 
   // Constructor for a configured station.
   DryStationConfig(std::string name, std::uint32_t time, SpinType spin)
@@ -115,7 +115,7 @@ private:
   // - 6 minutes for the dry station.
   // - Uni-directional spin.
   DryStationConfig(std::string name)
-      : StationConfig(name, true, 360), spin(SpinType::UNIDIRECTIONAL) {}
+      : StationConfig(name, true, 360), spin(SpinType::kUNIDIRECTIONAL) {}
 };
 
 class StationSerializer {
