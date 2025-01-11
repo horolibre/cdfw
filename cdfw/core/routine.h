@@ -21,6 +21,9 @@
 // Local Headers
 #include "cdfw/core/station.h"
 
+// C++ Standard Library Headers
+#include <memory>
+
 namespace cdfw {
 
 struct RoutineConfig {
@@ -40,6 +43,18 @@ struct RoutineConfig {
 
 protected:
   RoutineConfig();
+};
+
+class RoutineSerializer {
+public:
+  // Factory method.
+  static std::shared_ptr<RoutineSerializer> Create();
+
+  // Virtual destructor.
+  virtual ~RoutineSerializer() = default;
+
+  // Serializes the given routine configuration.
+  virtual std::string Serialize(const RoutineConfig &config) = 0;
 };
 } // namespace cdfw
 

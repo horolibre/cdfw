@@ -19,24 +19,34 @@ public:
   StationSerializerImpl() = default;
   virtual ~StationSerializerImpl() = default;
 
-  virtual std::string Serialize(const WetStationConfig &config) override final {
-    JsonDocument doc;
+  virtual void Serialize(JsonDocument &doc,
+                         const WetStationConfig &config) override final {
     doc["name"] = config.name;
     doc["enabled"] = config.enabled;
     doc["time"] = config.time;
     doc["agitation"] = static_cast<std::uint8_t>(config.agitation);
+  }
+
+  virtual std::string Serialize(const WetStationConfig &config) override final {
+    JsonDocument doc;
+    Serialize(doc, config);
 
     std::string json_str;
     serializeJson(doc, json_str);
     return json_str;
   }
 
-  virtual std::string Serialize(const DryStationConfig &config) override final {
-    JsonDocument doc;
+  virtual void Serialize(JsonDocument &doc,
+                         const DryStationConfig &config) override final {
     doc["name"] = config.name;
     doc["enabled"] = config.enabled;
     doc["time"] = config.time;
     doc["spin"] = static_cast<std::uint8_t>(config.spin);
+  }
+
+  virtual std::string Serialize(const DryStationConfig &config) override final {
+    JsonDocument doc;
+    Serialize(doc, config);
 
     std::string json_str;
     serializeJson(doc, json_str);

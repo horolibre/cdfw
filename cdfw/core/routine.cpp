@@ -15,44 +15,31 @@
 
 namespace cdfw {
 namespace {
-/*
-class RoutineSerializerImpl : public StationSerializer {
+class RoutineSerializerImpl : public RoutineSerializer {
 public:
-RoutineSerializerImpl() = default;
-virtual ~RoutineSerializerImpl() = default;
+  RoutineSerializerImpl() : station_serializer_(StationSerializer::Create()) {}
+  virtual ~RoutineSerializerImpl() = default;
 
-virtual std::string Serialize(const RoutineConfig &config) override final {
-JsonDocument doc;
-doc["name"] = config.name;
-doc["enabled"] = config.enabled;
-doc["time"] = config.time;
-doc["agitation"] = static_cast<std::uint8_t>(config.agitation);
+  virtual std::string Serialize(const RoutineConfig &config) override final {
+    JsonDocument doc;
+    for (std::size_t i = 0; i < 4; ++i) {
+      station_serializer_->Serialize(doc, config.wet_stations[i]);
+    }
+    station_serializer_->Serialize(doc, config.dry_station);
 
-std::string json_str;
-serializeJson(doc, json_str);
-return json_str;
-}
+    std::string json_str;
+    serializeJson(doc, json_str);
+    return json_str;
+  }
 
-virtual std::string Serialize(const RoutineConfig &config) override final {
-JsonDocument doc;
-doc["name"] = config.name;
-doc["enabled"] = config.enabled;
-doc["time"] = config.time;
-doc["spin"] = static_cast<std::uint8_t>(config.spin);
-
-std::string json_str;
-serializeJson(doc, json_str);
-return json_str;
-}
+private:
+  std::shared_ptr<StationSerializer> station_serializer_;
 };
-*/
 } // namespace
 
-/*
-std::shared_ptr<StationSerializer> StationSerializer::Create() {
-  return std::make_shared<StationSerializerImpl>();
+std::shared_ptr<RoutineSerializer> RoutineSerializer::Create() {
+  return std::make_shared<RoutineSerializerImpl>();
 }
-*/
 
 RoutineConfig RoutineConfig::GetDefault(void) {
   RoutineConfig config;
@@ -64,10 +51,11 @@ RoutineConfig RoutineConfig::GetDefault(void) {
   return config;
 }
 
-RoutineConfig::RoutineConfig() : wet_stations{WetStationConfig::GetDisabled(),
-                                                WetStationConfig::GetDisabled(),
-                                                WetStationConfig::GetDisabled(),
-                                                WetStationConfig::GetDisabled()},
-                                 dry_station(DryStationConfig::GetDisabled()) {}
+RoutineConfig::RoutineConfig()
+    : wet_stations{WetStationConfig::GetDisabled(),
+                   WetStationConfig::GetDisabled(),
+                   WetStationConfig::GetDisabled(),
+                   WetStationConfig::GetDisabled()},
+      dry_station(DryStationConfig::GetDisabled()) {}
 
 } // namespace cdfw

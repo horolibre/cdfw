@@ -51,5 +51,21 @@ TEST(RoutineConfigTests, Default) {
             DryStationConfig::SpinType::UNIDIRECTIONAL);
 }
 
+TEST(RoutineSerializerTests, Serialize) {
+  auto serializer = RoutineSerializer::Create();
+  RoutineConfig config = RoutineConfig::GetDefault();
+  std::string json = serializer->Serialize(config);
+
+  std::string wet_expected =
+      R"({"name":"wet_configured","enabled":true,"time":1000,"agitation":3})";
+  std::string dry_expected =
+      R"({"name":"dry_configured","enabled":true,"time":1000,"spin":2})";
+  std::string expected = R"({"wet_stations":[)" + wet_expected + R"(,)" +
+                         wet_expected + R"(,)" + wet_expected + R"(,)" +
+                         wet_expected + R"(],"dry_station":)" + dry_expected +
+                         R"(})";
+  EXPECT_EQ(json, expected);
+}
+
 } // namespace
 } // namespace cdfw

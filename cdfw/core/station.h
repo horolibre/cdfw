@@ -8,8 +8,12 @@
 // A station is the base element of a cleaning routine.
 // Stations fall into two categories: wet (e.g., clean, rinse) and dry.
 
+// Third Party Headers
+#include <ArduinoJson.h>
+
 // C++ Standard Library Headers
 #include <cstdint>
+#include <memory>
 #include <string>
 
 namespace cdfw {
@@ -51,10 +55,12 @@ struct WetStationConfig : StationConfig {
 
   virtual ~WetStationConfig() = default;
 
-  static WetStationConfig GetDefault(std::string name) { return WetStationConfig(name); }
+  static WetStationConfig GetDefault(std::string name) {
+    return WetStationConfig(name);
+  }
   static WetStationConfig GetDisabled() { return WetStationConfig(); }
   static WetStationConfig GetConfigured(std::string name, std::uint32_t time,
-                                 AgitationLevel agitation) {
+                                        AgitationLevel agitation) {
     return WetStationConfig(name, time, agitation);
   }
 
@@ -87,10 +93,12 @@ struct DryStationConfig : StationConfig {
 
   virtual ~DryStationConfig() = default;
 
-  static DryStationConfig GetDefault(std::string name) { return DryStationConfig(name); }
+  static DryStationConfig GetDefault(std::string name) {
+    return DryStationConfig(name);
+  }
   static DryStationConfig GetDisabled() { return DryStationConfig(); }
   static DryStationConfig GetConfigured(std::string name, std::uint32_t time,
-                                  SpinType spin) {
+                                        SpinType spin) {
     return DryStationConfig(name, time, spin);
   }
 
@@ -119,9 +127,11 @@ public:
   virtual ~StationSerializer() = default;
 
   // Serializes/Deserializes the given wet station configuration.
+  virtual void Serialize(JsonDocument &doc, const WetStationConfig &config) = 0;
   virtual std::string Serialize(const WetStationConfig &config) = 0;
 
   // Serializes the given dry station configuration.
+  virtual void Serialize(JsonDocument &doc, const DryStationConfig &config) = 0;
   virtual std::string Serialize(const DryStationConfig &config) = 0;
 };
 
