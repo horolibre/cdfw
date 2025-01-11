@@ -1,6 +1,6 @@
 // Local Headers
 #include "cdfw/core/debug.h"
-#include "cdfw/core/arduino.h"
+#include "cdfw/compat/arduino.h"
 
 // Third Party Headers
 #include <lvgl.h>

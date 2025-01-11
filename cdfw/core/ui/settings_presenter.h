@@ -15,6 +15,7 @@
 
 // C++ Standard Library Headers
 #include <memory>
+#include <string>
 
 namespace cdfw {
 namespace core {
@@ -37,7 +38,7 @@ public:
   virtual void Show() = 0;
   virtual void SetWifiEnabled(bool enabled) = 0;
   virtual void SetWifiCredentials(const WifiCredentials &credentials) = 0;
-  virtual void SetWifiStatus(const String &status) = 0;
+  virtual void SetWifiStatus(const std::string &status) = 0;
 };
 
 class SettingsPresenter : public SettingsModelSubscriber,

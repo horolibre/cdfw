@@ -6,11 +6,11 @@
 #define CDFW_CORE_UI_BOOT_PRESENTER_H
 
 // Local Headers
-#include "cdfw/core/arduino.h"
 #include "cdfw/core/ui/boot_model.h"
 
 // C++ Standard Library Headers
 #include <memory>
+#include <string>
 
 namespace cdfw {
 namespace core {
@@ -29,8 +29,8 @@ public:
   // ---------------------------------------------------------------------------
 
   virtual void Init() = 0;
-  virtual void SetDescription(const String &desc) = 0;
-  virtual void SetVersion(const String &version) = 0;
+  virtual void SetDescription(const std::string &desc) = 0;
+  virtual void SetVersion(const std::string &version) = 0;
 };
 
 class BootPresenter {

@@ -5,11 +5,9 @@
 #ifndef CDFW_CORE_UI_BOOT_MODEL_H
 #define CDFW_CORE_UI_BOOT_MODEL_H
 
-// Local Headers
-#include "cdfw/core/arduino.h"
-
 // C++ Standard Library Headers
 #include <memory>
+#include <string>
 
 namespace cdfw {
 namespace core {
@@ -22,8 +20,8 @@ public:
   // Virtual d'tor.
   virtual ~BootModel() = default;
 
-  virtual String GetDescription() = 0;
-  virtual String GetVersion() = 0;
+  virtual std::string GetDescription() = 0;
+  virtual std::string GetVersion() = 0;
 };
 } // namespace ui
 } // namespace core

@@ -4,11 +4,11 @@
 
 // Local Headers
 #include "cdfw/core/ui/boot_model.h"
-#include "cdfw/core/arduino.h"
 #include "cdfw/core/version.h"
 
 // C++ Standard Library Headers
 #include <memory>
+#include <string>
 
 namespace cdfw {
 namespace core {
@@ -19,9 +19,9 @@ public:
   BootModelImpl() = default;
   virtual ~BootModelImpl() = default;
 
-  virtual String GetDescription() { return "HOROLIBRE Cleaner"; }
+  virtual std::string GetDescription() { return "HOROLIBRE Cleaner"; }
 
-  virtual String GetVersion() { return CDFW_VERSION; }
+  virtual std::string GetVersion() { return CDFW_VERSION; }
 };
 } // namespace
 

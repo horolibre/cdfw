@@ -14,6 +14,7 @@
 // C++ Standard Library Headers
 #include <map>
 #include <memory>
+#include <string>
 
 namespace cdfw {
 namespace core {
@@ -76,7 +77,7 @@ private:
 
   void SetViewWifiState(const WifiState &state) {
     view_->SetWifiEnabled(state != WifiState::DISABLED_);
-    std::map<WifiState, String> state_map = {
+    std::map<WifiState, std::string> state_map = {
         {WifiState::DISABLED_, "Disabled"},
         {WifiState::DISCONNECTED, "Disconnected"},
         {WifiState::CONNECTED, "Connected"}};

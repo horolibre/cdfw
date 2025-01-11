@@ -5,8 +5,8 @@
 #ifndef CDFW_CORE_WIFI_H
 #define CDFW_CORE_WIFI_H
 
-// Local Headers
-#include "cdfw/core/arduino.h"
+// C++ Standard Library Headers
+#include <string>
 
 namespace cdfw {
 namespace core {
@@ -15,11 +15,11 @@ namespace core {
 enum class WifiState { DISABLED_, DISCONNECTED, CONNECTED };
 
 struct WifiCredentials {
-  String ssid;
-  String password;
+  std::string ssid;
+  std::string password;
 
   WifiCredentials() : ssid(""), password("") {}
-  WifiCredentials(const String &ssid, const String &password)
+  WifiCredentials(const std::string &ssid, const std::string &password)
       : ssid(ssid), password(password) {}
 };
 } // namespace core

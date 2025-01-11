@@ -7,6 +7,7 @@
 #ifndef PIO_UNIT_TESTING
 
 // Local Headers
+#include "cdfw/compat/arduino.h"
 #include "cdfw/core/core.h"
 #include "cdfw/gui/gui.h"
 #include "cdfw/hal/hal.h"

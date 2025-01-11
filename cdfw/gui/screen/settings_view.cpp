@@ -14,6 +14,7 @@
 
 // C++ Standard Library Headers
 #include <memory>
+#include <string>
 
 namespace cdfw {
 namespace gui {
@@ -122,7 +123,7 @@ public:
     // TODO
   }
 
-  virtual void SetWifiStatus(const String &status) override final {
+  virtual void SetWifiStatus(const std::string &status) override final {
     // TODO
   }
 

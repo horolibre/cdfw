@@ -4,7 +4,6 @@
 
 // Local Headers
 #include "cdfw/gui/screen/boot_view.h"
-#include "cdfw/core/arduino.h"
 #include "cdfw/core/ui/boot_presenter.h"
 #include "cdfw/core/version.h"
 #include "cdfw/gui/internal/color.h"
@@ -13,8 +12,10 @@
 #include <lvgl.h>
 
 // C++ Standard Library Headers
+#include <cstdint>
 #include <cstdio>
 #include <memory>
+#include <string>
 
 namespace cdfw {
 namespace gui {
@@ -38,11 +39,11 @@ public:
     lv_obj_align(ver_lbl_, LV_ALIGN_CENTER, 0, 16);
   }
 
-  virtual void SetDescription(const String &desc) override final {
+  virtual void SetDescription(const std::string &desc) override final {
     lv_label_set_text(desc_lbl_, desc.c_str());
   }
 
-  virtual void SetVersion(const String &version) override final {
+  virtual void SetVersion(const std::string &version) override final {
     std::uint8_t buf_size = 8;
     char str_buf[buf_size];
     std::snprintf(str_buf, buf_size, "v%s", version.c_str());
