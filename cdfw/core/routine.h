@@ -32,6 +32,9 @@ struct RoutineConfig {
 
   RoutineConfig() = default;
   virtual ~RoutineConfig() = default;
+
+  // Returns the factory default routine configuration.
+  static RoutineConfig GetDefault(void);
 };
 } // namespace cdfw
 

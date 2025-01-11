@@ -16,8 +16,7 @@ namespace cdfw {
 namespace {
 namespace stdfs = std::filesystem;
 
-TEST(RoutineConfigTests, Default) {
-  // Default constructed routine has all stations disabled.
+TEST(RoutineConfigTests, Disabled) {
   RoutineConfig config;
 
   for (auto &station : config.wet_stations) {
@@ -31,6 +30,25 @@ TEST(RoutineConfigTests, Default) {
   EXPECT_FALSE(config.dry_station.enabled);
   EXPECT_EQ(config.dry_station.time, 0);
   EXPECT_EQ(config.dry_station.spin, DryStationConfig::SpinType::NONE);
+}
+
+TEST(RoutineConfigTests, Default) {
+  RoutineConfig config = RoutineConfig::GetDefault();
+
+  std::string names[4] = {"Clean", "Rinse 1", "Rinse 2", "Rinse 3"};
+  for (std::size_t i = 0; i < 4; ++i) {
+    EXPECT_EQ(config.wet_stations[i].name, names[i]);
+    EXPECT_TRUE(config.wet_stations[i].enabled);
+    EXPECT_EQ(config.wet_stations[i].time, 180);
+    EXPECT_EQ(config.wet_stations[i].agitation,
+              WetStationConfig::AgitationLevel::MEDIUM);
+  }
+
+  EXPECT_EQ(config.dry_station.name, "Dry");
+  EXPECT_TRUE(config.dry_station.enabled);
+  EXPECT_EQ(config.dry_station.time, 360);
+  EXPECT_EQ(config.dry_station.spin,
+            DryStationConfig::SpinType::UNIDIRECTIONAL);
 }
 
 } // namespace
