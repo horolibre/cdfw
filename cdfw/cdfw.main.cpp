@@ -36,12 +36,14 @@ void InitHardware() {
 
   // Hardware is initialized on creation.
   touchscreen = hal::Touchscreen::Create();
+  sd = hal::SD::Create();
+
+  // Initialize app directories.
+  DirManager().CreateDirs(sd->MountPoint());
 
   // Playing around with SD card functionality.
   // Note: This section is temporary.
-  sd = hal::SD::Create();
   sd->PrintInfo();
-  DirWriter::Create()->Write(DirLayout(sd->MountPoint()));
   sd->Walk();
 }
 

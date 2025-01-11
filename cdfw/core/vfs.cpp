@@ -17,8 +17,15 @@ namespace {
 namespace stdfs = std::filesystem;
 
 void WalkImpl(stdfs::path p, std::string indent = "") {
-  Serial.printf("%s%s\n", indent.c_str(), p.c_str());
-  indent += "  ";
+  if (indent.empty()) {
+    // Show the top-level directory as absolute.
+    Serial.printf("%s%s/\n", indent.c_str(), p.c_str());
+    indent = "└── ";
+  } else {
+    // Otherwise, show the directory as relative.
+    Serial.printf("%s%s/\n", indent.c_str(), p.filename().c_str());
+    indent = "    " + indent;
+  }
 
   for (const auto &entry : stdfs::directory_iterator(p)) {
     if (entry.is_directory()) {

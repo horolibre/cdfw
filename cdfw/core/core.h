@@ -8,7 +8,7 @@
 // Local Headers
 #include "cdfw/core/debug.h"
 #include "cdfw/core/dir_layout.h"
-#include "cdfw/core/dir_writer.h"
+#include "cdfw/core/dir_manager.h"
 #include "cdfw/core/version.h"
 #include "cdfw/core/vfs.h"
 #include "cdfw/core/wifi.h"
