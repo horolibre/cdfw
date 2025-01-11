@@ -6,9 +6,9 @@
 #define CDFW_CORE_CORE_H
 
 // Local Headers
-#include "cdfw/core/arduino.h"
 #include "cdfw/core/debug.h"
 #include "cdfw/core/version.h"
+#include "cdfw/core/vfs.h"
 #include "cdfw/core/wifi.h"
 
 #include "cdfw/core/ui/app_presenter.h"

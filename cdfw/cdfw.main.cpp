@@ -17,6 +17,8 @@
 
 // C++ Standard Library Headers
 #include <cstdint>
+#include <filesystem>
+#include <fstream>
 #include <memory>
 
 namespace cdfw {
@@ -37,9 +39,8 @@ void InitHardware() {
   // Hardware is initialized on creation.
   touchscreen = hal::Touchscreen::Create();
   sd = hal::SD::Create();
-  LV_LOG_INFO("SD capacity: %llu bytes", sd->GetCapacity());
-  LV_LOG_INFO("SD available: %llu bytes", sd->GetAvailable());
-  LV_LOG_INFO("SD used: %llu bytes", sd->GetUsed());
+  sd->PrintInfo();
+  sd->Walk();
 }
 
 void InitGUI() {

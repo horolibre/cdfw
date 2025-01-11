@@ -5,36 +5,45 @@
 #ifdef CDFW_NATIVE
 
 // Local Headers
+#include "cdfw/compat/arduino.h"
 #include "cdfw/hal/sd.h"
 
 // C++ Standard Library Headers
 #include <filesystem>
+#include <iostream>
 #include <memory>
 
 namespace cdfw {
 namespace hal {
 namespace {
+namespace stdfs = std::filesystem;
+
 class SDImpl : public hal::SD {
 public:
   SDImpl() = default;
   virtual ~SDImpl() = default;
 
-  void Init() { tmp_dir_ = std::filesystem::temp_directory_path(); }
-
-  virtual std::uint64_t GetCapacity() override final {
-    return std::filesystem::space(tmp_dir_).capacity;
+  void Init() {
+    mp_dir_ = stdfs::temp_directory_path() / CDFW_SD_VOLUME_NAME;
+    stdfs::create_directories(mp_dir_);
   }
 
-  virtual std::uint64_t GetAvailable() override final {
-    return std::filesystem::space(tmp_dir_).available;
+  virtual std::uint64_t Capacity() override final {
+    return stdfs::space(mp_dir_).capacity;
   }
 
-  virtual std::uint64_t GetUsed() override final {
-    return GetCapacity() - GetAvailable();
+  virtual std::uint64_t Available() override final {
+    return stdfs::space(mp_dir_).available;
   }
+
+  virtual std::uint64_t Used() override final {
+    return Capacity() - Available();
+  }
+
+  virtual stdfs::path MountPoint() override final { return mp_dir_; }
 
 private:
-  std::filesystem::path tmp_dir_;
+  stdfs::path mp_dir_;
 };
 } // namespace
 

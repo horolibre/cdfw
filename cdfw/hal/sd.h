@@ -7,13 +7,18 @@
 
 // Interface for SD access.
 
+// Local Headers
+#include "cdfw/core/vfs.h"
+
 // C++ Standard Library Headers
 #include <memory>
+
+#define CDFW_SD_VOLUME_NAME "sd"
 
 namespace cdfw {
 namespace hal {
 // Representation of the SD device.
-class SD {
+class SD : public vfs::Volume {
 public:
   // Factory method.
   static std::unique_ptr<SD> Create();
@@ -21,9 +26,7 @@ public:
   // Virtual d'tor.
   virtual ~SD() = default;
 
-  virtual std::uint64_t GetCapacity() = 0;
-  virtual std::uint64_t GetAvailable() = 0;
-  virtual std::uint64_t GetUsed() = 0;
+  virtual bool IsSD() override final { return true; }
 };
 } // namespace hal
 } // namespace cdfw

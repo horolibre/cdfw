@@ -5,7 +5,8 @@
 #ifdef CDFW_CYD
 
 // Local Headers
-#include "cdfw/core/arduino.h"
+#include "cdfw/compat/arduino.h"
+#include "cdfw/core/vfs.h"
 #include "cdfw/hal/sd.h"
 
 // Third Party Headers
@@ -14,36 +15,50 @@
 #include <SPI.h>
 
 // C++ Standard Library Headers
+#include <filesystem>
 #include <memory>
+
+#define TO_MOUNT_POINT "/" CDFW_SD_VOLUME_NAME
 
 namespace cdfw {
 namespace hal {
 namespace {
+namespace ardfs = ::fs;
+namespace stdfs = std::filesystem;
+
 class SDImpl : public hal::SD {
 public:
   SDImpl() : spi_(SPIClass(VSPI)), sd_(::SD) {}
-  virtual ~SDImpl() = default;
+  virtual ~SDImpl() { sd_.end(); }
 
   void Init() {
-    if (!sd_.begin(SS, spi_, 80000000)) {
+    if (!sd_.begin(SS, spi_, 80000000, TO_MOUNT_POINT)) {
       Serial.println("Error: Failed to mount card.");
       return;
     }
   }
 
-  virtual std::uint64_t GetCapacity() override final { return sd_.cardSize(); }
+  virtual std::uint64_t Capacity() override final {
+    Serial.println("Capacity: A");
+    return sd_.cardSize();
+  }
 
-  virtual std::uint64_t GetAvailable() override final {
+  virtual std::uint64_t Available() override final {
+    Serial.println("Available: A");
     return sd_.totalBytes();
   }
 
-  virtual std::uint64_t GetUsed() override final {
-    return GetCapacity() - GetAvailable();
+  virtual std::uint64_t Used() override final {
+    return Capacity() - Available();
+  }
+
+  virtual stdfs::path MountPoint() override final {
+    return stdfs::path(sd_.mountpoint());
   }
 
 private:
   SPIClass spi_;
-  fs::SDFS &sd_;
+  ardfs::SDFS &sd_;
 };
 } // namespace
 
