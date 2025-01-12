@@ -23,7 +23,6 @@ function main {
   fi
 
   # Generate the coverage report(s).
-  export PATH=/Library/Developer/CommandLineTools/usr/bin:$PATH
   llvm-profdata merge -sparse coverage/*.profraw -o coverage/cdfw.profdata
   if [ $? -ne 0 ]; then
     echo "Failed to merge coverage data."
