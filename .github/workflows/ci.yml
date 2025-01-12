@@ -25,5 +25,9 @@ jobs:
       with:
         path: ~/.platformio
         key: platformio-${{ env.os }}
+    - name: Setup SDL2 frameworks
+      uses: BrettDong/setup-sdl2-frameworks@main
+      with:
+        sdl2: latest
     - name: Build firmware for env ${{ env.pio_env }} on ${{ env.os }}
       run: pio run -e ${{ env.pio_env }}
