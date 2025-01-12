@@ -1,9 +1,13 @@
 name: cdfw CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
 
 env:
-  pio_env: macos
+  pio_env: macos-cov
   os: macos
 
 jobs:
@@ -56,5 +60,14 @@ jobs:
       uses: Homebrew/actions/setup-homebrew@master
     - name: Install SDL2 frameworks
       run: brew install sdl2
+    - name: Install LLVM
+      run: brew install llvm
     - name: Run tests for env ${{ env.pio_env }} on ${{ env.os }}
       run: pio test -e ${{ env.pio_env }}
+    - name: Generate coverage report
+      run: ./tools/gen-cov.sh
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v5
+      with:
+        files: coverage/cdfw.lcov
+        token: ${{ secrets.CODECOV_TOKEN }}

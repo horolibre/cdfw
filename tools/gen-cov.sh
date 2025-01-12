@@ -23,7 +23,6 @@ function main {
   fi
 
   # Generate the coverage report(s).
-  export PATH=/Library/Developer/CommandLineTools/usr/bin:$PATH
   llvm-profdata merge -sparse coverage/*.profraw -o coverage/cdfw.profdata
   if [ $? -ne 0 ]; then
     echo "Failed to merge coverage data."
@@ -40,6 +39,13 @@ function main {
 
   llvm-cov report -instr-profile=coverage/cdfw.profdata "${inst_bin}" \
     -sources cdfw/ > coverage/coverage_report.txt
+  if [ $? -ne 0 ]; then
+    echo "Failed to generate coverage report."
+    exit 1
+  fi
+
+  llvm-cov export -format=lcov -instr-profile=coverage/cdfw.profdata "${inst_bin}" \
+    -sources cdfw/ > coverage/cdfw.lcov
   if [ $? -ne 0 ]; then
     echo "Failed to generate coverage report."
     exit 1
