@@ -3,7 +3,7 @@ name: cdfw CI
 on: [push, pull_request]
 
 env:
-  pio_env: macos
+  pio_env: macos-cov
   os: macos
 
 jobs:
@@ -58,3 +58,8 @@ jobs:
       run: brew install sdl2
     - name: Run tests for env ${{ env.pio_env }} on ${{ env.os }}
       run: pio test -e ${{ env.pio_env }}
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v5
+      with:
+        files: coverage/cdfw.lcov
+        token: ${{ secrets.CODECOV_TOKEN }}

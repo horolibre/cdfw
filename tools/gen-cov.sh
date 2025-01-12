@@ -44,6 +44,13 @@ function main {
     echo "Failed to generate coverage report."
     exit 1
   fi
+
+  llvm-cov export -format=lcov -instr-profile=coverage/cdfw.profdata "${inst_bin}" \
+    -sources cdfw/ > coverage/cdfw.lcov
+  if [ $? -ne 0 ]; then
+    echo "Failed to generate coverage report."
+    exit 1
+  fi
 }
 
 main
