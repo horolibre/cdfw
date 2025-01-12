@@ -60,6 +60,10 @@ jobs:
       uses: Homebrew/actions/setup-homebrew@master
     - name: Install SDL2 frameworks
       run: brew install sdl2
+    - name: Install LLVM and Clang
+      uses: KyleMayes/install-llvm-action@v1.7.0
+      with:
+        version: "15"
     - name: Run tests for env ${{ env.pio_env }} on ${{ env.os }}
       run: pio test -e ${{ env.pio_env }}
     - name: Generate coverage report
