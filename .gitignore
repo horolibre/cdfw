@@ -40,5 +40,6 @@
 # Python virtual environment
 .venv
 
-# Raw coverage data
+# Coverage data
 *.profraw
+coverage
