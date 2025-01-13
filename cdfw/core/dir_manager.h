@@ -12,8 +12,6 @@
 #include <memory>
 
 namespace cdfw {
-namespace stdfs = std::filesystem;
-
 // Forward declarations.
 class DirLayoutValidator;
 class DirWriter;
@@ -21,8 +19,9 @@ class DirWriter;
 class DirManager {
 public:
   // Constructors.
-  DirManager();
-  DirManager(std::unique_ptr<DirLayoutValidator> validator,
+  DirManager(std::shared_ptr<vfs::Volume> volume);
+  DirManager(std::shared_ptr<vfs::Volume> volume,
+             std::unique_ptr<DirLayoutValidator> validator,
              std::shared_ptr<DirWriter> writer);
 
   // Virtual destructor.
@@ -32,6 +31,7 @@ public:
   void CreateDirs(const vfs::Path &mount_dir);
 
 private:
+  std::shared_ptr<vfs::Volume> volume_;
   std::unique_ptr<DirLayoutValidator> validator_;
   std::shared_ptr<DirWriter> writer_;
 };

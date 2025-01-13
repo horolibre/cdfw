@@ -12,17 +12,18 @@
 #include <memory>
 
 namespace cdfw {
-DirManager::DirManager()
-    : DirManager(DirLayoutValidator::Create(), DirWriter::Create()) {}
+DirManager::DirManager(std::shared_ptr<vfs::Volume> volume)
+    : DirManager(volume, DirLayoutValidator::Create(), DirWriter::Create()) {}
 
-DirManager::DirManager(std::unique_ptr<DirLayoutValidator> validator,
+DirManager::DirManager(std::shared_ptr<vfs::Volume> volume,
+                       std::unique_ptr<DirLayoutValidator> validator,
                        std::shared_ptr<DirWriter> writer)
-    : validator_(std::move(validator)), writer_(writer) {}
+    : volume_(volume), validator_(std::move(validator)), writer_(writer) {}
 
 void DirManager::CreateDirs(const vfs::Path &mount_dir) {
   auto layout = DirLayout(mount_dir);
-  if (!validator_->Validate(layout)) {
-    writer_->Write(layout);
+  if (!validator_->Validate(*volume_, layout)) {
+    writer_->Write(*volume_, layout);
   }
 }
 } // namespace cdfw

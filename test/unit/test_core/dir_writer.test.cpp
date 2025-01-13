@@ -6,6 +6,8 @@
 #include "cdfw/core/dir_writer.h"
 #include "cdfw/core/dir_layout.h"
 #include "cdfw/core/vfs.h"
+#include "test/mocks/dir_writer.h"
+#include "test/mocks/vfs.h"
 
 // Third Party Headers
 #include <gtest/gtest.h>
@@ -18,66 +20,62 @@ namespace cdfw {
 namespace {
 namespace stdfs = std::filesystem;
 
-class MockDirWriterStrategy : public DirWriterStrategy {
-public:
-  std::vector<vfs::Path> paths;
-
-  MockDirWriterStrategy() = default;
-  ~MockDirWriterStrategy() = default;
-
-  virtual void Write(const vfs::Path &path) override final {
-    paths.push_back(path);
-  }
-};
-
 class DirWriterStrategyTests : public ::testing::Test {
 protected:
-  stdfs::path tmp_dir = stdfs::temp_directory_path() / "test";
+  vfs::MockVolume::Data volume_data;
+  vfs::MockVolume volume = vfs::MockVolume(volume_data);
+  vfs::Path tmp_dir = volume.TempDir() / "test";
   std::shared_ptr<DirWriterStrategy> strategy = DirWriterStrategy::Create();
 
   void SetUp() override {
-    stdfs::create_directories(tmp_dir);
-    EXPECT_TRUE(stdfs::exists(tmp_dir));
+    volume_data.Reset();
+    volume.CreateDirs(tmp_dir);
+    EXPECT_TRUE(volume.Exists(tmp_dir));
   }
 
-  void TearDown() override { stdfs::remove_all(tmp_dir); }
+  void TearDown() override {
+    // volume.RemoveAll(tmp_dir);
+    // EXPECT_FALSE(volume.Exists(tmp_dir));
+  }
 };
 
 TEST_F(DirWriterStrategyTests, Write_DirDoesNotExist) {
   auto p = tmp_dir / "a";
-  EXPECT_FALSE(stdfs::exists(p));
+  EXPECT_FALSE(volume.Exists(p));
 
-  strategy->Write(p);
-  EXPECT_TRUE(stdfs::exists(p));
+  strategy->Write(volume, p);
+  EXPECT_TRUE(volume.Exists(p));
 }
 
 TEST_F(DirWriterStrategyTests, Write_DirAlreadyExists) {
   auto p = tmp_dir / "a";
-  stdfs::create_directories(p);
-  EXPECT_TRUE(stdfs::exists(p));
+  volume.CreateDirs(p);
+  EXPECT_TRUE(volume.Exists(p));
 
-  strategy->Write(p);
-  EXPECT_TRUE(stdfs::exists(p));
+  strategy->Write(volume, p);
+  EXPECT_TRUE(volume.Exists(p));
 }
 
 TEST_F(DirWriterStrategyTests, Write_SubDirDoesNotExist) {
   auto p_a = tmp_dir / "a";
   auto p_b = p_a / "b";
-  EXPECT_FALSE(stdfs::exists(p_a));
-  EXPECT_FALSE(stdfs::exists(p_b));
+  EXPECT_FALSE(volume.Exists(p_a));
+  EXPECT_FALSE(volume.Exists(p_b));
 
-  strategy->Write(p_b);
-  EXPECT_TRUE(stdfs::exists(p_a));
-  EXPECT_TRUE(stdfs::exists(p_b));
+  strategy->Write(volume, p_b);
+  EXPECT_TRUE(volume.Exists(p_a));
+  EXPECT_TRUE(volume.Exists(p_b));
 }
 
 TEST(DirWriterTests, Write) {
-  stdfs::path tmp_dir = stdfs::temp_directory_path() / "test";
+  vfs::MockVolume::Data volume_data;
+  vfs::MockVolume volume = vfs::MockVolume(volume_data);
+  vfs::Path tmp_dir = volume.TempDir() / "test";
   auto strategy = std::make_shared<MockDirWriterStrategy>();
   auto writer = DirWriter::Create(strategy);
   DirLayout dir_layout(tmp_dir);
 
-  writer->Write(dir_layout);
+  writer->Write(volume, dir_layout);
   std::vector<vfs::Path> expected_paths = {
       dir_layout.app_dir, dir_layout.routines_dir, dir_layout.data_dir};
   EXPECT_EQ(expected_paths, strategy->paths);

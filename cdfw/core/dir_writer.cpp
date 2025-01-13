@@ -8,20 +8,19 @@
 #include "cdfw/core/vfs.h"
 
 // C++ Standard Library Headers
-#include <filesystem>
 #include <memory>
 
 namespace cdfw {
 namespace {
-namespace stdfs = std::filesystem;
 
 class DirWriterStrategyImpl : public DirWriterStrategy {
 public:
   DirWriterStrategyImpl() = default;
   ~DirWriterStrategyImpl() = default;
 
-  void Write(const vfs::Path &path) override final {
-    stdfs::create_directories(path.native());
+  void Write(vfs::Volume &volume, const vfs::Path &path) override final {
+    volume.CreateDirs(path);
+    // stdfs::create_directories(path.native());
   }
 };
 
@@ -31,10 +30,10 @@ public:
       : strategy_(strategy) {}
   ~DirWriterImpl() = default;
 
-  void Write(const DirLayout &dir_layout) override final {
-    strategy_->Write(dir_layout.app_dir);
-    strategy_->Write(dir_layout.routines_dir);
-    strategy_->Write(dir_layout.data_dir);
+  void Write(vfs::Volume &volume, const DirLayout &dir_layout) override final {
+    strategy_->Write(volume, dir_layout.app_dir);
+    strategy_->Write(volume, dir_layout.routines_dir);
+    strategy_->Write(volume, dir_layout.data_dir);
   }
 
 private:

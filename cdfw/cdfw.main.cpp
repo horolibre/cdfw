@@ -17,12 +17,13 @@
 
 // C++ Standard Library Headers
 #include <cstdint>
+#include <iostream>
 #include <memory>
 
 namespace cdfw {
 // Hawdware.
 std::unique_ptr<hal::Touchscreen> touchscreen = nullptr;
-std::unique_ptr<hal::SD> sd = nullptr;
+std::shared_ptr<vfs::Volume> sd = nullptr;
 
 // Presenters.
 std::unique_ptr<core::ui::AppPresenter> app_presenter = nullptr;
@@ -36,10 +37,10 @@ void InitHardware() {
 
   // Hardware is initialized on creation.
   touchscreen = hal::Touchscreen::Create();
-  sd = hal::SD::Create();
+  sd = hal::SD::CreateVolume();
 
   // Initialize app directories.
-  DirManager().CreateDirs(sd->MountPoint());
+  DirManager(sd).CreateDirs(sd->MountPoint());
 
   // Playing around with SD card functionality.
   // Note: This section is temporary.

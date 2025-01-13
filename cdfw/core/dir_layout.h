@@ -29,7 +29,8 @@ public:
   virtual ~DirLayoutValidator() = default;
 
   // Validates the given directory layout.
-  virtual bool Validate(const DirLayout &dir_layout) = 0;
+  virtual bool Validate(const vfs::Volume &volume,
+                        const DirLayout &dir_layout) = 0;
 };
 } // namespace cdfw
 

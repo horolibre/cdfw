@@ -22,10 +22,12 @@ class SD : public vfs::Volume {
 public:
   // Factory method.
   static std::unique_ptr<SD> Create();
+  static std::shared_ptr<vfs::Volume> CreateVolume();
 
   // Virtual d'tor.
   virtual ~SD() = default;
 
+  // Shared implementations.
   virtual bool IsSD() override final { return true; }
 };
 } // namespace hal

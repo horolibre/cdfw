@@ -16,9 +16,11 @@ public:
   DirLayoutValidatorImpl() = default;
   virtual ~DirLayoutValidatorImpl() = default;
 
-  bool Validate(const DirLayout &dir_layout) override final {
-    return dir_layout.app_dir.Exists() && dir_layout.routines_dir.Exists() &&
-           dir_layout.data_dir.Exists();
+  bool Validate(const vfs::Volume &volume,
+                const DirLayout &dir_layout) override final {
+    return volume.Exists(dir_layout.app_dir) &&
+           volume.Exists(dir_layout.routines_dir) &&
+           volume.Exists(dir_layout.data_dir);
   }
 };
 } // namespace

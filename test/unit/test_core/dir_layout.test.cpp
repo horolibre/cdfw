@@ -4,6 +4,7 @@
 
 // Local Headers
 #include "cdfw/core/dir_layout.h"
+#include "test/mocks/vfs.h"
 
 // Third Party Headers
 #include <gtest/gtest.h>
@@ -17,22 +18,27 @@ namespace stdfs = std::filesystem;
 
 class DirLayoutValidatorTests : public ::testing::Test {
 protected:
-  stdfs::path tmp_dir = stdfs::temp_directory_path() / "test";
+  vfs::MockVolume::Data data;
+  vfs::MockVolume volume = vfs::MockVolume(data);
+  vfs::Path tmp_dir = volume.TempDir() / "test";
   std::shared_ptr<DirLayoutValidator> validator = DirLayoutValidator::Create();
   DirLayout layout = DirLayout(tmp_dir);
 
   void SetUp() override {
-    stdfs::create_directories(tmp_dir);
-    EXPECT_TRUE(stdfs::exists(tmp_dir));
+    volume.CreateDirs(tmp_dir);
+    EXPECT_TRUE(volume.Exists(tmp_dir));
 
-    stdfs::create_directories(layout.app_dir.native());
-    stdfs::create_directories(layout.routines_dir.native());
-    stdfs::create_directories(layout.data_dir.native());
+    volume.CreateDirs(layout.app_dir);
+    volume.CreateDirs(layout.routines_dir);
+    volume.CreateDirs(layout.data_dir);
+    EXPECT_TRUE(volume.Exists(layout.app_dir));
+    EXPECT_TRUE(volume.Exists(layout.routines_dir));
+    EXPECT_TRUE(volume.Exists(layout.data_dir));
   }
 };
 
 TEST(DirLayoutTests, Layout) {
-  auto tmp_dir = stdfs::temp_directory_path() / "test";
+  auto tmp_dir = vfs::Path("foo");
   DirLayout layout(tmp_dir);
 
   EXPECT_EQ(layout.app_dir, tmp_dir / "horolibre");
@@ -41,22 +47,22 @@ TEST(DirLayoutTests, Layout) {
 }
 
 TEST_F(DirLayoutValidatorTests, PathsExist) {
-  EXPECT_TRUE(validator->Validate(layout));
+  EXPECT_TRUE(validator->Validate(volume, layout));
 }
 
 TEST_F(DirLayoutValidatorTests, AppDirDoesNotExist) {
-  stdfs::remove_all(layout.app_dir.native());
-  EXPECT_FALSE(validator->Validate(layout));
+  volume.RemoveAll(layout.app_dir);
+  EXPECT_FALSE(validator->Validate(volume, layout));
 }
 
 TEST_F(DirLayoutValidatorTests, RoutinesDirDoesNotExist) {
-  stdfs::remove(layout.routines_dir.native());
-  EXPECT_FALSE(validator->Validate(layout));
+  volume.Remove(layout.routines_dir);
+  EXPECT_FALSE(validator->Validate(volume, layout));
 }
 
 TEST_F(DirLayoutValidatorTests, DataDirDoesNotExist) {
-  stdfs::remove(layout.data_dir.native());
-  EXPECT_FALSE(validator->Validate(layout));
+  volume.Remove(layout.data_dir);
+  EXPECT_FALSE(validator->Validate(volume, layout));
 }
 } // namespace
 } // namespace cdfw

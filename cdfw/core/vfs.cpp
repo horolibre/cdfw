@@ -39,28 +39,36 @@ void WalkImpl(stdfs::path p, std::string indent = "") {
 
 class VolumeImpl : public Volume {
 public:
-  VolumeImpl(Volume *volume) : v_(volume) {}
+  VolumeImpl(std::unique_ptr<Volume> volume) : v_(std::move(volume)) {}
   virtual ~VolumeImpl() = default;
 
   virtual bool IsSD() override final { return v_->IsSD(); }
-
   virtual std::uint64_t Capacity() override final { return v_->Capacity(); }
-
   virtual std::uint64_t Available() override final { return v_->Available(); }
-
   virtual std::uint64_t Used() override final { return v_->Used(); }
-
   virtual vfs::Path MountPoint() override final { return v_->MountPoint(); }
-
   virtual vfs::Path TempDir() override final { return v_->TempDir(); }
+  virtual bool Exists(const vfs::Path &path) const override final {
+    return v_->Exists(path);
+  }
+
+  virtual bool CreateDirs(const vfs::Path &path) override final {
+    return v_->CreateDirs(path);
+  }
+  virtual bool Remove(const vfs::Path &path) override final {
+    return v_->Remove(path);
+  }
+  virtual bool RemoveAll(const vfs::Path &path) override final {
+    return v_->RemoveAll(path);
+  }
 
 private:
-  Volume *v_;
+  std::unique_ptr<Volume> v_;
 };
 } // namespace
 
-std::unique_ptr<Volume> Volume::Create(Volume *volume) {
-  return std::make_unique<VolumeImpl>(volume);
+std::shared_ptr<Volume> Volume::Create(std::unique_ptr<Volume> volume) {
+  return std::make_shared<VolumeImpl>(std::move(volume));
 }
 
 void Volume::Walk() {
@@ -75,8 +83,6 @@ void Volume::PrintInfo() {
   Serial.printf("SD used: %llu bytes\n", Used());
   Serial.printf("SD mountpoint: %s\n", MountPoint().native().c_str());
 }
-
-bool Path::Exists() const { return stdfs::exists(p_); }
 
 } // namespace vfs
 } // namespace cdfw

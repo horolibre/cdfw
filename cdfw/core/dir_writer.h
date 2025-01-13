@@ -22,7 +22,7 @@ public:
   virtual ~DirWriterStrategy() = default;
 
   // Creates a directory at the given path.
-  virtual void Write(const vfs::Path &path) = 0;
+  virtual void Write(vfs::Volume &volume, const vfs::Path &path) = 0;
 };
 
 class DirWriter {
@@ -36,7 +36,7 @@ public:
   virtual ~DirWriter() = default;
 
   // Writes the directories corresponding to the given layout.
-  virtual void Write(const DirLayout &dir_layout) = 0;
+  virtual void Write(vfs::Volume &volume, const DirLayout &dir_layout) = 0;
 };
 } // namespace cdfw
 
