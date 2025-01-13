@@ -5,19 +5,19 @@
 #ifndef CDFW_CORE_DIR_LAYOUT_H
 #define CDFW_CORE_DIR_LAYOUT_H
 
+// Local Headers
+#include "cdfw/core/vfs.h"
+
 // C++ Standard Library Headers
-#include <filesystem>
 #include <memory>
 
 namespace cdfw {
-namespace stdfs = std::filesystem;
-
 struct DirLayout {
-  const stdfs::path app_dir;
-  const stdfs::path routines_dir;
-  const stdfs::path data_dir;
+  const vfs::Path app_dir;
+  const vfs::Path routines_dir;
+  const vfs::Path data_dir;
 
-  DirLayout(const stdfs::path &mount_dir);
+  DirLayout(const vfs::Path &mount_dir);
 };
 
 class DirLayoutValidator {

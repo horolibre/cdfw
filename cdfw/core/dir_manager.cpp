@@ -6,13 +6,12 @@
 #include "cdfw/core/dir_manager.h"
 #include "cdfw/core/dir_layout.h"
 #include "cdfw/core/dir_writer.h"
+#include "cdfw/core/vfs.h"
 
 // C++ Standard Library Headers
-#include <filesystem>
 #include <memory>
 
 namespace cdfw {
-namespace stdfs = std::filesystem;
 DirManager::DirManager()
     : DirManager(DirLayoutValidator::Create(), DirWriter::Create()) {}
 
@@ -20,7 +19,7 @@ DirManager::DirManager(std::unique_ptr<DirLayoutValidator> validator,
                        std::shared_ptr<DirWriter> writer)
     : validator_(std::move(validator)), writer_(writer) {}
 
-void DirManager::CreateDirs(const stdfs::path &mount_dir) {
+void DirManager::CreateDirs(const vfs::Path &mount_dir) {
   auto layout = DirLayout(mount_dir);
   if (!validator_->Validate(layout)) {
     writer_->Write(layout);

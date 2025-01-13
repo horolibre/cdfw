@@ -25,9 +25,9 @@ protected:
     stdfs::create_directories(tmp_dir);
     EXPECT_TRUE(stdfs::exists(tmp_dir));
 
-    stdfs::create_directories(layout.app_dir);
-    stdfs::create_directories(layout.routines_dir);
-    stdfs::create_directories(layout.data_dir);
+    stdfs::create_directories(layout.app_dir.native());
+    stdfs::create_directories(layout.routines_dir.native());
+    stdfs::create_directories(layout.data_dir.native());
   }
 };
 
@@ -45,17 +45,17 @@ TEST_F(DirLayoutValidatorTests, PathsExist) {
 }
 
 TEST_F(DirLayoutValidatorTests, AppDirDoesNotExist) {
-  stdfs::remove_all(layout.app_dir);
+  stdfs::remove_all(layout.app_dir.native());
   EXPECT_FALSE(validator->Validate(layout));
 }
 
 TEST_F(DirLayoutValidatorTests, RoutinesDirDoesNotExist) {
-  stdfs::remove(layout.routines_dir);
+  stdfs::remove(layout.routines_dir.native());
   EXPECT_FALSE(validator->Validate(layout));
 }
 
 TEST_F(DirLayoutValidatorTests, DataDirDoesNotExist) {
-  stdfs::remove(layout.data_dir);
+  stdfs::remove(layout.data_dir.native());
   EXPECT_FALSE(validator->Validate(layout));
 }
 } // namespace

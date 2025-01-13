@@ -7,14 +7,12 @@
 
 // Local Headers
 #include "cdfw/core/dir_layout.h"
+#include "cdfw/core/vfs.h"
 
 // C++ Standard Library Headers
-#include <filesystem>
 #include <memory>
 
 namespace cdfw {
-namespace stdfs = std::filesystem;
-
 class DirWriterStrategy {
 public:
   // Factory method.
@@ -24,7 +22,7 @@ public:
   virtual ~DirWriterStrategy() = default;
 
   // Creates a directory at the given path.
-  virtual void Write(const stdfs::path &path) = 0;
+  virtual void Write(const vfs::Path &path) = 0;
 };
 
 class DirWriter {

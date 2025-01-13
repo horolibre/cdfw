@@ -9,6 +9,8 @@
 #include <cstdint>
 #include <filesystem>
 #include <memory>
+#include <string>
+#include <type_traits>
 
 namespace cdfw {
 namespace vfs {
@@ -32,6 +34,55 @@ public:
 
   void Walk();
   void PrintInfo();
+};
+
+// Thin wrapper around std::filesystem::path to provide an interface for mocks.
+class Path {
+public:
+  typedef char value_type;
+  static constexpr value_type preferred_separator = '/';
+
+  // constructors and destructor
+  Path() noexcept {}
+  Path(const Path &p) : p_(p.p_) {}
+  Path(Path &&p) noexcept : p_(std::move(p.p_)) {}
+  Path(std::string &&s) noexcept : p_(std::move(s)) {}
+  Path(const std::string &s) : p_(s) {}
+  Path(const char *s) : p_(s) {}
+  Path(const stdfs::path &p) : p_(p) {}
+  Path(stdfs::path &&p) noexcept : p_(std::move(p)) {}
+  ~Path() = default;
+
+  // append
+  Path &operator/=(const Path &p) {
+    p_ /= p.p_;
+    return *this;
+  }
+
+  // modifiers
+  friend Path operator/(const Path &lhs, const Path &rhs) {
+    Path result(lhs);
+    result /= rhs;
+    return result;
+  }
+
+  // comparators
+  friend bool operator==(const Path &lhs, const Path &rhs) noexcept {
+    return lhs.p_ == rhs.p_;
+  }
+
+  // native format
+  const value_type *c_str() const noexcept { return p_.c_str(); }
+  const std::string &native() const noexcept { return p_.native(); }
+  operator std::string() const { return p_.native(); }
+
+  // query
+  // bool is_absolute() const { return p_.is_absolute(); }
+  // bool is_relative() const { return p_.is_relative(); }
+  bool Exists() const;
+
+private:
+  stdfs::path p_;
 };
 } // namespace vfs
 } // namespace cdfw

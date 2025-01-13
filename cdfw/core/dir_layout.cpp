@@ -4,13 +4,12 @@
 
 // Local Headers
 #include "cdfw/core/dir_layout.h"
+#include "cdfw/core/vfs.h"
 
 // C++ Standard Library Headers
-#include <filesystem>
 #include <memory>
 
 namespace cdfw {
-namespace stdfs = std::filesystem;
 namespace {
 class DirLayoutValidatorImpl : public DirLayoutValidator {
 public:
@@ -18,14 +17,13 @@ public:
   virtual ~DirLayoutValidatorImpl() = default;
 
   bool Validate(const DirLayout &dir_layout) override final {
-    return stdfs::exists(dir_layout.app_dir) &&
-           stdfs::exists(dir_layout.routines_dir) &&
-           stdfs::exists(dir_layout.data_dir);
+    return dir_layout.app_dir.Exists() && dir_layout.routines_dir.Exists() &&
+           dir_layout.data_dir.Exists();
   }
 };
 } // namespace
 
-DirLayout::DirLayout(const stdfs::path &mount_dir)
+DirLayout::DirLayout(const vfs::Path &mount_dir)
     : app_dir(mount_dir / "horolibre"), routines_dir(app_dir / "routines"),
       data_dir(app_dir / "data") {}
 

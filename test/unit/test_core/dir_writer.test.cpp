@@ -5,6 +5,7 @@
 // Local Headers
 #include "cdfw/core/dir_writer.h"
 #include "cdfw/core/dir_layout.h"
+#include "cdfw/core/vfs.h"
 
 // Third Party Headers
 #include <gtest/gtest.h>
@@ -19,12 +20,12 @@ namespace stdfs = std::filesystem;
 
 class MockDirWriterStrategy : public DirWriterStrategy {
 public:
-  std::vector<stdfs::path> paths;
+  std::vector<vfs::Path> paths;
 
   MockDirWriterStrategy() = default;
   ~MockDirWriterStrategy() = default;
 
-  virtual void Write(const stdfs::path &path) override final {
+  virtual void Write(const vfs::Path &path) override final {
     paths.push_back(path);
   }
 };
@@ -77,7 +78,7 @@ TEST(DirWriterTests, Write) {
   DirLayout dir_layout(tmp_dir);
 
   writer->Write(dir_layout);
-  std::vector<stdfs::path> expected_paths = {
+  std::vector<vfs::Path> expected_paths = {
       dir_layout.app_dir, dir_layout.routines_dir, dir_layout.data_dir};
   EXPECT_EQ(expected_paths, strategy->paths);
 }

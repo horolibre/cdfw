@@ -14,8 +14,6 @@
 
 namespace cdfw {
 namespace {
-namespace stdfs = std::filesystem;
-
 TEST(RoutineConfigTests, Disabled) {
   RoutineConfig config = RoutineConfig::GetDisabled();
 

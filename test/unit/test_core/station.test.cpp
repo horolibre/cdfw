@@ -13,8 +13,6 @@
 
 namespace cdfw {
 namespace {
-namespace stdfs = std::filesystem;
-
 TEST(WetStationConfigTests, Disabled) {
   auto config = WetStationConfig::GetDisabled();
 

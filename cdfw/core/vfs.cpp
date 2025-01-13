@@ -74,5 +74,7 @@ void Volume::PrintInfo() {
   Serial.printf("SD mountpoint: %s\n", MountPoint().string().c_str());
 }
 
+bool Path::Exists() const { return stdfs::exists(p_); }
+
 } // namespace vfs
 } // namespace cdfw

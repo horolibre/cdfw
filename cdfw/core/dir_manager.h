@@ -5,8 +5,10 @@
 #ifndef CDFW_CORE_DIR_MANAGER_H
 #define CDFW_CORE_DIR_MANAGER_H
 
+// Local Headers
+#include "cdfw/core/vfs.h"
+
 // C++ Standard Library Headers
-#include <filesystem>
 #include <memory>
 
 namespace cdfw {
@@ -27,7 +29,7 @@ public:
   virtual ~DirManager() = default;
 
   // Creates the app directories if they do not exist.
-  void CreateDirs(const stdfs::path &mount_dir);
+  void CreateDirs(const vfs::Path &mount_dir);
 
 private:
   std::unique_ptr<DirLayoutValidator> validator_;

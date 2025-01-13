@@ -4,22 +4,24 @@
 
 // Local Headers
 #include "cdfw/core/dir_writer.h"
+#include "cdfw/core/dir_layout.h"
+#include "cdfw/core/vfs.h"
 
 // C++ Standard Library Headers
 #include <filesystem>
 #include <memory>
 
 namespace cdfw {
+namespace {
 namespace stdfs = std::filesystem;
 
-namespace {
 class DirWriterStrategyImpl : public DirWriterStrategy {
 public:
   DirWriterStrategyImpl() = default;
   ~DirWriterStrategyImpl() = default;
 
-  void Write(const stdfs::path &path) override final {
-    stdfs::create_directories(path);
+  void Write(const vfs::Path &path) override final {
+    stdfs::create_directories(path.native());
   }
 };
 
