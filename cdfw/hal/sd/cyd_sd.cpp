@@ -63,13 +63,24 @@ public:
     return stdfs::remove(path.native());
   }
   virtual bool RemoveAll(const vfs::Path &path) override final {
-    return stdfs::remove(path.native());
-    // return true;
+    WalkWithCB(path.native(), [](stdfs::path p) { stdfs::remove(p); });
+    return Remove(path);
   }
 
 private:
   SPIClass spi_;
   ardfs::SDFS &sd_;
+
+  void WalkWithCB(stdfs::path p, std::function<void(stdfs::path)> cb) {
+    for (const auto &entry : stdfs::directory_iterator(p)) {
+      if (entry.is_directory()) {
+        WalkWithCB(entry.path(), cb);
+      } else {
+        cb(entry.path());
+      }
+      cb(entry.path());
+    }
+  }
 };
 } // namespace
 

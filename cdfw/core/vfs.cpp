@@ -31,8 +31,8 @@ void WalkImpl(stdfs::path p, std::string indent = "") {
     if (entry.is_directory()) {
       WalkImpl(entry.path(), indent);
     } else {
-      Serial.printf("%s%s (%d bytes)\n", indent.c_str(), entry.path().c_str(),
-                    entry.file_size());
+      Serial.printf("%s%s (%d bytes)\n", indent.c_str(),
+                    entry.path().filename().c_str(), entry.file_size());
     }
   }
 }

@@ -40,6 +40,7 @@ void InitHardware() {
   sd = hal::SD::CreateVolume();
 
   // Initialize app directories.
+  sd->RemoveAll("/sd"); // TEMP: Clear the SD card.
   DirManager(sd).CreateDirs(sd->MountPoint());
 
   // Playing around with SD card functionality.
