@@ -41,7 +41,6 @@ public:
   struct Data {
     bool is_sd;
     std::uint64_t capacity;
-    std::uint64_t available;
     std::uint64_t used;
     MockPath mount_point;
     std::set<vfs::Path> paths;
@@ -51,7 +50,6 @@ public:
     void Reset() {
       is_sd = false;
       capacity = 0;
-      available = 0;
       used = 0;
       mount_point = MockPath("/mp");
       paths.clear();
@@ -67,7 +65,9 @@ public:
   virtual bool IsSD() override final { return data.is_sd; }
 
   virtual std::uint64_t Capacity() override final { return data.capacity; }
-  virtual std::uint64_t Available() override final { return data.available; }
+  virtual std::uint64_t Available() override final {
+    return Capacity() - Used();
+  }
   virtual std::uint64_t Used() override final { return data.used; }
 
   virtual vfs::Path MountPoint() override final { return data.mount_point; }
@@ -95,18 +95,24 @@ public:
   }
 
   virtual bool Remove(const vfs::Path &path) override final {
-    for (auto it = data.paths.begin(); it != data.paths.end(); ++it) {
+    // Reverse iterate through the data.paths set so that children are
+    // encountered first. If the requested path has children, do not remove.
+    for (auto it = data.paths.rbegin(), end = data.paths.rend(); it != end;
+         ++it) {
       if (*it == path) {
-        data.paths.erase(it);
+        data.paths.erase(--(it.base()));
         return true;
+      } else if (it->native().find(path.native()) == 0) {
+        return false;
       }
     }
+
     return false;
   }
   virtual bool RemoveAll(const vfs::Path &path) override final {
     // Loop through the data.paths set; any entry that starts with the given
     // path should be removed from the set.
-    for (auto it = data.paths.begin(); it != data.paths.end();) {
+    for (auto it = data.paths.begin(), end = data.paths.end(); it != end;) {
       if (it->native().find(path.native()) == 0) {
         it = data.paths.erase(it);
       } else {
