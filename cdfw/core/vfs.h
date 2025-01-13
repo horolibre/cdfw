@@ -16,26 +16,6 @@ namespace cdfw {
 namespace vfs {
 namespace stdfs = std::filesystem;
 
-class Volume {
-public:
-  // Volume is not meant to be instantiated directly, instead you should
-  // instantiate a derived class (e.g., SD). This factory method exists to allow
-  // for us to inject a mock volume for testing.
-  static std::unique_ptr<Volume> Create(Volume *volume);
-  virtual ~Volume() = default;
-
-  virtual bool IsSD() = 0;
-
-  virtual std::uint64_t Capacity() = 0;
-  virtual std::uint64_t Available() = 0;
-  virtual std::uint64_t Used() = 0;
-
-  virtual stdfs::path MountPoint() = 0;
-
-  void Walk();
-  void PrintInfo();
-};
-
 // Thin wrapper around std::filesystem::path to provide an interface for mocks.
 class Path {
 public:
@@ -76,6 +56,9 @@ public:
   const std::string &native() const noexcept { return p_.native(); }
   operator std::string() const { return p_.native(); }
 
+  // decomposition
+  Path filename() const { return p_.filename(); }
+
   // query
   // bool is_absolute() const { return p_.is_absolute(); }
   // bool is_relative() const { return p_.is_relative(); }
@@ -83,6 +66,27 @@ public:
 
 private:
   stdfs::path p_;
+};
+
+class Volume {
+public:
+  // Volume is not meant to be instantiated directly, instead you should
+  // instantiate a derived class (e.g., SD). This factory method exists to allow
+  // for us to inject a mock volume for testing.
+  static std::unique_ptr<Volume> Create(Volume *volume);
+  virtual ~Volume() = default;
+
+  virtual bool IsSD() = 0;
+
+  virtual std::uint64_t Capacity() = 0;
+  virtual std::uint64_t Available() = 0;
+  virtual std::uint64_t Used() = 0;
+
+  virtual vfs::Path MountPoint() = 0;
+  virtual vfs::Path TempDir() = 0;
+
+  void Walk();
+  void PrintInfo();
 };
 } // namespace vfs
 } // namespace cdfw

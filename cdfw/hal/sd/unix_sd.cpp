@@ -6,6 +6,7 @@
 
 // Local Headers
 #include "cdfw/compat/arduino.h"
+#include "cdfw/core/vfs.h"
 #include "cdfw/hal/sd.h"
 
 // C++ Standard Library Headers
@@ -40,7 +41,9 @@ public:
     return Capacity() - Available();
   }
 
-  virtual stdfs::path MountPoint() override final { return mp_dir_; }
+  virtual vfs::Path MountPoint() override final { return mp_dir_.string(); }
+
+  virtual vfs::Path TempDir() override final { return MountPoint() / "tmp"; }
 
 private:
   stdfs::path mp_dir_;

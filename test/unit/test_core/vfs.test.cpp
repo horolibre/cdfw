@@ -35,7 +35,8 @@ public:
   virtual std::uint64_t Available() override final { return available; }
   virtual std::uint64_t Used() override final { return used; }
 
-  virtual stdfs::path MountPoint() override final { return "/sd"; }
+  virtual vfs::Path MountPoint() override final { return "/sd"; }
+  virtual vfs::Path TempDir() override final { return "/sd/tmp"; }
 };
 
 TEST(VFSVolumeTests, IsSD) {

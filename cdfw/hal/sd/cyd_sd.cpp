@@ -46,9 +46,9 @@ public:
     return Capacity() - Available();
   }
 
-  virtual stdfs::path MountPoint() override final {
-    return stdfs::path(sd_.mountpoint());
-  }
+  virtual vfs::Path MountPoint() override final { return sd_.mountpoint(); }
+
+  virtual vfs::Path TempDir() override final { return MountPoint() / "tmp"; }
 
 private:
   SPIClass spi_;

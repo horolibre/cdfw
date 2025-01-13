@@ -50,7 +50,9 @@ public:
 
   virtual std::uint64_t Used() override final { return v_->Used(); }
 
-  virtual stdfs::path MountPoint() override final { return v_->MountPoint(); }
+  virtual vfs::Path MountPoint() override final { return v_->MountPoint(); }
+
+  virtual vfs::Path TempDir() override final { return v_->TempDir(); }
 
 private:
   Volume *v_;
@@ -63,7 +65,7 @@ std::unique_ptr<Volume> Volume::Create(Volume *volume) {
 
 void Volume::Walk() {
   Serial.println("Walking SD card...");
-  WalkImpl(MountPoint());
+  WalkImpl(MountPoint().native());
   Serial.println("Done walking SD card.");
 }
 
@@ -71,7 +73,7 @@ void Volume::PrintInfo() {
   Serial.printf("SD capacity: %llu bytes\n", Capacity());
   Serial.printf("SD available: %llu bytes\n", Available());
   Serial.printf("SD used: %llu bytes\n", Used());
-  Serial.printf("SD mountpoint: %s\n", MountPoint().string().c_str());
+  Serial.printf("SD mountpoint: %s\n", MountPoint().native().c_str());
 }
 
 bool Path::Exists() const { return stdfs::exists(p_); }
