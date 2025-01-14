@@ -70,7 +70,6 @@ public:
       lv_obj_t *panel = lv_obj_create(scr_);
       lv_obj_set_size(panel, 320, 200);
       lv_obj_add_style(panel, &Styles::GetInstance().style1, 0);
-      lv_obj_set_style_bg_color(panel, color::MED_BLUE, LV_PART_MAIN);
       lv_obj_align(panel, LV_ALIGN_BOTTOM_MID, 0, 0);
       lv_obj_set_layout(panel, LV_LAYOUT_FLEX);
       lv_obj_set_flex_flow(panel, LV_FLEX_FLOW_ROW);
