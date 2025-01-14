@@ -14,6 +14,9 @@
 #include <lvgl.h>
 
 // C++ Standard Library Headers
+#include <cstdint>
+#include <cstdio>
+#include <iostream>
 #include <memory>
 #include <string>
 
@@ -21,6 +24,9 @@ namespace cdfw {
 namespace gui {
 namespace screen {
 namespace {
+std::string s_ssid_selection_cache;
+lv_obj_t *s_password_page = nullptr;
+
 struct BackEventPayload {
   lv_obj_t *menu;
   core::ui::SettingsPresenter *presenter;
@@ -35,6 +41,29 @@ void BackEventHandler(lv_event_t *e) {
   }
 }
 
+void ConnectEventHandler(lv_event_t *e) {
+  auto label = static_cast<lv_obj_t *>(lv_event_get_user_data(e));
+  s_ssid_selection_cache = lv_label_get_text(label);
+  if (s_password_page) {
+    lv_menu_set_page_title(s_password_page, s_ssid_selection_cache.c_str());
+  }
+}
+
+static void TAEventHandler(lv_event_t *e) {
+  lv_event_code_t code = lv_event_get_code(e);
+  lv_obj_t *ta = static_cast<lv_obj_t *>(lv_event_get_target(e));
+  lv_obj_t *kb = static_cast<lv_obj_t *>(lv_event_get_user_data(e));
+  if (code == LV_EVENT_FOCUSED) {
+    lv_keyboard_set_textarea(kb, ta);
+    lv_obj_remove_flag(kb, LV_OBJ_FLAG_HIDDEN);
+  }
+
+  if (code == LV_EVENT_DEFOCUSED) {
+    lv_keyboard_set_textarea(kb, NULL);
+    lv_obj_add_flag(kb, LV_OBJ_FLAG_HIDDEN);
+  }
+}
+
 void AddMenuSeparator(lv_obj_t *obj) {
   for (int i = 0; i < 1; i++) {
     lv_menu_separator_create(obj);
@@ -46,7 +75,7 @@ lv_style_t *GetLineStyle(lv_obj_t *obj) {
   lv_style_init(&style_line);
   lv_style_set_line_width(&style_line, 1);
   lv_style_set_line_color(
-      &style_line, lv_color_darken(lv_obj_get_style_bg_color(obj, 0), 30));
+      &style_line, lv_color_darken(lv_obj_get_style_bg_color(obj, 0), 15));
   lv_style_set_line_rounded(&style_line, true);
   return &style_line;
 }
@@ -122,7 +151,6 @@ public:
     }
 
     // Now we work through the sub-pages.
-
     // Setup Wi-Fi sub page.
     auto sub_page_wifi = lv_menu_page_create(menu, "Wi-Fi");
     {
@@ -134,56 +162,134 @@ public:
       auto section = lv_menu_section_create(sub_page_wifi);
       {
         // Menu item for enabling/disabling Wi-Fi.
-        auto cont = lv_menu_cont_create(section);
-        auto img = lv_image_create(cont);
-        lv_image_set_src(img, LV_SYMBOL_WIFI);
-        auto label = lv_label_create(cont);
-        lv_label_set_text(label, "Wi-Fi");
-        lv_obj_set_flex_grow(label, 1);
-        auto toggle = lv_switch_create(cont);
-        lv_obj_add_state(toggle, LV_STATE_CHECKED);
-        lv_obj_add_event_cb(
-            toggle,
-            [](lv_event_t *e) {
-              lv_event_code_t code = lv_event_get_code(e);
-              auto obj = static_cast<lv_obj_t *>(lv_event_get_target(e));
-              if (code == LV_EVENT_PRESSED) {
-                auto pres = static_cast<core::ui::SettingsPresenter *>(
-                    lv_event_get_user_data(e));
-                pres->OnWifiEnabled(!lv_obj_has_state(obj, LV_STATE_CHECKED));
-              }
-            },
-            LV_EVENT_PRESSED, presenter);
+        {
+          auto cont = lv_menu_cont_create(section);
+          auto img = lv_image_create(cont);
+          lv_image_set_src(img, LV_SYMBOL_WIFI);
+          auto label = lv_label_create(cont);
+          lv_label_set_text(label, "Wi-Fi");
+          lv_obj_set_flex_grow(label, 1);
+          auto toggle = lv_switch_create(cont);
+          lv_obj_add_state(toggle, LV_STATE_CHECKED);
+          lv_obj_add_event_cb(
+              toggle,
+              [](lv_event_t *e) {
+                lv_event_code_t code = lv_event_get_code(e);
+                auto obj = static_cast<lv_obj_t *>(lv_event_get_target(e));
+                if (code == LV_EVENT_PRESSED) {
+                  auto pres = static_cast<core::ui::SettingsPresenter *>(
+                      lv_event_get_user_data(e));
+                  pres->OnWifiEnabled(!lv_obj_has_state(obj, LV_STATE_CHECKED));
+                }
+              },
+              LV_EVENT_PRESSED, presenter);
+        }
+
+        AddLine(section);
+
+        // Menu item for displaying Wi-Fi status.
+        {
+          auto cont = lv_menu_cont_create(section);
+          auto led = lv_led_create(cont);
+          lv_led_set_color(led, lv_palette_main(LV_PALETTE_ORANGE));
+          lv_led_set_brightness(led, 195); // 75% of MAX
+          lv_obj_set_size(led, 10, 10);
+
+          auto label = lv_label_create(cont);
+          lv_label_set_text(label, "Not connected");
+          lv_obj_set_style_text_color(label, lv_palette_main(LV_PALETTE_GREY),
+                                      0);
+          lv_obj_set_flex_grow(label, 1);
+
+          // Menu item for connecting to a Wi-Fi network.
+          // TODO: Currently this is just a switch for playing with GUI event
+          // propagation, but otherwise the switch does nothing. Real
+          // implementation interfacing with business logic that uses the WiFi
+          // library will be added later.
+          // BUG: Set WiFi enabled, connect, disable, re-enable. WiFi icon is
+          // red (disconnected) despite WiFi being enabled and connected.
+          auto btn = lv_btn_create(cont);
+          label = lv_label_create(btn);
+          lv_label_set_text(label, "Connect");
+          lv_obj_add_event_cb(
+              btn,
+              [](lv_event_t *e) {
+                lv_event_code_t code = lv_event_get_code(e);
+                auto obj = static_cast<lv_obj_t *>(lv_event_get_target(e));
+                if (code == LV_EVENT_PRESSED) {
+                  auto pres = static_cast<core::ui::SettingsPresenter *>(
+                      lv_event_get_user_data(e));
+                  pres->OnWifiConnectRequest(
+                      !lv_obj_has_state(obj, LV_STATE_CHECKED));
+                }
+              },
+              LV_EVENT_PRESSED, presenter);
+        }
       }
 
+      // Password sub-page of the Wi-Fi page.
+      auto sub_page_wifi_password = lv_menu_page_create(menu, "Password");
+      {
+        lv_obj_set_style_pad_hor(
+            sub_page_wifi_password,
+            lv_obj_get_style_pad_left(lv_menu_get_main_header(menu), 0), 0);
+
+        AddMenuSeparator(sub_page_wifi_password);
+        auto section = lv_menu_section_create(sub_page_wifi_password);
+        {
+          // Menu item for entering a Wi-Fi password.
+          auto cont = lv_menu_cont_create(section);
+          auto ta = lv_textarea_create(cont);
+          lv_textarea_set_placeholder_text(ta, "Password");
+          lv_obj_set_flex_grow(ta, 1);
+          lv_textarea_set_one_line(ta, true);
+
+          // cont = lv_menu_cont_create(section);
+          auto btn = lv_btn_create(cont);
+          auto label = lv_label_create(btn);
+          lv_label_set_text(label, "Connect");
+          lv_obj_add_flag(btn, LV_OBJ_FLAG_FLEX_IN_NEW_TRACK);
+
+          // cont = lv_menu_cont_create(sub_page_wifi_password);
+          // lv_obj_t * kb = lv_keyboard_create(cont);
+          lv_obj_t *kb = lv_keyboard_create(sub_page_wifi_password);
+          lv_obj_add_flag(kb, LV_OBJ_FLAG_IGNORE_LAYOUT);
+          lv_obj_align(kb, LV_ALIGN_BOTTOM_MID, 0, 0);
+          lv_keyboard_set_textarea(kb, ta);
+          lv_obj_add_event_cb(ta, TAEventHandler, LV_EVENT_ALL, kb);
+          lv_obj_set_flex_grow(kb, 1);
+        }
+      }
+
+      // TODO: Find a better way to implement this spacing.
+      AddMenuSeparator(sub_page_wifi);
+      AddMenuSeparator(sub_page_wifi);
+      AddMenuSeparator(sub_page_wifi);
+      auto label = lv_label_create(sub_page_wifi);
+      lv_label_set_text(label, "Available Networks");
       AddMenuSeparator(sub_page_wifi);
       section = lv_menu_section_create(sub_page_wifi);
       {
-        // Menu item for connecting to a Wi-Fi network.
-        // TODO: Currently this is just a switch for playing with GUI event
-        // propagation, but otherwise the switch does nothing. Real
-        // implementation interfacing with business logic that uses the WiFi
-        // library will be added later.
-        // BUG: Set WiFi enabled, connect, disable, re-enable. WiFi icon is red
-        // (disconnected) despite WiFi being enabled and connected.
-        auto cont = lv_menu_cont_create(section);
-        auto label = lv_label_create(cont);
-        lv_label_set_text(label, "Connect");
-        lv_obj_set_flex_grow(label, 1);
-        auto toggle = lv_switch_create(cont);
-        lv_obj_add_event_cb(
-            toggle,
-            [](lv_event_t *e) {
-              lv_event_code_t code = lv_event_get_code(e);
-              auto obj = static_cast<lv_obj_t *>(lv_event_get_target(e));
-              if (code == LV_EVENT_PRESSED) {
-                auto pres = static_cast<core::ui::SettingsPresenter *>(
-                    lv_event_get_user_data(e));
-                pres->OnWifiConnectRequest(
-                    !lv_obj_has_state(obj, LV_STATE_CHECKED));
-              }
-            },
-            LV_EVENT_PRESSED, presenter);
+        // Create a fake list of available networks.
+        bool first_network = true;
+        for (int i = 0; i < 3; i++) {
+          if (!first_network) {
+            AddLine(section);
+          } else {
+            first_network = false;
+          }
+          auto cont = lv_menu_cont_create(section);
+          // lv_obj_add_flag(cont, LV_OBJ_FLAG_CLICKABLE);
+          auto label = lv_label_create(cont);
+          lv_label_set_text(
+              label, (std::string("Network ") + std::to_string(i)).c_str());
+          lv_obj_set_flex_grow(label, 1);
+          lv_menu_set_load_page_event(menu, cont, sub_page_wifi_password);
+          lv_obj_add_event_cb(cont, ConnectEventHandler, LV_EVENT_CLICKED,
+                              label);
+          // Cache wifi password sub page so that it's title can be updated.
+          s_password_page = sub_page_wifi_password;
+        }
       }
     }
 
@@ -194,7 +300,7 @@ public:
           sub_page_display,
           lv_obj_get_style_pad_left(lv_menu_get_main_header(menu), 0), 0);
 
-      AddMenuSeparator(sub_page_wifi);
+      AddMenuSeparator(sub_page_display);
       auto section = lv_menu_section_create(sub_page_display);
       {
         // Menu item for enabling/disabling auto brightness.
@@ -214,22 +320,25 @@ public:
     // Setup About sub page.
     auto sub_page_about = lv_menu_page_create(menu, "About");
     {
-      // Software Information sub page.
-      auto sub_page_software_info =
-          lv_menu_page_create(menu, "Software Information");
+      // Device Information sub page.
+      auto sub_page_device_info =
+          lv_menu_page_create(menu, "Device Information");
       {
         lv_obj_set_style_pad_hor(
-            sub_page_software_info,
+            sub_page_device_info,
             lv_obj_get_style_pad_left(lv_menu_get_main_header(menu), 0), 0);
 
-        AddMenuSeparator(sub_page_software_info);
-        auto section = lv_menu_section_create(sub_page_software_info);
+        AddMenuSeparator(sub_page_device_info);
+        auto section = lv_menu_section_create(sub_page_device_info);
 
         // Software info menu item.
-        auto cont = lv_menu_cont_create(section);
-        auto label = lv_label_create(cont);
         // TODO: Should we get version from a model like the boot view? If not,
         // then why are we doing it in the boot view?
+        auto cont = lv_menu_cont_create(section);
+        auto label = lv_label_create(cont);
+        lv_label_set_text(label, "Firmware Version");
+        lv_obj_set_flex_grow(label, 1);
+        label = lv_label_create(cont);
         std::uint8_t buf_size = 8;
         char str_buf[buf_size];
         std::snprintf(str_buf, buf_size, "v%s", CDFW_VERSION);
@@ -261,11 +370,11 @@ public:
       AddMenuSeparator(sub_page_about);
       auto section = lv_menu_section_create(sub_page_about);
       {
-        // Software Information menu item.
+        // Device Information menu item.
         auto cont = lv_menu_cont_create(section);
         auto label = lv_label_create(cont);
-        lv_label_set_text(label, "Software Information");
-        lv_menu_set_load_page_event(menu, cont, sub_page_software_info);
+        lv_label_set_text(label, "Device Information");
+        lv_menu_set_load_page_event(menu, cont, sub_page_device_info);
 
         AddLine(section);
 
@@ -290,18 +399,27 @@ public:
       auto section = lv_menu_section_create(main_page);
       {
         // Wi-Fi menu item.
-        auto cont = lv_menu_cont_create(section);
-        auto img = lv_image_create(cont);
-        lv_image_set_src(img, LV_SYMBOL_WIFI);
-        auto label = lv_label_create(cont);
-        lv_label_set_text(label, "Wi-Fi");
-        lv_menu_set_load_page_event(menu, cont, sub_page_wifi);
+        {
+          auto cont = lv_menu_cont_create(section);
+          auto img = lv_image_create(cont);
+          lv_image_set_src(img, LV_SYMBOL_WIFI);
+          auto label = lv_label_create(cont);
+          lv_label_set_text(label, "Wi-Fi");
+          lv_menu_set_load_page_event(menu, cont, sub_page_wifi);
+        }
+
+        AddLine(section);
 
         // Display menu item.
-        cont = lv_menu_cont_create(section);
-        img = lv_image_create(cont);
-        // TODO: Find a better icon (e.g., monitor).
-        lv_image_set_src(img, LV_SYMBOL_IMAGE);
+        {
+          auto cont = lv_menu_cont_create(section);
+          auto img = lv_image_create(cont);
+          // TODO: Find a better icon (e.g., monitor).
+          lv_image_set_src(img, LV_SYMBOL_IMAGE);
+          auto label = lv_label_create(cont);
+          lv_label_set_text(label, "Display");
+          lv_menu_set_load_page_event(menu, cont, sub_page_display);
+        }
       }
 
       AddMenuSeparator(main_page);
