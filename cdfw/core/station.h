@@ -23,16 +23,16 @@ namespace cdfw {
 // ---------------------------------------------------------------------------
 
 // Every station has a name and a type.
-struct StationConfig {
+struct Station {
   std::string name;
   bool enabled;
   std::uint32_t time; // Time in seconds.
 
-  virtual ~StationConfig() = default;
+  virtual ~Station() = default;
 
 protected:
-  StationConfig() = default;
-  StationConfig(std::string name, bool enabled, std::uint32_t time)
+  Station() = default;
+  Station(std::string name, bool enabled, std::uint32_t time)
       : name(name), enabled(enabled), time(time) {}
 };
 
@@ -43,7 +43,7 @@ protected:
 // Represents a disabled station.
 
 // Represents for clean and rinse stations.
-struct WetStationConfig : StationConfig {
+struct WetStation : Station {
   enum class AgitationLevel : std::uint8_t {
     kNONE = 0, // No agitation.
     kLOW = 1,
@@ -53,36 +53,36 @@ struct WetStationConfig : StationConfig {
 
   AgitationLevel agitation;
 
-  virtual ~WetStationConfig() = default;
+  virtual ~WetStation() = default;
 
-  static WetStationConfig GetDefault(std::string name) {
-    return WetStationConfig(name);
+  static WetStation GetDefault(std::string name) {
+    return WetStation(name);
   }
-  static WetStationConfig GetDisabled() { return WetStationConfig(); }
-  static WetStationConfig GetConfigured(std::string name, std::uint32_t time,
+  static WetStation GetDisabled() { return WetStation(); }
+  static WetStation GetConfigured(std::string name, std::uint32_t time,
                                         AgitationLevel agitation) {
-    return WetStationConfig(name, time, agitation);
+    return WetStation(name, time, agitation);
   }
 
 private:
   // Default constructor creates a disabled station.
-  WetStationConfig()
-      : StationConfig("Disabled", false, 0), agitation(AgitationLevel::kNONE) {}
+  WetStation()
+      : Station("Disabled", false, 0), agitation(AgitationLevel::kNONE) {}
 
   // Constructor for a configured station.
-  WetStationConfig(std::string name, std::uint32_t time,
+  WetStation(std::string name, std::uint32_t time,
                    AgitationLevel agitation)
-      : StationConfig(name, true, time), agitation(agitation) {}
+      : Station(name, true, time), agitation(agitation) {}
 
   // By default we assume:
   // - 3 minutes for the wet station.
   // - Medium agitation.
-  WetStationConfig(std::string name)
-      : StationConfig(name, true, 180), agitation(AgitationLevel::kMEDIUM) {}
+  WetStation(std::string name)
+      : Station(name, true, 180), agitation(AgitationLevel::kMEDIUM) {}
 };
 
 // Represents for dry stations.
-struct DryStationConfig : StationConfig {
+struct DryStation : Station {
   enum class SpinType : std::uint8_t {
     kNONE = 0,           // No spinning.
     kUNIDIRECTIONAL = 1, // Spin in one direction.
@@ -91,31 +91,31 @@ struct DryStationConfig : StationConfig {
 
   SpinType spin;
 
-  virtual ~DryStationConfig() = default;
+  virtual ~DryStation() = default;
 
-  static DryStationConfig GetDefault(std::string name) {
-    return DryStationConfig(name);
+  static DryStation GetDefault(std::string name) {
+    return DryStation(name);
   }
-  static DryStationConfig GetDisabled() { return DryStationConfig(); }
-  static DryStationConfig GetConfigured(std::string name, std::uint32_t time,
+  static DryStation GetDisabled() { return DryStation(); }
+  static DryStation GetConfigured(std::string name, std::uint32_t time,
                                         SpinType spin) {
-    return DryStationConfig(name, time, spin);
+    return DryStation(name, time, spin);
   }
 
 private:
   // Default constructor creates a disabled station.
-  DryStationConfig()
-      : StationConfig("Disabled", false, 0), spin(SpinType::kNONE) {}
+  DryStation()
+      : Station("Disabled", false, 0), spin(SpinType::kNONE) {}
 
   // Constructor for a configured station.
-  DryStationConfig(std::string name, std::uint32_t time, SpinType spin)
-      : StationConfig(name, true, time), spin(spin) {}
+  DryStation(std::string name, std::uint32_t time, SpinType spin)
+      : Station(name, true, time), spin(spin) {}
 
   // By default we assume:
   // - 6 minutes for the dry station.
   // - Uni-directional spin.
-  DryStationConfig(std::string name)
-      : StationConfig(name, true, 360), spin(SpinType::kUNIDIRECTIONAL) {}
+  DryStation(std::string name)
+      : Station(name, true, 360), spin(SpinType::kUNIDIRECTIONAL) {}
 };
 
 class StationSerializer {
@@ -127,12 +127,12 @@ public:
   virtual ~StationSerializer() = default;
 
   // Serializes/Deserializes the given wet station configuration.
-  virtual void Serialize(JsonObject &obj, const WetStationConfig &config) = 0;
-  virtual std::string Serialize(const WetStationConfig &config) = 0;
+  virtual void Serialize(JsonObject &obj, const WetStation &config) = 0;
+  virtual std::string Serialize(const WetStation &config) = 0;
 
   // Serializes the given dry station configuration.
-  virtual void Serialize(JsonObject &dobj, const DryStationConfig &config) = 0;
-  virtual std::string Serialize(const DryStationConfig &config) = 0;
+  virtual void Serialize(JsonObject &dobj, const DryStation &config) = 0;
+  virtual std::string Serialize(const DryStation &config) = 0;
 };
 
 } // namespace cdfw

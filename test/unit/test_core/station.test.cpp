@@ -13,30 +13,30 @@
 
 namespace cdfw {
 namespace {
-TEST(WetStationConfigTests, Disabled) {
-  auto config = WetStationConfig::GetDisabled();
+TEST(WetStationTests, Disabled) {
+  auto config = WetStation::GetDisabled();
 
   EXPECT_EQ(config.name, "Disabled");
   EXPECT_FALSE(config.enabled);
   EXPECT_EQ(config.time, 0);
-  EXPECT_EQ(config.agitation, WetStationConfig::AgitationLevel::kNONE);
+  EXPECT_EQ(config.agitation, WetStation::AgitationLevel::kNONE);
 }
 
-TEST(WetStationConfigTests, Enabled_Default) {
+TEST(WetStationTests, Enabled_Default) {
   std::string name = "wet_default";
-  auto config = WetStationConfig::GetDefault(name);
+  auto config = WetStation::GetDefault(name);
 
   EXPECT_EQ(config.name, name);
   EXPECT_TRUE(config.enabled);
   EXPECT_EQ(config.time, 180);
-  EXPECT_EQ(config.agitation, WetStationConfig::AgitationLevel::kMEDIUM);
+  EXPECT_EQ(config.agitation, WetStation::AgitationLevel::kMEDIUM);
 }
 
-TEST(WetStationConfigTests, Enabled_Configured) {
+TEST(WetStationTests, Enabled_Configured) {
   std::string name = "wet_configured";
   std::uint32_t time = 1000;
-  auto agitation = WetStationConfig::AgitationLevel::kHIGH;
-  auto config = WetStationConfig::GetConfigured(name, time, agitation);
+  auto agitation = WetStation::AgitationLevel::kHIGH;
+  auto config = WetStation::GetConfigured(name, time, agitation);
 
   EXPECT_EQ(config.name, name);
   EXPECT_TRUE(config.enabled);
@@ -44,30 +44,30 @@ TEST(WetStationConfigTests, Enabled_Configured) {
   EXPECT_EQ(config.agitation, agitation);
 }
 
-TEST(DryStationConfigTests, Disabled) {
-  auto config = DryStationConfig::GetDisabled();
+TEST(DryStationTests, Disabled) {
+  auto config = DryStation::GetDisabled();
 
   EXPECT_EQ(config.name, "Disabled");
   EXPECT_FALSE(config.enabled);
   EXPECT_EQ(config.time, 0);
-  EXPECT_EQ(config.spin, DryStationConfig::SpinType::kNONE);
+  EXPECT_EQ(config.spin, DryStation::SpinType::kNONE);
 }
 
-TEST(DryStationConfigTests, Enabled_Default) {
+TEST(DryStationTests, Enabled_Default) {
   std::string name = "dry_default";
-  auto config = DryStationConfig::GetDefault(name);
+  auto config = DryStation::GetDefault(name);
 
   EXPECT_EQ(config.name, name);
   EXPECT_TRUE(config.enabled);
   EXPECT_EQ(config.time, 360);
-  EXPECT_EQ(config.spin, DryStationConfig::SpinType::kUNIDIRECTIONAL);
+  EXPECT_EQ(config.spin, DryStation::SpinType::kUNIDIRECTIONAL);
 }
 
-TEST(DryStationConfigTests, Enabled_Configured) {
+TEST(DryStationTests, Enabled_Configured) {
   std::string name = "dry_configured";
   std::uint32_t time = 1000;
-  auto spin = DryStationConfig::SpinType::kBIDIRECTIONAL;
-  auto config = DryStationConfig::GetConfigured(name, time, spin);
+  auto spin = DryStation::SpinType::kBIDIRECTIONAL;
+  auto config = DryStation::GetConfigured(name, time, spin);
 
   EXPECT_EQ(config.name, name);
   EXPECT_TRUE(config.enabled);
@@ -78,8 +78,8 @@ TEST(DryStationConfigTests, Enabled_Configured) {
 TEST(StationSerializerTests, Serialize_WetStation) {
   std::string name = "wet_configured";
   std::uint32_t time = 1000;
-  auto agitation = WetStationConfig::AgitationLevel::kHIGH;
-  auto config = WetStationConfig::GetConfigured(name, time, agitation);
+  auto agitation = WetStation::AgitationLevel::kHIGH;
+  auto config = WetStation::GetConfigured(name, time, agitation);
   auto serializer = StationSerializer::Create();
   auto json_str = serializer->Serialize(config);
 
@@ -91,8 +91,8 @@ TEST(StationSerializerTests, Serialize_WetStation) {
 TEST(StationSerializerTests, Serialize_DryStation) {
   std::string name = "dry_configured";
   std::uint32_t time = 1000;
-  auto spin = DryStationConfig::SpinType::kBIDIRECTIONAL;
-  auto config = DryStationConfig::GetConfigured(name, time, spin);
+  auto spin = DryStation::SpinType::kBIDIRECTIONAL;
+  auto config = DryStation::GetConfigured(name, time, spin);
   auto serializer = StationSerializer::Create();
   auto json_str = serializer->Serialize(config);
 

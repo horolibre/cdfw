@@ -14,24 +14,24 @@
 
 namespace cdfw {
 namespace {
-TEST(RoutineConfigTests, Disabled) {
-  RoutineConfig config = RoutineConfig::GetDisabled();
+TEST(RoutineTests, Disabled) {
+  Routine config = Routine::GetDisabled();
 
   for (auto &station : config.wet_stations) {
     EXPECT_EQ(station.name, "Disabled");
     EXPECT_FALSE(station.enabled);
     EXPECT_EQ(station.time, 0);
-    EXPECT_EQ(station.agitation, WetStationConfig::AgitationLevel::kNONE);
+    EXPECT_EQ(station.agitation, WetStation::AgitationLevel::kNONE);
   }
 
   EXPECT_EQ(config.dry_station.name, "Disabled");
   EXPECT_FALSE(config.dry_station.enabled);
   EXPECT_EQ(config.dry_station.time, 0);
-  EXPECT_EQ(config.dry_station.spin, DryStationConfig::SpinType::kNONE);
+  EXPECT_EQ(config.dry_station.spin, DryStation::SpinType::kNONE);
 }
 
-TEST(RoutineConfigTests, Default) {
-  RoutineConfig config = RoutineConfig::GetDefault();
+TEST(RoutineTests, Default) {
+  Routine config = Routine::GetDefault();
 
   std::string names[4] = {"Clean", "Rinse 1", "Rinse 2", "Rinse 3"};
   for (std::size_t i = 0; i < 4; ++i) {
@@ -39,19 +39,19 @@ TEST(RoutineConfigTests, Default) {
     EXPECT_TRUE(config.wet_stations[i].enabled);
     EXPECT_EQ(config.wet_stations[i].time, 180);
     EXPECT_EQ(config.wet_stations[i].agitation,
-              WetStationConfig::AgitationLevel::kMEDIUM);
+              WetStation::AgitationLevel::kMEDIUM);
   }
 
   EXPECT_EQ(config.dry_station.name, "Dry");
   EXPECT_TRUE(config.dry_station.enabled);
   EXPECT_EQ(config.dry_station.time, 360);
   EXPECT_EQ(config.dry_station.spin,
-            DryStationConfig::SpinType::kUNIDIRECTIONAL);
+            DryStation::SpinType::kUNIDIRECTIONAL);
 }
 
 TEST(RoutineSerializerTests, Serialize_Disabled) {
   auto serializer = RoutineSerializer::Create();
-  RoutineConfig config = RoutineConfig::GetDisabled();
+  Routine config = Routine::GetDisabled();
   std::string json = serializer->Serialize(config);
 
   std::string expected =
@@ -67,7 +67,7 @@ TEST(RoutineSerializerTests, Serialize_Disabled) {
 
 TEST(RoutineSerializerTests, Serialize_Default) {
   auto serializer = RoutineSerializer::Create();
-  RoutineConfig config = RoutineConfig::GetDefault();
+  Routine config = Routine::GetDefault();
   std::string json = serializer->Serialize(config);
 
   std::string expected =
@@ -82,12 +82,12 @@ TEST(RoutineSerializerTests, Serialize_Default) {
 
 TEST(RoutineSerializerTests, Serialize_Configured) {
   auto serializer = RoutineSerializer::Create();
-  RoutineConfig config = RoutineConfig::GetDefault();
+  Routine config = Routine::GetDefault();
   config.name = "routine_configured";
-  config.wet_stations[0] = WetStationConfig::GetConfigured(
-      "Clean", 1000, WetStationConfig::AgitationLevel::kHIGH);
-  config.dry_station = DryStationConfig::GetConfigured(
-      "Dry", 1000, DryStationConfig::SpinType::kBIDIRECTIONAL);
+  config.wet_stations[0] = WetStation::GetConfigured(
+      "Clean", 1000, WetStation::AgitationLevel::kHIGH);
+  config.dry_station = DryStation::GetConfigured(
+      "Dry", 1000, DryStation::SpinType::kBIDIRECTIONAL);
   std::string json = serializer->Serialize(config);
 
   std::string expected =

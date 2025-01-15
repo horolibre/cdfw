@@ -27,25 +27,25 @@
 
 namespace cdfw {
 
-struct RoutineConfig {
+struct Routine {
   std::string name;
 
   // Turntable positions 1 - 4.
-  WetStationConfig wet_stations[4];
+  WetStation wet_stations[4];
 
   // Turntable position 5.
-  DryStationConfig dry_station;
+  DryStation dry_station;
 
-  virtual ~RoutineConfig() = default;
+  virtual ~Routine() = default;
 
   // Returns the factory default routine configuration.
-  static RoutineConfig GetDefault(void);
+  static Routine GetDefault(void);
 
   // Returns a routine with all stations disabled.
-  static RoutineConfig GetDisabled(void) { return RoutineConfig(); }
+  static Routine GetDisabled(void) { return Routine(); }
 
 protected:
-  RoutineConfig();
+  Routine();
 };
 
 class RoutineSerializer {
@@ -57,7 +57,7 @@ public:
   virtual ~RoutineSerializer() = default;
 
   // Serializes the given routine configuration.
-  virtual std::string Serialize(const RoutineConfig &config) = 0;
+  virtual std::string Serialize(const Routine &config) = 0;
 };
 } // namespace cdfw
 

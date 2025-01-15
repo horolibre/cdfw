@@ -45,36 +45,26 @@ public:
 
   void Init(core::ui::CleanPresenter *presenter) override final {
     scr_ = lv_obj_create(NULL);
-    lv_obj_add_style(scr_, &Styles::GetInstance().style_scr, 0);
+    // lv_obj_add_style(scr_, &Styles::GetInstance().style_scr, 0);
 
-    // Add nav bar.
+    auto win = lv_win_create(scr_);
     {
-      // Top bar object.
-      lv_obj_t *tb = lv_obj_create(scr_);
-      lv_obj_set_size(tb, 320, 40);
-      lv_obj_add_style(tb, &Styles::GetInstance().style_top_bar, 0);
-      lv_obj_align(tb, LV_ALIGN_TOP_MID, 0, 0);
+      lv_obj_set_size(win, lv_disp_get_hor_res(NULL),
+                      lv_disp_get_ver_res(NULL));
 
-      // Title centered in top bar.
-      {
-        lv_obj_t *label = lv_label_create(scr_);
-        lv_label_set_text(label, "Clean");
-        lv_obj_align(label, LV_ALIGN_TOP_MID, 0, 13);
-      }
+      auto btn = lv_win_add_button(win, LV_SYMBOL_LEFT, 40);
+      lv_obj_add_event_cb(
+          btn,
+          [](lv_event_t *e) {
+            auto pres = static_cast<core::ui::CleanPresenter *>(
+                lv_event_get_user_data(e));
+            pres->OnBackClicked();
+          },
+          LV_EVENT_PRESSED, presenter);
+      lv_win_add_title(win, "Clean");
 
-      AddBackButton(scr_, presenter);
-    }
-
-    // Add main panel.
-    {
-      lv_obj_t *panel = lv_obj_create(scr_);
-      lv_obj_set_size(panel, 320, 200);
-      lv_obj_add_style(panel, &Styles::GetInstance().style1, 0);
-      lv_obj_align(panel, LV_ALIGN_BOTTOM_MID, 0, 0);
-      lv_obj_set_layout(panel, LV_LAYOUT_FLEX);
-      lv_obj_set_flex_flow(panel, LV_FLEX_FLOW_ROW);
-      lv_obj_set_flex_align(panel, LV_FLEX_ALIGN_SPACE_EVENLY,
-                            LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+      auto header = lv_win_get_header(win);
+      lv_obj_set_height(header, 40);
     }
   }
 
