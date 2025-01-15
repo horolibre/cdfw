@@ -284,6 +284,11 @@ public:
           lv_label_set_text(
               label, (std::string("Network ") + std::to_string(i)).c_str());
           lv_obj_set_flex_grow(label, 1);
+          label = lv_label_create(cont);
+          lv_label_set_text(label, LV_SYMBOL_RIGHT);
+          lv_obj_set_style_text_color(
+              label, lv_color_darken(lv_obj_get_style_bg_color(section, 0), 50),
+              0);
           lv_menu_set_load_page_event(menu, cont, sub_page_wifi_password);
           lv_obj_add_event_cb(cont, ConnectEventHandler, LV_EVENT_CLICKED,
                               label);
@@ -346,8 +351,7 @@ public:
       }
 
       // License Information sub page.
-      auto sub_page_license_info =
-          lv_menu_page_create(menu, "License Information");
+      auto sub_page_license_info = lv_menu_page_create(menu, "License");
       {
         lv_obj_set_style_pad_hor(
             sub_page_license_info,
@@ -374,6 +378,12 @@ public:
         auto cont = lv_menu_cont_create(section);
         auto label = lv_label_create(cont);
         lv_label_set_text(label, "Device Information");
+        lv_obj_set_flex_grow(label, 1);
+        label = lv_label_create(cont);
+        lv_label_set_text(label, LV_SYMBOL_RIGHT);
+        lv_obj_set_style_text_color(
+            label, lv_color_darken(lv_obj_get_style_bg_color(section, 0), 50),
+            0);
         lv_menu_set_load_page_event(menu, cont, sub_page_device_info);
 
         AddLine(section);
@@ -381,7 +391,13 @@ public:
         // License Information menu item.
         cont = lv_menu_cont_create(section);
         label = lv_label_create(cont);
-        lv_label_set_text(label, "License Information");
+        lv_label_set_text(label, "License");
+        lv_obj_set_flex_grow(label, 1);
+        label = lv_label_create(cont);
+        lv_label_set_text(label, LV_SYMBOL_RIGHT);
+        lv_obj_set_style_text_color(
+            label, lv_color_darken(lv_obj_get_style_bg_color(section, 0), 50),
+            0);
         lv_menu_set_load_page_event(menu, cont, sub_page_license_info);
       }
     }
@@ -405,6 +421,12 @@ public:
           lv_image_set_src(img, LV_SYMBOL_WIFI);
           auto label = lv_label_create(cont);
           lv_label_set_text(label, "Wi-Fi");
+          lv_obj_set_flex_grow(label, 1);
+          label = lv_label_create(cont);
+          lv_label_set_text(label, LV_SYMBOL_RIGHT);
+          lv_obj_set_style_text_color(
+              label, lv_color_darken(lv_obj_get_style_bg_color(section, 0), 50),
+              0);
           lv_menu_set_load_page_event(menu, cont, sub_page_wifi);
         }
 
@@ -418,6 +440,12 @@ public:
           lv_image_set_src(img, LV_SYMBOL_IMAGE);
           auto label = lv_label_create(cont);
           lv_label_set_text(label, "Display");
+          lv_obj_set_flex_grow(label, 1);
+          label = lv_label_create(cont);
+          lv_label_set_text(label, LV_SYMBOL_RIGHT);
+          lv_obj_set_style_text_color(
+              label, lv_color_darken(lv_obj_get_style_bg_color(section, 0), 50),
+              0);
           lv_menu_set_load_page_event(menu, cont, sub_page_display);
         }
       }
@@ -429,6 +457,12 @@ public:
         auto cont = lv_menu_cont_create(section);
         auto label = lv_label_create(cont);
         lv_label_set_text(label, "About");
+        lv_obj_set_flex_grow(label, 1);
+        label = lv_label_create(cont);
+        lv_label_set_text(label, LV_SYMBOL_RIGHT);
+        lv_obj_set_style_text_color(
+            label, lv_color_darken(lv_obj_get_style_bg_color(section, 0), 50),
+            0);
         lv_menu_set_load_page_event(menu, cont, sub_page_about);
       }
 
