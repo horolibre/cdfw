@@ -44,8 +44,18 @@ struct Routine {
   // Returns a routine with all stations disabled.
   static Routine GetDisabled(void) { return Routine(); }
 
+  // Returns a routine with the given configuration.
+  static Routine GetConfigured(std::string name, WetStation wet1,
+                               WetStation wet2, WetStation wet3,
+                               WetStation wet4, DryStation dry) {
+    return Routine{name, wet1, wet2, wet3, wet4, dry};
+  }
+
 protected:
   Routine();
+  Routine(std::string name, WetStation wet1, WetStation wet2, WetStation wet3,
+          WetStation wet4, DryStation dry)
+      : name(name), wet_stations{wet1, wet2, wet3, wet4}, dry_station(dry) {}
 };
 
 class RoutineSerializer {
@@ -56,8 +66,11 @@ public:
   // Virtual destructor.
   virtual ~RoutineSerializer() = default;
 
-  // Serializes the given routine configuration.
+  // Serializes the given routine.
   virtual std::string Serialize(const Routine &config) = 0;
+
+  // Deserializes the given routine representation.
+  virtual Routine Deserialize(const std::string &obj) = 0;
 };
 } // namespace cdfw
 

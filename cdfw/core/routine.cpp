@@ -38,6 +38,27 @@ public:
     return json_str;
   }
 
+  virtual Routine Deserialize(const std::string &obj) override final {
+    JsonDocument doc;
+    deserializeJson(doc, obj);
+
+    WetStation wet_stations[] = {
+        station_serializer_->DeserializeWet(
+            (doc["wet_stations"][0]).as<JsonObject>()),
+        station_serializer_->DeserializeWet(
+            (doc["wet_stations"][1]).as<JsonObject>()),
+        station_serializer_->DeserializeWet(
+            (doc["wet_stations"][2]).as<JsonObject>()),
+        station_serializer_->DeserializeWet(
+            (doc["wet_stations"][3]).as<JsonObject>())};
+    DryStation dry_station = station_serializer_->DeserializeDry(
+        doc["dry_station"].as<JsonObject>());
+
+    return Routine::GetConfigured(
+        doc["name"].as<std::string>(), wet_stations[0], wet_stations[1],
+        wet_stations[2], wet_stations[3], dry_station);
+  }
+
 private:
   std::shared_ptr<StationSerializer> station_serializer_;
 };
