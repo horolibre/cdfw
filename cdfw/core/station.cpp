@@ -54,6 +54,41 @@ public:
     serializeJson(obj, json_str);
     return json_str;
   }
+
+  virtual WetStation DeserializeWet(const JsonObject &obj) override final {
+    if (obj["enabled"].as<bool>()) {
+      return WetStation::GetConfigured(
+          obj["name"].as<std::string>(), obj["time"].as<std::uint32_t>(),
+          static_cast<WetStation::AgitationLevel>(
+              obj["agitation"].as<std::uint8_t>()));
+    } else {
+      return WetStation::GetDisabled();
+    }
+  }
+
+  virtual WetStation DeserializeWet(const std::string &obj) override final {
+    JsonDocument doc;
+    deserializeJson(doc, obj);
+
+    return DeserializeWet(doc.as<JsonObject>());
+  }
+
+  virtual DryStation DeserializeDry(const JsonObject &obj) override final {
+    if (obj["enabled"].as<bool>()) {
+      return DryStation::GetConfigured(
+          obj["name"].as<std::string>(), obj["time"].as<std::uint32_t>(),
+          static_cast<DryStation::SpinType>(obj["spin"].as<std::uint8_t>()));
+    } else {
+      return DryStation::GetDisabled();
+    }
+  }
+
+  virtual DryStation DeserializeDry(const std::string &obj) override final {
+    JsonDocument doc;
+    deserializeJson(doc, obj);
+
+    return DeserializeDry(doc.as<JsonObject>());
+  }
 };
 } // namespace
 

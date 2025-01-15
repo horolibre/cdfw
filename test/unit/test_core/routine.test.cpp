@@ -45,8 +45,7 @@ TEST(RoutineTests, Default) {
   EXPECT_EQ(config.dry_station.name, "Dry");
   EXPECT_TRUE(config.dry_station.enabled);
   EXPECT_EQ(config.dry_station.time, 360);
-  EXPECT_EQ(config.dry_station.spin,
-            DryStation::SpinType::kUNIDIRECTIONAL);
+  EXPECT_EQ(config.dry_station.spin, DryStation::SpinType::kUNIDIRECTIONAL);
 }
 
 TEST(RoutineSerializerTests, Serialize_Disabled) {

@@ -59,10 +59,9 @@ Routine Routine::GetDefault(void) {
 }
 
 Routine::Routine()
-    : name("Disabled"), wet_stations{WetStation::GetDisabled(),
-                                     WetStation::GetDisabled(),
-                                     WetStation::GetDisabled(),
-                                     WetStation::GetDisabled()},
+    : name("Disabled"),
+      wet_stations{WetStation::GetDisabled(), WetStation::GetDisabled(),
+                   WetStation::GetDisabled(), WetStation::GetDisabled()},
       dry_station(DryStation::GetDisabled()) {}
 
 } // namespace cdfw

@@ -55,12 +55,10 @@ struct WetStation : Station {
 
   virtual ~WetStation() = default;
 
-  static WetStation GetDefault(std::string name) {
-    return WetStation(name);
-  }
+  static WetStation GetDefault(std::string name) { return WetStation(name); }
   static WetStation GetDisabled() { return WetStation(); }
   static WetStation GetConfigured(std::string name, std::uint32_t time,
-                                        AgitationLevel agitation) {
+                                  AgitationLevel agitation) {
     return WetStation(name, time, agitation);
   }
 
@@ -70,8 +68,7 @@ private:
       : Station("Disabled", false, 0), agitation(AgitationLevel::kNONE) {}
 
   // Constructor for a configured station.
-  WetStation(std::string name, std::uint32_t time,
-                   AgitationLevel agitation)
+  WetStation(std::string name, std::uint32_t time, AgitationLevel agitation)
       : Station(name, true, time), agitation(agitation) {}
 
   // By default we assume:
@@ -93,19 +90,16 @@ struct DryStation : Station {
 
   virtual ~DryStation() = default;
 
-  static DryStation GetDefault(std::string name) {
-    return DryStation(name);
-  }
+  static DryStation GetDefault(std::string name) { return DryStation(name); }
   static DryStation GetDisabled() { return DryStation(); }
   static DryStation GetConfigured(std::string name, std::uint32_t time,
-                                        SpinType spin) {
+                                  SpinType spin) {
     return DryStation(name, time, spin);
   }
 
 private:
   // Default constructor creates a disabled station.
-  DryStation()
-      : Station("Disabled", false, 0), spin(SpinType::kNONE) {}
+  DryStation() : Station("Disabled", false, 0), spin(SpinType::kNONE) {}
 
   // Constructor for a configured station.
   DryStation(std::string name, std::uint32_t time, SpinType spin)
@@ -133,6 +127,12 @@ public:
   // Serializes the given dry station configuration.
   virtual void Serialize(JsonObject &dobj, const DryStation &config) = 0;
   virtual std::string Serialize(const DryStation &config) = 0;
+
+  // Deserializes the given configuration object.
+  virtual WetStation DeserializeWet(const JsonObject &obj) = 0;
+  virtual WetStation DeserializeWet(const std::string &obj) = 0;
+  virtual DryStation DeserializeDry(const JsonObject &obj) = 0;
+  virtual DryStation DeserializeDry(const std::string &obj) = 0;
 };
 
 } // namespace cdfw
