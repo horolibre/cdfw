@@ -195,5 +195,27 @@ TEST_F(StationSerializerTests, Deserialize_DryStation_Configured) {
   EXPECT_EQ(station.spin, DryStation::SpinType::kBIDIRECTIONAL);
 }
 
+TEST_F(StationSerializerTests, RoundTrip_WetStation) {
+  auto expected = WetStation::GetConfigured("Clean", 123,
+                                            WetStation::AgitationLevel::kHIGH);
+  auto actual = serializer->DeserializeWet(serializer->Serialize(expected));
+
+  EXPECT_EQ(actual.name, expected.name);
+  EXPECT_EQ(actual.enabled, expected.enabled);
+  EXPECT_EQ(actual.time, expected.time);
+  EXPECT_EQ(actual.agitation, expected.agitation);
+}
+
+TEST_F(StationSerializerTests, RoundTrip_DryStation) {
+  auto expected = DryStation::GetConfigured(
+      "Dry", 123, DryStation::SpinType::kUNIDIRECTIONAL);
+  auto actual = serializer->DeserializeDry(serializer->Serialize(expected));
+
+  EXPECT_EQ(actual.name, expected.name);
+  EXPECT_EQ(actual.enabled, expected.enabled);
+  EXPECT_EQ(actual.time, expected.time);
+  EXPECT_EQ(actual.spin, expected.spin);
+}
+
 } // namespace
 } // namespace cdfw

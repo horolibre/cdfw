@@ -233,5 +233,33 @@ TEST_F(RoutineSerializerTests, Deserialize_Configured) {
   EXPECT_EQ(routine.dry_station.spin, expected.dry_station.spin);
 }
 
+TEST_F(RoutineSerializerTests, RoundTrip) {
+  Routine expected = Routine::GetConfigured(
+      "routine_configured",
+      WetStation::GetConfigured("Clean", 20, WetStation::AgitationLevel::kNONE),
+      WetStation::GetConfigured("Rinse 1", 40,
+                                WetStation::AgitationLevel::kLOW),
+      WetStation::GetConfigured("Rinse 2", 60,
+                                WetStation::AgitationLevel::kMEDIUM),
+      WetStation::GetConfigured("Rinse 3", 80,
+                                WetStation::AgitationLevel::kHIGH),
+      DryStation::GetConfigured("Dry", 100,
+                                DryStation::SpinType::kBIDIRECTIONAL));
+  Routine actual = serializer->Deserialize(serializer->Serialize(expected));
+
+  EXPECT_EQ(actual.name, expected.name);
+  for (std::size_t i = 0; i < 4; ++i) {
+    EXPECT_EQ(actual.wet_stations[i].name, expected.wet_stations[i].name);
+    EXPECT_EQ(actual.wet_stations[i].enabled, expected.wet_stations[i].enabled);
+    EXPECT_EQ(actual.wet_stations[i].time, expected.wet_stations[i].time);
+    EXPECT_EQ(actual.wet_stations[i].agitation,
+              expected.wet_stations[i].agitation);
+  }
+  EXPECT_EQ(actual.dry_station.name, expected.dry_station.name);
+  EXPECT_EQ(actual.dry_station.enabled, expected.dry_station.enabled);
+  EXPECT_EQ(actual.dry_station.time, expected.dry_station.time);
+  EXPECT_EQ(actual.dry_station.spin, expected.dry_station.spin);
+}
+
 } // namespace
 } // namespace cdfw
